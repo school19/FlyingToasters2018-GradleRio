@@ -1,6 +1,8 @@
 package hardware;
 
-import com.ctre.CANTalon;
+import simulation.CANTalon;
+
+//TODO use Talon[] instead of CANTalon[] to allow for current limiting talons
 
 public class LinkedTalons implements MotorController {
 	protected int numberOfTalons;
@@ -38,5 +40,17 @@ public class LinkedTalons implements MotorController {
 	@Override
 	public double getPower() {
 		return currentPower;
+	}
+	
+	public void setCurrentLimit(int amps){
+		for(CANTalon ct : talons){
+			ct.setCurrentLimit(amps);
+		}
+	}
+	
+	public void EnableCurrentLimit(boolean enable){
+		for(CANTalon ct : talons){
+			ct.EnableCurrentLimit(enable);
+		}
 	}
 }

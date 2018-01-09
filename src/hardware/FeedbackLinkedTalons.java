@@ -1,7 +1,7 @@
 package hardware;
 
-import com.ctre.CANTalon;
-import com.ctre.CANTalon.FeedbackDevice;
+import simulation.CANTalon;
+import simulation.CANTalon.FeedbackDevice;
 
 import controllers.AbstractFeedbackController;
 import utilities.Logging;
@@ -59,6 +59,7 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	}
 
 	@Override
+	//set the feedback controller,
 	public void setFeedbackController(AbstractFeedbackController controller) {
 		feedbackController = controller;
 	}
@@ -92,5 +93,20 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 		}else{
 			Logging.w("runFeedback run with feedback inactive");
 		}
+	}
+	
+	public void setCurrentLimit(int amps){
+		super.setCurrentLimit(amps);
+		feedbackTalon.setCurrentLimit(amps);
+	}
+	
+	public void EnableCurrentLimit(boolean enable){
+		super.EnableCurrentLimit(enable);
+		feedbackTalon.EnableCurrentLimit(enable);
+	}
+
+	@Override
+	public AbstractFeedbackController getFeedbackController() {
+		return feedbackController;
 	}
 }

@@ -1,6 +1,6 @@
 package hardware;
 
-import com.ctre.CANTalon;
+import simulation.CANTalon;
 
 public class Talon implements MotorController {
 	protected CANTalon talon;
@@ -20,5 +20,15 @@ public class Talon implements MotorController {
 	@Override
 	public double getPower() {
 		return currentPower;
+	}
+	
+	@Override
+	public void setCurrentLimit(int amps){
+		talon.setCurrentLimit(amps);
+	}
+	
+	@Override
+	public void EnableCurrentLimit(boolean enable){
+		talon.EnableCurrentLimit(enable);
 	}
 }

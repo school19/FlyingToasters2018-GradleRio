@@ -1,6 +1,6 @@
 package hardware;
 
-import com.ctre.CANTalon.FeedbackDevice;
+import simulation.CANTalon.FeedbackDevice;
 
 import controllers.AbstractFeedbackController;
 import utilities.Logging;
@@ -27,7 +27,6 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	@Override
 	public void setFeedbackController(AbstractFeedbackController controller) {
 		feedbackController = controller;
-		
 	}
 
 	@Override
@@ -63,6 +62,11 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	@Override
 	public void setFeedbackDevice(FeedbackDevice device) {
 		talon.setFeedbackDevice(device);
+	}
+
+	@Override
+	public AbstractFeedbackController getFeedbackController() {
+		return feedbackController;
 	}
 
 }
