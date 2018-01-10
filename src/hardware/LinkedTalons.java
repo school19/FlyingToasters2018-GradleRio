@@ -1,12 +1,13 @@
 package hardware;
 
-import simulation.CANTalon;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 //TODO use Talon[] instead of CANTalon[] to allow for current limiting talons
 
 public class LinkedTalons implements MotorController {
 	protected int numberOfTalons;
-	protected CANTalon[] talons;
+	protected TalonSRX[] talons;
 	protected double currentPower = 0;
 	
 	/**
@@ -18,10 +19,10 @@ public class LinkedTalons implements MotorController {
 	public LinkedTalons(int... talonIDs) {
 		
 		numberOfTalons = talonIDs.length;
-		talons = new CANTalon[numberOfTalons];
+		talons = new TalonSRX[numberOfTalons];
 
 		for (int i = 0; i < numberOfTalons; i++)
-			talons[i] = new CANTalon(talonIDs[i]);
+			talons[i] = new TalonSRX(talonIDs[i]);
 	}
 
 	@Override

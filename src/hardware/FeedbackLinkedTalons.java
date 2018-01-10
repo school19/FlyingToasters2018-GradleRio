@@ -1,7 +1,8 @@
 package hardware;
 
-import simulation.CANTalon;
-import simulation.CANTalon.FeedbackDevice;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import controllers.AbstractFeedbackController;
 import utilities.Logging;
@@ -9,7 +10,7 @@ import utilities.Utilities.Conversions.Distance;
 
 //TODO finish implementing linked talons
 public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorController {
-	private CANTalon feedbackTalon;
+	private TalonSRX feedbackTalon;
 	private AbstractFeedbackController feedbackController;
 	private boolean feedbackActive = false;
 	/**
@@ -20,12 +21,12 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 */
 	public FeedbackLinkedTalons(int feedbackTalonID, int... talonIDs) {
 		super(talonIDs);
-		feedbackTalon = new CANTalon(feedbackTalonID);
+		feedbackTalon = new TalonSRX(feedbackTalonID);
 	}
 	
 	public FeedbackLinkedTalons(FeedbackDevice device, int feedbackTalonID, int... talonIDs){
 		super(talonIDs);
-		feedbackTalon = new CANTalon(feedbackTalonID);
+		feedbackTalon = new TalonSRX(feedbackTalonID);
 		
 	}
 
@@ -38,7 +39,7 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 */
 	public void setPower(double power) {
 		currentPower = power;
-		for (CANTalon talon : talons)
+		for (TalonSRX talon : talons)
 			talon.set(power);
 		feedbackTalon.set(power);
 	}

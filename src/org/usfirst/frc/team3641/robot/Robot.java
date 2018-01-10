@@ -1,8 +1,8 @@
 package org.usfirst.frc.team3641.robot;
 
 
-import simulation.IterativeRobot;
-import simulation.HardwareTimer;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.internal.HardwareTimer;
 //import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Pro775DriveBase;
