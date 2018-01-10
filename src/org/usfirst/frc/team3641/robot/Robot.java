@@ -3,8 +3,8 @@ package org.usfirst.frc.team3641.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
-//import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Pro775DriveBase;
 import pathfinder.Point;
 import pathfinder.Waypoint;
@@ -15,11 +15,12 @@ import pathfinder.Waypoint;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class Robot extends IterativeRobot {
+public class Robot extends IterativeRobot implements CommandCallback {
 	final String defaultAuto = "Default";
 	final String customAuto = "My Auto";
+	ArrayList<Command> commands;
 	String autoSelected;
-	//SendableChooser<String> chooser = new SendableChooser<>();
+	SendableChooser<String> chooser = new SendableChooser<>();
 
 	Pro775DriveBase driveBase;
 	
@@ -27,7 +28,7 @@ public class Robot extends IterativeRobot {
 	double lastTime;
 	double deltaTime = 0;;
 	
-	//PS4 ps4 = new PS4(0);
+	PS4 ps4 = new PS4(0);
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -35,9 +36,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		//chooser.addDefault("Default Auto", defaultAuto);
-		//chooser.addObject("My Auto", customAuto);
-		//SmartDashboard.putData("Auto choices", chooser);
+		chooser.addDefault("Default Auto", defaultAuto);
+		chooser.addObject("My Auto", customAuto);
+		SmartDashboard.putData("Auto choices", chooser);
 		driveBase = new Pro775DriveBase();
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
@@ -56,9 +57,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		//autoSelected = chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
+		autoSelected = chooser.getSelected();
+		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
 	}
 
@@ -113,5 +113,9 @@ public class Robot extends IterativeRobot {
 	 */
 	public void standardInit() {
 		lastTime = timer.getFPGATimestamp();
+	}
+	
+	public void commandFinished(Command cmd){
+		
 	}
 }
