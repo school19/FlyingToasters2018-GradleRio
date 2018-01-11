@@ -1,6 +1,7 @@
 package hardware;
 
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -39,9 +40,11 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 */
 	public void setPower(double power) {
 		currentPower = power;
-		for (TalonSRX talon : talons)
-			talon.set(power);
-		feedbackTalon.set(power);
+		for (Talon talon : talons) {
+			talon.setPower(power);
+		}
+		
+		feedbackTalon.set(ControlMode.PercentOutput, power);
 	}
 
 	@Override
@@ -51,12 +54,12 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 
 	@Override
 	public double getPosition() {
-		return Distance.ENCODER_TICK.convert(feedbackTalon.getEncPosition(), Distance.M);
+		return Distance.ENCODER_TICK.convert(feedbackTalon.getSelectedSensorPosition(0), Distance.M);
 	}
 
 	@Override
 	public void setFeedbackDevice(FeedbackDevice device) {
-		feedbackTalon.setFeedbackDevice(device);
+		feedbackTalon.configSelectedFeedbackSensor(device, 0, 1000);
 	}
 
 	@Override
@@ -98,12 +101,14 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	
 	public void setCurrentLimit(int amps){
 		super.setCurrentLimit(amps);
-		feedbackTalon.setCurrentLimit(amps);
+		feedbackTalon.configContinuousCurrentLimit(amps, 100);
+		feedbackTalon.configPeakCurrentLimit(amps, 100);
+		feedbackTalon.configPeakCurrentDuration(100, 100);
 	}
 	
 	public void EnableCurrentLimit(boolean enable){
 		super.EnableCurrentLimit(enable);
-		feedbackTalon.EnableCurrentLimit(enable);
+		feedbackTalon.enableCurrentLimit(enable);
 	}
 
 	@Override

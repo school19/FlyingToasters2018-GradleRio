@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class LinkedTalons implements MotorController {
 	protected int numberOfTalons;
-	protected TalonSRX[] talons;
+	protected Talon[] talons;
 	protected double currentPower = 0;
 	
 	/**
@@ -19,10 +19,10 @@ public class LinkedTalons implements MotorController {
 	public LinkedTalons(int... talonIDs) {
 		
 		numberOfTalons = talonIDs.length;
-		talons = new TalonSRX[numberOfTalons];
+		talons = new Talon[numberOfTalons];
 
 		for (int i = 0; i < numberOfTalons; i++)
-			talons[i] = new TalonSRX(talonIDs[i]);
+			talons[i] = new Talon(talonIDs[i]);
 	}
 
 	@Override
@@ -34,8 +34,8 @@ public class LinkedTalons implements MotorController {
 	 */
 	public void setPower(double power) {
 		currentPower = power;
-		for (CANTalon talon : talons)
-			talon.set(power);
+		for (Talon talon : talons)
+			talon.setPower(power);
 	}
 
 	@Override
@@ -44,13 +44,13 @@ public class LinkedTalons implements MotorController {
 	}
 	
 	public void setCurrentLimit(int amps){
-		for(CANTalon ct : talons){
+		for(Talon ct : talons){
 			ct.setCurrentLimit(amps);
 		}
 	}
 	
 	public void EnableCurrentLimit(boolean enable){
-		for(CANTalon ct : talons){
+		for(Talon ct : talons){
 			ct.EnableCurrentLimit(enable);
 		}
 	}

@@ -1,6 +1,7 @@
 package hardware;
 
-import com.ctre.CANTalon.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import controllers.AbstractFeedbackController;
 import utilities.Logging;
 import utilities.Utilities;
@@ -20,7 +21,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	}
 	@Override
 	public double getPosition() {
-		return Distance.ENCODER_TICK.convert(talon.getEncPosition(), Distance.M);
+		return Distance.ENCODER_TICK.convert(talon.getSelectedSensorPosition(0), Distance.M);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 
 	@Override
 	public void setFeedbackDevice(FeedbackDevice device) {
-		talon.setFeedbackDevice(device);
+		talon.configSelectedFeedbackSensor(device, 0, 1000);
 	}
 
 	@Override

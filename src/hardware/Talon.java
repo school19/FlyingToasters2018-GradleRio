@@ -1,11 +1,13 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Talon implements MotorController {
-	protected CANTalon talon;
+	protected TalonSRX talon;
 	protected double currentPower;
 	public Talon(int talonID) {
-		talon = new CANTalon(talonID);
+		talon = new TalonSRX(talonID);
 		currentPower = 0;
 	}
 
@@ -13,7 +15,7 @@ public class Talon implements MotorController {
 	@Override
 	public void setPower(double power) {
 		currentPower = power;
-		talon.set(currentPower);
+		talon.set(ControlMode.PercentOutput, currentPower);
 	}
 
 	@Override
@@ -23,11 +25,13 @@ public class Talon implements MotorController {
 	
 	@Override
 	public void setCurrentLimit(int amps){
-		talon.setCurrentLimit(amps);
+		talon.configContinuousCurrentLimit(amps, 100);
+		talon.configPeakCurrentLimit(amps, 100);
+		talon.configPeakCurrentDuration(100, 100);
 	}
 	
 	@Override
 	public void EnableCurrentLimit(boolean enable){
-		talon.EnableCurrentLimit(enable);
+		talon.enableCurrentLimit(enable);
 	}
 }
