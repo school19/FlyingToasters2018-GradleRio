@@ -1,6 +1,8 @@
 package hardware;
 
-import com.ctre.CANTalon.FeedbackDevice;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import controllers.AbstractFeedbackController;
 
 public interface FeedbackMotorController extends MotorController{

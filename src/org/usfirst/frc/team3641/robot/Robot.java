@@ -1,6 +1,10 @@
 package org.usfirst.frc.team3641.robot;
 
 
+import java.util.ArrayList;
+
+import commands.Command;
+import commands.CommandCallback;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -115,7 +119,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		lastTime = timer.getFPGATimestamp();
 	}
 	
-	public void commandFinished(Command cmd){
+	@Override
+	public void commandFinished(Command cmd) {
+		// TODO Auto-generated method stub
 		
 	}
 }

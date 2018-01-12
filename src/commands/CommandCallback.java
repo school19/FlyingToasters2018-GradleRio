@@ -1,4 +1,4 @@
-package controllers;
+package commands;
 
 /**
  * abstract interface for a command
