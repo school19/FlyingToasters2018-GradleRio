@@ -9,14 +9,18 @@ import java.util.ArrayList;
  *
  */
 public abstract class OpMode extends Command implements CommandCallback{
-	ArrayList<Command> commands;
-	public OpMode(CommandCallback callback, String name){
-		super(callback, name);
+	private ArrayList<Command> commands;
+	private Robot robot;
+	public OpMode(Robot bot, String name){
+		super(bot, name);
 		commands = new ArrayList<Command>();
+		robot = bot;
 	}
 	
-	public OpMode(CommandCallback callback){
-		super(callback);
+	public OpMode(Robot bot){
+		super(bot);
+		commands = new ArrayList<Command>();
+		robot = bot;
 	}
 	//called once
 	public void init(){
