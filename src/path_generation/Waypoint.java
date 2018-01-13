@@ -49,6 +49,6 @@ public class Waypoint {
 	
 	@Override
 	public String toString(){
-		return "X: " + position.x + ", Y: " + position.y + ", Angle: " + rotation + ", distance: " + distance + ", time: " + time;
+		return "X: " + position.x + ", Y: " + position.y + ", Angle: " + rotation + ", distance: " + distance + ", time: " + time + ", velocity:" + velocity;
 	}
 }

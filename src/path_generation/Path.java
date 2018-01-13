@@ -2,6 +2,7 @@ package path_generation;
 
 import java.util.ArrayList;
 
+import path_generation.Path.VelocityMode;
 import utilities.Logging;
 
 
@@ -33,6 +34,7 @@ public class Path {
 			VelocityMode mode) {
 		waypoints = new ArrayList<Waypoint>();
 		genBezierPath(start, end, numberOfPoints, 0.2);
+		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
 		getTimes();
@@ -62,8 +64,8 @@ public class Path {
 		case TRIANGULAR:
 			for(Waypoint wp : waypoints) {
 				double distance = wp.distance;
-				double accelVelocity = Math.sqrt(2 * distance / accel);
-				double decelVelocity = Math.sqrt(2 * (endPos - distance) / accel);
+				double accelVelocity = Math.sqrt(2 * distance * accel);
+				double decelVelocity = Math.sqrt(2 * (endPos - distance) * accel);
 				wp.velocity = Math.min(accelVelocity, decelVelocity);
 			}
 			break;
@@ -75,14 +77,14 @@ public class Path {
 		case TRAPAZOIDAL:
 			for(Waypoint wp : waypoints) {
 				double distance = wp.distance;
-				double accelVelocity = Math.sqrt(2 * distance / accel);
-				double decelVelocity = Math.sqrt(2 * (endPos - distance) / accel);
+				double accelVelocity = Math.sqrt(2 * distance * accel);
+				double decelVelocity = Math.sqrt(2 * (endPos - distance) * accel);
 				double triangularVelocity = Math.min(accelVelocity, decelVelocity);
 				wp.velocity = Math.min(triangularVelocity, vel);
 			}
 			break;
 		default:
-			Logging.e("Couldn't find velocity profile mode.");
+			System.out.println("Couldn't find velocity profile mode.");
 		}
 	}
 	
@@ -118,7 +120,7 @@ public class Path {
 		double gpLength = distance / 2 * tightness;
 
 		Point startOffset = Point.PolarPoint(gpLength, start.rotation);
-		Point endOffset =  Point.PolarPoint(gpLength, end.rotation);
+		Point endOffset =  Point.PolarPoint(-gpLength, end.rotation);
 
 		Point gp1 = startPoint.sum(startOffset);
 		Point gp2 = endPoint.sum(endOffset);
