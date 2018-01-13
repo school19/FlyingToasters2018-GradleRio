@@ -3,6 +3,7 @@ package path_generation;
 public class Waypoint {
 	public Point position;
 	public double distance;
+	public double velocity;
 	public double rotation;
 	public double time;
 	public Waypoint(Point waypointPosition, double wpRotation) {
