@@ -4,6 +4,11 @@ import org.usfirst.frc.team3641.robot.Robot;
 
 import utilities.Logging;
 
+/**
+ * Simplest auton. Does nothing, prints strings.s
+ * @author jack
+ *
+ */
 public class TestAuton extends OpMode {
 	public TestAuton(Robot callback, String name) {
 		super(callback, name);

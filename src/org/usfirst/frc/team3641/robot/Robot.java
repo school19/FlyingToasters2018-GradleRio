@@ -26,7 +26,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 
-	Pro775DriveBase driveBase;
+	public Pro775DriveBase driveBase;
 	
 	HardwareTimer timer;
 	double lastTime;

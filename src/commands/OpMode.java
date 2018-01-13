@@ -12,7 +12,7 @@ import org.usfirst.frc.team3641.robot.Robot;
  */
 public abstract class OpMode extends Command implements CommandCallback{
 	private ArrayList<Command> commands;
-	private Robot robot;
+	protected Robot robot;
 	public OpMode(Robot bot, String name){
 		super(bot, name);
 		commands = new ArrayList<Command>();
@@ -39,6 +39,11 @@ public abstract class OpMode extends Command implements CommandCallback{
 		for(Command cmd:commands){
 			cmd.stop();
 		}
+	}
+	
+	protected void addCommand(Command cmd) {
+		commands.add(cmd);
+		cmd.init();
 	}
 	
 	public void commandFinished(Command cmd){
