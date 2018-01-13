@@ -2,6 +2,8 @@ package commands;
 
 import java.util.ArrayList;
 
+import org.usfirst.frc.team3641.robot.Robot;
+
 /**
  * abstract interface for a command
  * 
