@@ -10,9 +10,9 @@ import utilities.Logging;
  *
  */
 public class LineAuton extends OpMode {
-	final static double DRIVE_TIME = 2;
+	final static double DRIVE_TIME = 1.35;
 	final static double DRIVE_SPEED = 0.75;
-	final static double LEFT_DS = 1.0;
+	final static double DRIVE_TURN = -0.05;
 	
 	private double timer = 0;
 	
@@ -26,9 +26,7 @@ public class LineAuton extends OpMode {
 	
 	public void init() {
 		super.init();
-		//robot.driveBase.drive(DRIVE_SPEED, DRIVE_SPEED);
 		timer = 0;
-		Logging.h("INIT RUN!!!");
 	}
 	
 	public void periodic(double deltaTime) {
@@ -39,7 +37,7 @@ public class LineAuton extends OpMode {
 			earlyStop();
 			endCommand();
 		}else {
-			robot.driveBase.drive(LEFT_DS, DRIVE_SPEED);
+			robot.driveBase.drive(DRIVE_SPEED, DRIVE_TURN);
 		}
 	}
 	

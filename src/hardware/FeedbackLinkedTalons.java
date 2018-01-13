@@ -39,12 +39,12 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 *            The power to set each of the talons to.
 	 */
 	public void setPower(double power) {
-		currentPower = power;
-		for (Talon talon : talons) {
-			talon.setPower(power);
+		super.setPower(power);
+		if(isReversed) {
+			feedbackTalon.set(ControlMode.PercentOutput, -power);
+		} else {
+			feedbackTalon.set(ControlMode.PercentOutput, power);
 		}
-		
-		feedbackTalon.set(ControlMode.PercentOutput, power);
 	}
 
 	@Override

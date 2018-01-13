@@ -26,6 +26,7 @@ public class DriveBase2016 extends DriveBase {
 		super();
 		left = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.LEFT0.id, Talon.LEFT1.id);
 		right = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.RIGHT0.id, Talon.RIGHT1.id);
+		right.setInverted(true);
 		//add the motor controllers to the list to be updated
 		registerMotorController(left);
 		registerMotorController(right);
@@ -33,13 +34,43 @@ public class DriveBase2016 extends DriveBase {
 	
 	@Override
 	public void drive(double... inputs) {
-		Logging.h("Drive called! Inputs = " + inputs[0] + inputs[1]);
-		if(inputs.length != 2){
-			Logging.e("Incorrect number of inputs to drive(double... inputs): " + inputs.length);
-		}else{
-			//tank drive
-			left.setPower(inputs[1]);
-			right.setPower(-inputs[0]);
+		if(inputs.length == 2) {
+			driveArcade(inputs[0],inputs[1]);
+		} else {
+			Logging.e("Invalid number of inputs to drive");
+		}
+	}
+	
+	public void driveArcade(double power, double turn) {
+		double leftPow = power - turn;
+		double rightPow = power + turn;
+		left.setPower(leftPow);
+		right.setPower(rightPow);
+	}
+	
+	public void driveGrilledCheese(double power, double rotation) {
+		double gain = 1;
+		double limit = 0.25;
+		
+		
+		rotation = expInput(rotation, 1.5);
+		double arcadePower = expInput(power, 1.5);
+		double arcadeRotation = rotation;
+		double cheesyRotation = rotation * gain * Math.abs(arcadePower);
+		
+		power = Math.abs(power);
+		if(power == 0) rotation = arcadeRotation;
+		else if(power <= limit) rotation = (power/limit)*cheesyRotation + (1-power/limit) * arcadeRotation;
+		else rotation = cheesyRotation;
+		
+		driveArcade(arcadePower, rotation);
+	}
+	
+	public double expInput(double input, double power) {
+		if(input > 0) {
+			return Math.pow(input, power);
+		}else {
+			return -Math.pow(-input, power);
 		}
 	}
 }

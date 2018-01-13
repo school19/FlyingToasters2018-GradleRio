@@ -8,6 +8,7 @@ import commands.CommandCallback;
 import commands.LineAuton;
 import commands.OpMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,10 +32,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	SendableChooser<String> chooser = new SendableChooser<>();
 
 	public DriveBase2016 driveBase;
-	
-	HardwareTimer timer;
+
 	double lastTime;
 	double deltaTime = 0;;
+	
+	Timer timer;
 	
 	boolean isFirstPeriodic;
 	PS4 ps4;
@@ -51,10 +53,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		driveBase = new DriveBase2016();
-		timer = new HardwareTimer();
-		lastTime = timer.getFPGATimestamp();
 		opMode = new LineAuton(this);
 		ps4 = new PS4(0);
+		timer = new Timer();
+		timer.reset();
+		timer.start();
 	}
 
 	/**
@@ -111,7 +114,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}else {
 			standardPeriodic();
 			ps4.poll();
-			driveBase.drive(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
+			driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 		}
 	}
 	
@@ -130,7 +133,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called periodically
 	 */
 	public void standardPeriodic() {
-		double currentTime = timer.getFPGATimestamp();
+		double currentTime = timer.get();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		driveBase.update(deltaTime);
@@ -145,7 +148,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	
 	public void standardFirstPeriodic() {
 		opMode.init();
-		lastTime = timer.getFPGATimestamp();
+		lastTime = timer.get();
+		isFirstPeriodic = false;
 	}
 	@Override
 	public void commandFinished(Command cmd) {

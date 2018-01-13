@@ -4,7 +4,7 @@ package hardware;
 public interface MotorController {
 	void setPower(double power);
 	double getPower();
-	
+	void setInverted(boolean inverted);
 	void setCurrentLimit(int amps);
 	void EnableCurrentLimit(boolean enable);
 }

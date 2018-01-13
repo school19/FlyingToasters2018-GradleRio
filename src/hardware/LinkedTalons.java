@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 //TODO use Talon[] instead of CANTalon[] to allow for current limiting talons
 
 public class LinkedTalons implements MotorController {
+	protected boolean isReversed = false;
 	protected int numberOfTalons;
 	protected Talon[] talons;
 	protected double currentPower = 0;
@@ -34,8 +35,13 @@ public class LinkedTalons implements MotorController {
 	 */
 	public void setPower(double power) {
 		currentPower = power;
-		for (Talon talon : talons)
-			talon.setPower(power);
+		for (Talon talon : talons) {
+			if(isReversed) {
+				talon.setPower(-power);
+			} else {
+				talon.setPower(power);
+			}
+		}
 	}
 
 	@Override
@@ -53,5 +59,10 @@ public class LinkedTalons implements MotorController {
 		for(Talon ct : talons){
 			ct.EnableCurrentLimit(enable);
 		}
+	}
+
+	@Override
+	public void setInverted(boolean inverted) {
+		isReversed = inverted;
 	}
 }
