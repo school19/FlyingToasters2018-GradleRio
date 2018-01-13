@@ -36,7 +36,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	double lastTime;
 	double deltaTime = 0;;
 	
-	PS4 ps4 = new PS4(0);
+	boolean isFirstPeriodic;
+	PS4 ps4;
 	
 	OpMode opMode;
 	
@@ -53,6 +54,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
 		opMode = new LineAuton(this);
+		ps4 = new PS4(0);
 	}
 
 	/**
@@ -68,11 +70,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSelected = chooser.getSelected();
-		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
-		
-		opMode.init();
+		isFirstPeriodic = true;
 	}
 
 	/**
@@ -80,28 +78,47 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		standardPeriodic();
-		/*switch (autoSelected) {
-		default:
-			// Put default auto code here
-			break;
-		}*/
-		opMode.periodic(deltaTime);
+		if (isFirstPeriodic) {
+			autonomousFirstPeriodic();
+		} else {
+			standardPeriodic();
+			/*
+			 * switch (autoSelected) { default: // Put default auto code here break; }
+			 */
+			if (deltaTime == 0) {
+				opMode.init();
+			} else {
+				opMode.periodic(deltaTime);
+			}
+		}
 	}
-
+	
+	public void autonomousFirstPeriodic() {
+		standardFirstPeriodic();
+	}
 	
 	@Override
 	public void teleopInit() {
+		isFirstPeriodic = true;
 	}
 	/**
 	 * This function is called periodically during operator control
 	 */
 	@Override
 	public void teleopPeriodic() {
-		standardPeriodic();
-		driveBase.drive(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
+		if(isFirstPeriodic) {
+			teleopFirstPeriodic();
+		}else {
+			standardPeriodic();
+			ps4.poll();
+			driveBase.drive(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
+		}
 	}
-
+	
+	private void teleopFirstPeriodic() {
+		standardFirstPeriodic();
+	}
+	
 	/**
 	 * This function is called periodically during test mode
 	 */
@@ -123,9 +140,13 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called to initialize
 	 */
 	public void standardInit() {
-		lastTime = timer.getFPGATimestamp();
+		lastTime = -1;
 	}
 	
+	public void standardFirstPeriodic() {
+		opMode.init();
+		lastTime = timer.getFPGATimestamp();
+	}
 	@Override
 	public void commandFinished(Command cmd) {
 		Logging.h("Auton finished!");

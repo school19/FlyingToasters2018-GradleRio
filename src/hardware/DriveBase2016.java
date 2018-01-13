@@ -11,10 +11,10 @@ public class DriveBase2016 extends DriveBase {
 	
 	
 	public enum Talon {
-		LEFT0(8),
-		LEFT1(9),
-		RIGHT0(5),
-		RIGHT1(1);
+		LEFT0(1),
+		LEFT1(2),
+		RIGHT0(3),
+		RIGHT1(4);
 		
 		public int id;
 		Talon(int talonID){
@@ -33,12 +33,13 @@ public class DriveBase2016 extends DriveBase {
 	
 	@Override
 	public void drive(double... inputs) {
+		Logging.h("Drive called! Inputs = " + inputs[0] + inputs[1]);
 		if(inputs.length != 2){
 			Logging.e("Incorrect number of inputs to drive(double... inputs): " + inputs.length);
 		}else{
 			//tank drive
-			left.setPower(inputs[0]);
-			right.setPower(inputs[1]);
+			left.setPower(inputs[1]);
+			right.setPower(-inputs[0]);
 		}
 	}
 }

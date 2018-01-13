@@ -2,6 +2,8 @@ package commands;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import utilities.Logging;
+
 /**
  * Time based auton to cross the auto line.
  * @author jack
@@ -10,6 +12,7 @@ import org.usfirst.frc.team3641.robot.Robot;
 public class LineAuton extends OpMode {
 	final static double DRIVE_TIME = 2;
 	final static double DRIVE_SPEED = 0.75;
+	final static double LEFT_DS = 1.0;
 	
 	private double timer = 0;
 	
@@ -22,14 +25,21 @@ public class LineAuton extends OpMode {
 	}
 	
 	public void init() {
-		robot.driveBase.drive(DRIVE_SPEED, DRIVE_SPEED);
+		super.init();
+		//robot.driveBase.drive(DRIVE_SPEED, DRIVE_SPEED);
+		timer = 0;
+		Logging.h("INIT RUN!!!");
 	}
 	
 	public void periodic(double deltaTime) {
+		super.periodic(deltaTime);
+		Logging.h("timer = " + timer);
 		timer += deltaTime;
 		if(timer >= DRIVE_TIME) {
 			earlyStop();
 			endCommand();
+		}else {
+			robot.driveBase.drive(LEFT_DS, DRIVE_SPEED);
 		}
 	}
 	
@@ -38,7 +48,9 @@ public class LineAuton extends OpMode {
 	}
 	
 	public void stop() {
+		super.stop();
 		earlyStop();
+		timer = 0;
 	}
 
 }
