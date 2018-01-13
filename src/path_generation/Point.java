@@ -1,4 +1,4 @@
-package pathfinder;
+package path_generation;
 
 public class Point {
 	//the coordinates of the point

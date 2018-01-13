@@ -1,4 +1,4 @@
-package pathfinder;
+package path_generation;
 
 public class Waypoint {
 	public Point position;

@@ -1,4 +1,4 @@
-package pathfinder;
+package path_generation;
 
 import java.util.ArrayList;
 

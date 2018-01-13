@@ -3,7 +3,7 @@ package controllers.motion_profiles;
 import utilities.Logging;
 import controllers.AbstractFeedbackController;
 import controllers.PIDcontroller;
-import pathfinder.*;
+import path_generation.*;
 /**
  * class for generation and excecution of motion profiles.
  * @author jackf

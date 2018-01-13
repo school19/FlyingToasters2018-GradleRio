@@ -1,5 +1,5 @@
 package controllers.motion_profiles;
-import pathfinder.*;
+import path_generation.*;
 //wheel profile generator for robots with wheels on either side
 public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 	//how far to the right the wheel is, negative for left

@@ -5,13 +5,17 @@ import java.util.ArrayList;
 
 import commands.Command;
 import commands.CommandCallback;
+import commands.LineAuton;
+import commands.OpMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import hardware.DriveBase2016;
 import hardware.Pro775DriveBase;
-import pathfinder.Point;
-import pathfinder.Waypoint;
+import path_generation.Point;
+import path_generation.Waypoint;
+import utilities.Logging;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -26,13 +30,15 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	String autoSelected;
 	SendableChooser<String> chooser = new SendableChooser<>();
 
-	public Pro775DriveBase driveBase;
+	public DriveBase2016 driveBase;
 	
 	HardwareTimer timer;
 	double lastTime;
 	double deltaTime = 0;;
 	
 	PS4 ps4 = new PS4(0);
+	
+	OpMode opMode;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -43,9 +49,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addDefault("Default Auto", defaultAuto);
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
-		driveBase = new Pro775DriveBase();
+		driveBase = new DriveBase2016();
 		timer = new HardwareTimer();
 		lastTime = timer.getFPGATimestamp();
+		opMode = new LineAuton(this);
 	}
 
 	/**
@@ -64,6 +71,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		autoSelected = chooser.getSelected();
 		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
+		
+		opMode.init();
 	}
 
 	/**
@@ -72,19 +81,17 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	@Override
 	public void autonomousPeriodic() {
 		standardPeriodic();
-		switch (autoSelected) {
+		/*switch (autoSelected) {
 		default:
 			// Put default auto code here
 			break;
-		}
+		}*/
+		opMode.periodic(deltaTime);
 	}
 
 	
 	@Override
 	public void teleopInit() {
-		Waypoint start = new Waypoint(new Point(0,0), 0);
-		Waypoint end = new Waypoint(new Point(2,0), 0);
-		driveBase.driveFromTo(start,end);
 	}
 	/**
 	 * This function is called periodically during operator control
@@ -92,7 +99,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	@Override
 	public void teleopPeriodic() {
 		standardPeriodic();
-		//driveBase.drive(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
+		driveBase.drive(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
 	}
 
 	/**
@@ -121,7 +128,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	
 	@Override
 	public void commandFinished(Command cmd) {
-		// TODO Auto-generated method stub
-		
+		Logging.h("Auton finished!");
 	}
 }

@@ -1,11 +1,13 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
 import controllers.motion_profiles.WheelProfileGenerator;
-import pathfinder.Path;
-import pathfinder.Waypoint;
+import path_generation.Path;
+import path_generation.Waypoint;
 import utilities.Logging;
 
 public class Pro775DriveBase extends DriveBase{
@@ -44,8 +46,8 @@ public class Pro775DriveBase extends DriveBase{
 	public Pro775DriveBase() {
 		super();
 		//create the linked talons for each side of the drive base
-		//left = new FeedbackLinkedTalons(CANTalon.FeedbackDevice.CtreMagEncoder_Absolute, Talon.LEFT0.id, Talon.LEFT1.id, Talon.LEFT2.id, Talon.LEFT3.id);
-		//right = new FeedbackLinkedTalons(CANTalon.FeedbackDevice.CtreMagEncoder_Absolute, Talon.RIGHT0.id, Talon.RIGHT1.id, Talon.RIGHT2.id, Talon.RIGHT3.id);
+		left = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.LEFT0.id, Talon.LEFT1.id, Talon.LEFT2.id, Talon.LEFT3.id);
+		right = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.RIGHT0.id, Talon.RIGHT1.id, Talon.RIGHT2.id, Talon.RIGHT3.id);
 		//setup current limiting
 		left.setCurrentLimit(currentLimit);
 		right.setCurrentLimit(currentLimit);

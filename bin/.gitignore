@@ -1,4 +1,5 @@
-/controllers/
-/hardware/
+/commands/
 /org/
-/utilities/
+/hardware/
+/controllers/
+/path_generation/

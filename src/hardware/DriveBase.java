@@ -21,7 +21,7 @@ public abstract class DriveBase{
 	//override this with whatever stuff
 	abstract public void drive(double... inputs);
 	//add a motor controller to the list
-	public void registerMotorController(MotorController mc){
+	protected void registerMotorController(MotorController mc){
 		if(mc instanceof FeedbackMotorController){
 			FeedbackMotorController fmc = (FeedbackMotorController)mc;
 			feedbackControllers.add(fmc);

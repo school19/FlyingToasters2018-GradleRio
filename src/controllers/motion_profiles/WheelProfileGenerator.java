@@ -1,5 +1,5 @@
 package controllers.motion_profiles;
-import pathfinder.*;
+import path_generation.*;
 public abstract class WheelProfileGenerator {
 	public abstract Profile genPoints(Path p, double offset);
 }
