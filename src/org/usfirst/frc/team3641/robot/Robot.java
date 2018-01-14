@@ -9,13 +9,9 @@ import commands.LineAuton;
 import commands.OpMode;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.internal.HardwareTimer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.DriveBase2016;
-import hardware.Pro775DriveBase;
-import path_generation.Point;
-import path_generation.Waypoint;
 import utilities.Logging;
 /**
  * The VM is configured to automatically run this class, and to call the

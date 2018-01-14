@@ -1,7 +1,5 @@
 package hardware;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-
 import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
@@ -19,8 +17,8 @@ public class Pro775DriveBase extends DriveBase{
 	private PIDcontroller leftMotionProfilePID = new PIDcontroller(0,0,0);
 	private PIDcontroller rightMotionProfilePID = new PIDcontroller(0,0,0);
 	
-	private FeedbackLinkedTalons left;
-	private FeedbackLinkedTalons right;
+	private FeedbackLinkedCAN left;
+	private FeedbackLinkedCAN right;
 	
 	private WheelProfileGenerator leftProfileGen;
 	private WheelProfileGenerator rightProfileGen;
@@ -28,7 +26,7 @@ public class Pro775DriveBase extends DriveBase{
 	public MotionProfile leftMotionProfile;
 	public MotionProfile rightMotionProfile;
 	
-	public enum Talon {
+	public enum Talons {
 		LEFT0(8),
 		LEFT1(9),
 		LEFT2(10),
@@ -38,21 +36,27 @@ public class Pro775DriveBase extends DriveBase{
 		RIGHT2(2),
 		RIGHT3(3);
 		public int id;
-		Talon(int talonID){
+		Talons(int talonID){
 			id = talonID;
+		}
+		public Talon get() {
+			return new Talon(id);
 		}
 	}
 	
 	public Pro775DriveBase() {
 		super();
 		//create the linked talons for each side of the drive base
-		left = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.LEFT0.id, Talon.LEFT1.id, Talon.LEFT2.id, Talon.LEFT3.id);
-		right = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.RIGHT0.id, Talon.RIGHT1.id, Talon.RIGHT2.id, Talon.RIGHT3.id);
+		//TODO Fix this if the 775 drivebase ever happens.
+		/*left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, 
+				Talon.LEFT0.id, Talon.LEFT1.id, Talon.LEFT2.id, Talon.LEFT3.id);
+		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, 
+				Talon.RIGHT0.id, Talon.RIGHT1.id, Talon.RIGHT2.id, Talon.RIGHT3.id);*/
 		//setup current limiting
 		left.setCurrentLimit(currentLimit);
 		right.setCurrentLimit(currentLimit);
-		left.EnableCurrentLimit(true);
-		right.EnableCurrentLimit(true);
+		left.enableCurrentLimit(true);
+		right.enableCurrentLimit(true);
 		
 		//add the motor controllers to the list to be updated
 		registerMotorController(left);

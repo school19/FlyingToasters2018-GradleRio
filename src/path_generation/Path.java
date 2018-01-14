@@ -2,7 +2,6 @@ package path_generation;
 
 import java.util.ArrayList;
 
-import path_generation.Path.VelocityMode;
 import utilities.Logging;
 
 
@@ -84,7 +83,7 @@ public class Path {
 			}
 			break;
 		default:
-			System.out.println("Couldn't find velocity profile mode.");
+			Logging.e("Couldn't find velocity profile mode.");
 		}
 	}
 	

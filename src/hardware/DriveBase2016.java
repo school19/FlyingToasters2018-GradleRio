@@ -6,26 +6,28 @@ import utilities.Logging;
 
 public class DriveBase2016 extends DriveBase {
 
-	private FeedbackLinkedTalons left;
-	private FeedbackLinkedTalons right;
+	private FeedbackLinkedCAN left;
+	private FeedbackLinkedCAN right;
 	
 	
-	public enum Talon {
-		LEFT0(1),
-		LEFT1(2),
-		RIGHT0(3),
-		RIGHT1(4);
-		
+	public enum Talons {
+		LEFT0(1), LEFT1(2), RIGHT0(3), RIGHT1(4);
+
 		public int id;
-		Talon(int talonID){
-			id = talonID;
+
+		Talons(int talonID){
+				id = talonID;
+			}
+
+		public Talon get() {
+			return new Talon(id);
 		}
 	}
 	
 	public DriveBase2016() {
 		super();
-		left = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.LEFT0.id, Talon.LEFT1.id);
-		right = new FeedbackLinkedTalons(FeedbackDevice.CTRE_MagEncoder_Absolute, Talon.RIGHT0.id, Talon.RIGHT1.id);
+		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Talons.LEFT0.id, Talons.LEFT1.get());
+		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Talons.RIGHT0.id, Talons.RIGHT1.get());
 		right.setInverted(true);
 		//add the motor controllers to the list to be updated
 		registerMotorController(left);

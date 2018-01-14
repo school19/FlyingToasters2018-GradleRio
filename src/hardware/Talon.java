@@ -1,9 +1,10 @@
 package hardware;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class Talon implements MotorController {
+public class Talon implements CANMotorController {
 	protected TalonSRX talon;
 	protected boolean isReversed = false;
 	protected double currentPower;
@@ -30,16 +31,25 @@ public class Talon implements MotorController {
 	public double getPower() {
 		return currentPower;
 	}
-	
-	@Override
+
 	public void setCurrentLimit(int amps){
 		talon.configContinuousCurrentLimit(amps, 100);
 		talon.configPeakCurrentLimit(amps, 100);
 		talon.configPeakCurrentDuration(100, 100);
 	}
 	
-	@Override
-	public void EnableCurrentLimit(boolean enable){
+	
+	public void enableCurrentLimit(boolean enable){
 		talon.enableCurrentLimit(enable);
+	}
+
+	@Override
+	public void setFollower(CANMotorController master) {
+		talon.follow(master.getMotorController());
+	}
+
+	@Override
+	public IMotorController getMotorController() {
+		return talon;
 	}
 }

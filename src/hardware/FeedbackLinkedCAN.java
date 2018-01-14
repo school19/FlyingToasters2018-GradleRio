@@ -1,17 +1,18 @@
 package hardware;
 
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import controllers.AbstractFeedbackController;
 import utilities.Logging;
-import utilities.Utilities.Conversions.Distance;
 
-//TODO finish implementing linked talons
-public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorController {
-	private TalonSRX feedbackTalon;
+/**
+ * Linked can motor controlelrs with feedback, works in master/slave mode
+ * @author jack
+ *
+ */
+public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements FeedbackMotorController {
+	private FeedbackTalon feedbackTalon;
 	private AbstractFeedbackController feedbackController;
 	private boolean feedbackActive = false;
 	/**
@@ -20,15 +21,19 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 * @param talonIDs
 	 *            Each of the IDs you want to control.
 	 */
-	public FeedbackLinkedTalons(int feedbackTalonID, int... talonIDs) {
-		super(talonIDs);
-		feedbackTalon = new TalonSRX(feedbackTalonID);
+	public FeedbackLinkedCAN(FeedbackTalon feedback, CANMotorController... controllers) {
+		//initializes the controllers and stuff
+		super(controllers);
+		feedbackTalon = feedback;
+		//set the motor controllers to follow the master talon
+		for(CANMotorController mc : motorControllers) {
+			mc.setFollower(feedbackTalon);
+		}
 	}
 	
-	public FeedbackLinkedTalons(FeedbackDevice device, int feedbackTalonID, int... talonIDs){
-		super(talonIDs);
-		feedbackTalon = new TalonSRX(feedbackTalonID);
-		
+	public FeedbackLinkedCAN(FeedbackDevice device, int feedbackTalonID, CANMotorController... controllers){
+		this(new FeedbackTalon(feedbackTalonID, device), controllers);
+		feedbackTalon.setFeedbackDevice(device);
 	}
 
 	@Override
@@ -39,11 +44,10 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	 *            The power to set each of the talons to.
 	 */
 	public void setPower(double power) {
-		super.setPower(power);
 		if(isReversed) {
-			feedbackTalon.set(ControlMode.PercentOutput, -power);
+			feedbackTalon.setPower(-power);
 		} else {
-			feedbackTalon.set(ControlMode.PercentOutput, power);
+			feedbackTalon.setPower(power);
 		}
 	}
 
@@ -54,12 +58,12 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 
 	@Override
 	public double getPosition() {
-		return Distance.ENCODER_TICK.convert(feedbackTalon.getSelectedSensorPosition(0), Distance.M);
+		return feedbackTalon.getPosition();
 	}
 
 	@Override
 	public void setFeedbackDevice(FeedbackDevice device) {
-		feedbackTalon.configSelectedFeedbackSensor(device, 0, 1000);
+		feedbackTalon.setFeedbackDevice(device);
 	}
 
 	@Override
@@ -101,13 +105,11 @@ public class FeedbackLinkedTalons extends LinkedTalons implements FeedbackMotorC
 	
 	public void setCurrentLimit(int amps){
 		super.setCurrentLimit(amps);
-		feedbackTalon.configContinuousCurrentLimit(amps, 100);
-		feedbackTalon.configPeakCurrentLimit(amps, 100);
-		feedbackTalon.configPeakCurrentDuration(100, 100);
+		feedbackTalon.setCurrentLimit(amps);
 	}
 	
-	public void EnableCurrentLimit(boolean enable){
-		super.EnableCurrentLimit(enable);
+	public void enableCurrentLimit(boolean enable){
+		super.enableCurrentLimit(enable);
 		feedbackTalon.enableCurrentLimit(enable);
 	}
 
