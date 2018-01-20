@@ -16,6 +16,9 @@ public class MotionProfile implements AbstractFeedbackController{
 	private double totalTime = 0;
 	private MPPoint lastTarget;
 	private WheelProfileGenerator wpg;
+	//the amount to offset the encoder value by
+	private double offset;
+	
 	
 	public PIDcontroller pid;
 	public double kV = 0;
@@ -37,6 +40,10 @@ public class MotionProfile implements AbstractFeedbackController{
 		lastTarget = p.start();
 	}
 	
+	public void setOffset(double encoderOffset) {
+		encoderOffset = offset;
+	}
+	
 	public void setPoints(MPPoint... points){
 		if(points.length < 2){
 			Logging.w("Useless motion profile - less than 2 points");
@@ -46,8 +53,8 @@ public class MotionProfile implements AbstractFeedbackController{
 		}
 	}
 	
-	public void generateProfileFromPath(Path path, double offset){
-		profile = wpg.genPoints(path, offset);
+	public void generateProfileFromPath(Path path){
+		profile = wpg.genPoints(path);
 		
 		lastTarget = profile.start();
 	}
@@ -78,6 +85,7 @@ public class MotionProfile implements AbstractFeedbackController{
 	
 	//run the control loop
 	public double run(double current, double deltaTime){
+		double offsetCurrent = current - offset;
 		//update current time
 		totalTime += deltaTime;
 		
@@ -97,7 +105,7 @@ public class MotionProfile implements AbstractFeedbackController{
 		//set up the PIDs
 		pid.setSetpoint(target.position);
 		
-		double pidOut = pid.run(current, deltaTime);
+		double pidOut = pid.run(offsetCurrent, deltaTime);
 		
 		double velOut = kV * target.velocity;
 		double accelOut = kA * accel;
