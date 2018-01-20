@@ -41,7 +41,7 @@ public class MotionProfile implements AbstractFeedbackController{
 	}
 	
 	public void setOffset(double encoderOffset) {
-		encoderOffset = offset;
+		offset = encoderOffset;
 	}
 	
 	public void setPoints(MPPoint... points){
