@@ -6,13 +6,13 @@ import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-public class MotionProfileTest extends OpMode {
+public class BaseLineAuton extends OpMode {
 	final static double dist_m = 4.0;
 	
 	Waypoint start = new Waypoint(new Point(0,0),0);
-	Waypoint end = new Waypoint(new Point(0,0), Math.PI / 2.0);
+	Waypoint end = new Waypoint(new Point(2.5,0), 0);
 	
-	public MotionProfileTest(Robot bot) {
+	public BaseLineAuton(Robot bot) {
 		super(bot, "Motion Profile Auton");
 	}
 	

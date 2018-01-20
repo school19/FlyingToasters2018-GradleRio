@@ -13,11 +13,11 @@ public class DriveBase2016 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
 	
-	final static double velGain = 0.321;
-	final static double accelGain = 0.001;
+	final static double velGain = 0.35;
+	final static double accelGain = 0.01;
 	
-	private PIDcontroller leftMotionProfilePID = new PIDcontroller(1,0,0);
-	private PIDcontroller rightMotionProfilePID = new PIDcontroller(1,0,0);
+	private PIDcontroller leftMotionProfilePID = new PIDcontroller(5,0,0.1);
+	private PIDcontroller rightMotionProfilePID = new PIDcontroller(5,0,0.1);
 	
 	private WheelProfileGenerator leftProfileGen;
 	private WheelProfileGenerator rightProfileGen;
@@ -55,6 +55,9 @@ public class DriveBase2016 extends DriveBase {
 		//TODO set offsets appropriately
 		leftProfileGen = new SkidsteerProfileGenerator(-0.3413125);
 		rightProfileGen = new SkidsteerProfileGenerator(0.3413125);
+		
+		leftMotionProfilePID.setDOnMeasurement(false);
+		rightMotionProfilePID.setDOnMeasurement(false);
 		
 		leftMotionProfile = new MotionProfile(leftMotionProfilePID, velGain, accelGain, leftProfileGen);
 		rightMotionProfile = new MotionProfile(rightMotionProfilePID, velGain, accelGain, rightProfileGen);

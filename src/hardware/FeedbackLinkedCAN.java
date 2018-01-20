@@ -7,7 +7,7 @@ import controllers.AbstractFeedbackController;
 import utilities.Logging;
 
 /**
- * Linked can motor controlelrs with feedback, works in master/slave mode
+ * Linked can motor controllers with feedback, works in master/slave mode
  * @author jack
  *
  */
@@ -44,7 +44,6 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	 *            The power to set each of the talons to.
 	 */
 	public void setPower(double power) {
-		Logging.h("set power: " + power);
 		if(isReversed) {
 			feedbackTalon.setPower(-power);
 		} else {
@@ -97,7 +96,6 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 
 	@Override
 	public void runFeedback(double deltaTime) {
-		Logging.h("Feedback run");
 		if(feedbackActive){
 			double output = feedbackController.run(getPosition(), deltaTime);
 			setPower(output);

@@ -6,9 +6,9 @@ import utilities.Logging;
 
 
 public class Path {
-	static final double maxVel = 1;
-	static final double maxAccel = 20;
-	static final int defaultPoints = 200;
+	static final double maxVel = 3;
+	static final double maxAccel = 2.5;
+	static final int defaultPoints = 50;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
 	//a path consists of a list of waypoints.
@@ -32,7 +32,7 @@ public class Path {
 	public Path(Waypoint start, Waypoint end, int numberOfPoints, double velocity, double accel,
 			VelocityMode mode) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierPath(start, end, numberOfPoints, 0.35);
+		genBezierPath(start, end, numberOfPoints, 0.5);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);

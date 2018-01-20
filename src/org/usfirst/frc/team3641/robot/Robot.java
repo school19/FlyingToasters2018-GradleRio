@@ -3,9 +3,11 @@ package org.usfirst.frc.team3641.robot;
 
 import java.util.ArrayList;
 
+import commands.BaseLineAuton;
 import commands.Command;
 import commands.CommandCallback;
 import commands.OpMode;
+import commands.SwitchAuton;
 import commands.MotionProfileTest;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -49,7 +51,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		driveBase = new DriveBase2016();
-		opMode = new MotionProfileTest(this);
+		opMode = new SwitchAuton(this);
 		ps4 = new PS4(0);
 		timer = new Timer();
 		timer.reset();
@@ -76,7 +78,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	@Override
 	public void autonomousInit() {
 		isFirstPeriodic = true;
-		opMode = new MotionProfileTest(this);
+		
 	}
 
 	/**
@@ -116,6 +118,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			standardPeriodic();
 			ps4.poll();
 			driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+			Logging.h("left enc.: " + driveBase.left.getPosition());
+			Logging.h("Right enc.:" + driveBase.right.getPosition());
 		}
 	}
 	
