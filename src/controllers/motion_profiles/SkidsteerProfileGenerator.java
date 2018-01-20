@@ -11,16 +11,16 @@ public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 	}
 	//generate the motion profile for the path
 	@Override
-	public Profile genPoints(Path p, double offset){
+	public Profile genPoints(Path p){
 		Profile outProfile = new Profile(p.waypoints.size());
 		Waypoint firstWP = p.waypoints.get(0);
 		Point firstPoint = getOffsetPoint(firstWP);
-		MPPoint startMPPoint = new MPPoint(0,offset,0);
+		MPPoint startMPPoint = new MPPoint(0,0,0);
 
 		outProfile.setPoint(0,startMPPoint);
 
 		//loop through every other point and add it to the profile
-		double totalDist = offset;
+		double totalDist = 0;
 		Point lastOffsetPoint = firstPoint;
 		for(int i = 1; i < p.waypoints.size(); i++){
 			//get the current waypoint

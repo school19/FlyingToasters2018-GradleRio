@@ -7,7 +7,7 @@ import utilities.Logging;
 
 public class Path {
 	static final double maxVel = 1;
-	static final double maxAccel = 4.0;
+	static final double maxAccel = 20;
 	static final int defaultPoints = 200;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	

@@ -83,8 +83,13 @@ public class Pro775DriveBase extends DriveBase{
 	
 	public void drivePath(Path p) {
 		//generate profiles
-		leftMotionProfile.generateProfileFromPath(p, left.getPosition());
-		rightMotionProfile.generateProfileFromPath(p, right.getPosition());
+		leftMotionProfile.generateProfileFromPath(p);
+		rightMotionProfile.generateProfileFromPath(p);
+
+		//set offsets
+		leftMotionProfile.setOffset(left.getPosition());
+		rightMotionProfile.setOffset(right.getPosition());
+		
 		//enable them
 		left.setFeedbackController(leftMotionProfile);
 		right.setFeedbackController(rightMotionProfile);
