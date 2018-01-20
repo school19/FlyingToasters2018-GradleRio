@@ -6,8 +6,8 @@ import utilities.Logging;
 
 
 public class Path {
-	static final double maxVel = 4.0;
-	static final double maxAccel = 5.0;
+	static final double maxVel = 1;
+	static final double maxAccel = 4.0;
 	static final int defaultPoints = 200;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
@@ -32,7 +32,7 @@ public class Path {
 	public Path(Waypoint start, Waypoint end, int numberOfPoints, double velocity, double accel,
 			VelocityMode mode) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierPath(start, end, numberOfPoints, 0.2);
+		genBezierPath(start, end, numberOfPoints, 0.35);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
@@ -40,7 +40,7 @@ public class Path {
 	}
 	
 	//calculate the distances of each point, return end position
-	private double getPositions() {
+	private void getPositions() {
 		//stores the total distance
 		double distanceAccumulator = 0;
 		//get the position of the first point, and set its distance to 0
@@ -54,7 +54,7 @@ public class Path {
 			distanceAccumulator += dist;
 			waypoints.get(i).distance = distanceAccumulator;
 		}
-		return distanceAccumulator;
+		endPos = distanceAccumulator;
 	}
 	
 	//set the times for every waypoint based on distance

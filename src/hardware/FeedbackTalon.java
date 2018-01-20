@@ -7,7 +7,7 @@ import utilities.Logging;
 import utilities.Utilities;
 
 public class FeedbackTalon extends Talon implements FeedbackMotorController, Utilities.Conversions {
-	
+	boolean isEncoderReversed = false;
 	private AbstractFeedbackController feedbackController;
 	private boolean feedbackActive = false;
 	
@@ -21,7 +21,12 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	}
 	@Override
 	public double getPosition() {
-		return Distance.ENCODER_TICK.convert(talon.getSelectedSensorPosition(0), Distance.M);
+		double d = Distance.ENCODER_TICK.convert(talon.getSelectedSensorPosition(0), Distance.M);
+		if(isEncoderReversed) {
+			return -d;
+		}else {
+			return d;
+		}
 	}
 
 	@Override
@@ -67,6 +72,16 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	@Override
 	public AbstractFeedbackController getFeedbackController() {
 		return feedbackController;
+	}
+
+	@Override
+	public void setEncoderReversed(boolean reversed) {
+		isEncoderReversed = reversed;
+	}
+
+	@Override
+	public void resetEncoders() {
+		talon.setSelectedSensorPosition(0, 0, 1000);
 	}
 
 }

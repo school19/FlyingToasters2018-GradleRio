@@ -62,8 +62,8 @@ public class Profile {
 	
 	public String toString() {
 		String out = "";
-		for(int i = 0; i <= trajectory.length; i++) {
-			out += getPoint(i).toString() + "\n";
+		for(MPPoint getPoint : trajectory) {
+			out += getPoint.toString() + "\n";
 		}
 		return out;
 	}

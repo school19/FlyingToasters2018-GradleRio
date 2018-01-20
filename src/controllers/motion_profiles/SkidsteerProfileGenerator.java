@@ -1,5 +1,6 @@
 package controllers.motion_profiles;
 import path_generation.*;
+import utilities.Logging;
 //wheel profile generator for robots with wheels on either side
 public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 	//how far to the right the wheel is, negative for left
@@ -40,11 +41,13 @@ public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 			lastOffsetPoint = offsetPoint;
 		}
 		outProfile.getPoint(0).velocity = outProfile.getPoint(1).velocity;
+		//TODO remove unnecesary logg'g
+		Logging.h(outProfile);
 		//return it!
 		return outProfile;
 	}
 
 	private Point getOffsetPoint(Waypoint wp){
-		return wp.position.sum(Point.PolarPoint(rightOffset, 3 * Math.PI / 2));
+		return wp.position.sum(Point.PolarPoint(rightOffset, 3 * Math.PI / 2 + wp.rotation));
 	}
 }

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import commands.Command;
 import commands.CommandCallback;
-import commands.LineAuton;
 import commands.OpMode;
+import commands.MotionProfileTest;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -49,11 +49,17 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addObject("My Auto", customAuto);
 		SmartDashboard.putData("Auto choices", chooser);
 		driveBase = new DriveBase2016();
-		opMode = new LineAuton(this);
+		opMode = new MotionProfileTest(this);
 		ps4 = new PS4(0);
 		timer = new Timer();
 		timer.reset();
 		timer.start();
+	}
+	
+	public void disabledInit() {
+		opMode.stop();
+		driveBase.setFeedbackActive(false);
+		isFirstPeriodic = true;
 	}
 
 	/**
@@ -70,6 +76,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	@Override
 	public void autonomousInit() {
 		isFirstPeriodic = true;
+		opMode = new MotionProfileTest(this);
 	}
 
 	/**
@@ -84,15 +91,13 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			/*
 			 * switch (autoSelected) { default: // Put default auto code here break; }
 			 */
-			if (deltaTime == 0) {
-				opMode.init();
-			} else {
-				opMode.periodic(deltaTime);
-			}
+			
+			opMode.periodic(deltaTime);
 		}
 	}
 	
 	public void autonomousFirstPeriodic() {
+		opMode.init();
 		standardFirstPeriodic();
 	}
 	
@@ -140,13 +145,15 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	public void standardInit() {
 		lastTime = -1;
+		driveBase.left.resetEncoders();
+		driveBase.right.resetEncoders();
 	}
-	
+
 	public void standardFirstPeriodic() {
-		opMode.init();
 		lastTime = timer.get();
 		isFirstPeriodic = false;
 	}
+
 	@Override
 	public void commandFinished(Command cmd) {
 		Logging.h("Auton finished!");

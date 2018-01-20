@@ -12,7 +12,7 @@ import utilities.Logging;
  */
 
 // TODO add fancy class that does all the stuff the old PID did
-public class PIDcontroller extends ProportionalController {
+public class PIDcontroller extends ProportionalController implements AbstractFeedbackController{
 	private double kI, kD;
 	private boolean dOnMeasurement = false;
 	private double maxIntegral;

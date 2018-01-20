@@ -48,6 +48,7 @@ public class MotionProfile implements AbstractFeedbackController{
 	
 	public void generateProfileFromPath(Path path, double offset){
 		profile = wpg.genPoints(path, offset);
+		
 		lastTarget = profile.start();
 	}
 

@@ -17,7 +17,7 @@ public abstract class Utilities {
 			ROBOT_LENGTH (IN.length * 36),
 			ROBOT_WIDTH (IN.length * 32),
 			WHEEL_ROTATION (DRIVE_WHEEL_CIRCUMFERENCE),
-			ENCODER_TICK (WHEEL_ROTATION.length / 1024);
+			ENCODER_TICK (WHEEL_ROTATION.length / DRIVE_ENCODER_TICKS_PER_TURN);
 			
 			private final double length;
 			Distance(double len){

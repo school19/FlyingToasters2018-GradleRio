@@ -44,6 +44,7 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	 *            The power to set each of the talons to.
 	 */
 	public void setPower(double power) {
+		Logging.h("set power: " + power);
 		if(isReversed) {
 			feedbackTalon.setPower(-power);
 		} else {
@@ -53,6 +54,7 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 
 	@Override
 	public double getPower() {
+		
 		return currentPower;
 	}
 
@@ -95,6 +97,7 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 
 	@Override
 	public void runFeedback(double deltaTime) {
+		Logging.h("Feedback run");
 		if(feedbackActive){
 			double output = feedbackController.run(getPosition(), deltaTime);
 			setPower(output);
@@ -116,5 +119,15 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	@Override
 	public AbstractFeedbackController getFeedbackController() {
 		return feedbackController;
+	}
+
+	@Override
+	public void setEncoderReversed(boolean reversed) {
+		feedbackTalon.setEncoderReversed(reversed);		
+	}
+
+	@Override
+	public void resetEncoders() {
+		feedbackTalon.resetEncoders();
 	}
 }
