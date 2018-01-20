@@ -1,7 +1,6 @@
 package hardware;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-
 import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
@@ -80,21 +79,21 @@ public class DriveBase2016 extends DriveBase {
 	public void driveGrilledCheese(double power, double rotation) {
 		double gain = 1;
 		double limit = 0.25;
-
-		double expRotation = -expInput(rotation, 1.5);
-		double arcadePower = expInput(power, 1.5);
-		double arcadeRotation = expRotation;
-		double cheesyRotation = expRotation * gain * Math.abs(arcadePower);
-
-		power = Math.abs(power);
-		if (power == 0)
-			rotation = arcadeRotation;
-		else if (power <= limit)
-			rotation = (power / limit) * cheesyRotation + (1 - power / limit) * arcadeRotation;
-		else
-			rotation = cheesyRotation;
-
-		driveArcade(arcadePower, rotation);
+		double subLimitWeight = 2.0;
+		double exp = 1.5;
+		
+		rotation = expInput(rotation, exp);
+		double outputPower = expInput(power, exp);
+		
+		double arcadeRotation = rotation;
+		double cheesyRotation = rotation * gain * Math.abs(outputPower);
+		double arcadeWeight = (1-Math.abs(power)/limit/subLimitWeight);
+		double cheesyWeight = (Math.abs(power)/limit*subLimitWeight);
+		
+		double outputRotation = cheesyRotation;
+		if(Math.abs(power) <= limit) outputRotation = cheesyWeight*cheesyRotation + arcadeWeight*arcadeRotation;
+		
+		driveArcade(outputPower, outputRotation);
 	}
 	
 	public double expInput(double input, double power) {

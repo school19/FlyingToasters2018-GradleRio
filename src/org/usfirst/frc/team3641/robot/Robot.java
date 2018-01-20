@@ -115,7 +115,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}else {
 			standardPeriodic();
 			ps4.poll();
-			driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
+			driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
 		}
 	}
 	
