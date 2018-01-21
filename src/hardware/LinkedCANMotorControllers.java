@@ -1,5 +1,8 @@
 package hardware;
 
+import hardware.interfaces.CANMotorController;
+import hardware.interfaces.MotorController;
+
 /**
  * Linked can motor controllers, works by setting all motor controllers since there is no one slave.
  * @author jack

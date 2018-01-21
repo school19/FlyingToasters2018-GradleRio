@@ -1,4 +1,4 @@
-package hardware;
+package hardware.interfaces;
 
 import java.util.ArrayList;
 

@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import hardware.interfaces.CANMotorController;
+
 public class Talon implements CANMotorController {
 	protected TalonSRX talon;
 	protected boolean isReversed = false;

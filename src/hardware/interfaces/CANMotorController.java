@@ -1,4 +1,4 @@
-package hardware;
+package hardware.interfaces;
 
 import com.ctre.phoenix.motorcontrol.IMotorController;
 

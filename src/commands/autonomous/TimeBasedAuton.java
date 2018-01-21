@@ -1,7 +1,8 @@
-package commands;
+package commands.autonomous;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import commands.interfaces.OpMode;
 import utilities.Logging;
 
 /**
@@ -9,18 +10,18 @@ import utilities.Logging;
  * @author jack
  *
  */
-public class LineAuton extends OpMode {
+public class TimeBasedAuton extends OpMode {
 	final static double DRIVE_TIME = 1.35;
 	final static double DRIVE_SPEED = 0.75;
 	final static double DRIVE_TURN = -0.05;
 	
 	private double timer = 0;
 	
-	public LineAuton(Robot bot) {
+	public TimeBasedAuton(Robot bot) {
 		super(bot, "Line Auton");
 	}
 	
-	public LineAuton(Robot bot, String name) {
+	public TimeBasedAuton(Robot bot, String name) {
 		super(bot, name);
 	}
 	
@@ -31,7 +32,7 @@ public class LineAuton extends OpMode {
 	
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
-		Logging.h("timer = " + timer);
+		Logging.l("timer = " + timer);
 		timer += deltaTime;
 		if(timer >= DRIVE_TIME) {
 			earlyStop();

@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import hardware.interfaces.CANMotorController;
+
 public class Victor implements CANMotorController {
 	protected VictorSPX victor;
 	protected boolean isReversed = false;

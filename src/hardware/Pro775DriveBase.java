@@ -4,6 +4,7 @@ import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
 import controllers.motion_profiles.WheelProfileGenerator;
+import hardware.interfaces.DriveBase;
 import path_generation.Path;
 import path_generation.Waypoint;
 import utilities.Logging;

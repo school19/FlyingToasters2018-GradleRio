@@ -1,4 +1,4 @@
-package hardware;
+package hardware.interfaces;
 
 //TODO implement current limits
 public interface MotorController {

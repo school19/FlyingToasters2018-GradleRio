@@ -4,6 +4,8 @@ package hardware;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import controllers.AbstractFeedbackController;
+import hardware.interfaces.CANMotorController;
+import hardware.interfaces.FeedbackMotorController;
 import utilities.Logging;
 
 /**

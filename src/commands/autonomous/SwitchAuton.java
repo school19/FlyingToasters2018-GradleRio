@@ -1,7 +1,8 @@
-package commands;
+package commands.autonomous;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import path_generation.Point;
 import path_generation.Waypoint;

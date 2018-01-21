@@ -1,14 +1,12 @@
 package org.usfirst.frc.team3641.robot;
 
-
-import java.util.ArrayList;
-
-import commands.BaseLineAuton;
-import commands.Command;
-import commands.CommandCallback;
-import commands.OpMode;
-import commands.SwitchAuton;
-import commands.MotionProfileTest;
+import commands.autonomous.TimeBasedAuton;
+import commands.autonomous.SwitchAuton;
+import commands.autonomous.TestAuton;
+import commands.interfaces.Command;
+import commands.interfaces.CommandCallback;
+import commands.interfaces.OpMode;
+import commands.teleop.Teleop;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,11 +21,19 @@ import utilities.Logging;
  * directory.
  */
 public class Robot extends IterativeRobot implements CommandCallback {
-	final String defaultAuto = "Default";
-	final String customAuto = "My Auto";
-	ArrayList<Command> commands;
-	String autoSelected;
-	SendableChooser<String> chooser = new SendableChooser<>();
+	enum Auton{
+		AUTO_LINE("Auto Line auton"),
+		AUTO_SWITCH("Switch auton"),
+		AUTO_TEST("Test Auton");
+		
+		String name;
+		Auton(String n){
+			name = n;
+		}
+	}
+	
+	Auton autoSelected;
+	SendableChooser<Auton> chooser = new SendableChooser<>();
 
 	public DriveBase2016 driveBase;
 
@@ -37,9 +43,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	Timer timer;
 	
 	boolean isFirstPeriodic;
-	PS4 ps4;
 	
-	OpMode opMode;
+	OpMode autonomous;
+	OpMode teleop;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -47,38 +53,53 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void robotInit() {
-		chooser.addDefault("Default Auto", defaultAuto);
-		chooser.addObject("My Auto", customAuto);
+		//Set up smart dashboard with auton chooser
+		chooser.addDefault(Auton.AUTO_LINE.name, Auton.AUTO_LINE);
+		chooser.addObject(Auton.AUTO_SWITCH.name, Auton.AUTO_SWITCH);
 		SmartDashboard.putData("Auto choices", chooser);
+		//initialize drivebase
 		driveBase = new DriveBase2016();
-		opMode = new SwitchAuton(this);
-		ps4 = new PS4(0);
+		//initialize timer
 		timer = new Timer();
+		resetTimer();
+	}
+	
+	/**
+	 * Resets and starts the timer.
+	 */
+	public void resetTimer() {
 		timer.reset();
 		timer.start();
 	}
 	
+	/**
+	 * called when the robot is disabled. Stops the commands and disables closed loop control.
+	 */
 	public void disabledInit() {
-		opMode.stop();
+		autonomous.stop();
+		teleop.stop();
 		driveBase.setFeedbackActive(false);
-		isFirstPeriodic = true;
 	}
 
 	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
+	 * Called once when auton starts. Sets up the auton and sets the isFirstPeriodic flag to true to be called on the first periodic.
 	 */
 	@Override
 	public void autonomousInit() {
 		isFirstPeriodic = true;
-		
+		autoSelected = chooser.getSelected();
+		switch(autoSelected) {
+		case AUTO_LINE:
+			autonomous = new TimeBasedAuton(this);
+			break;
+		case AUTO_SWITCH:
+			autonomous = new SwitchAuton(this);
+			break;
+		default:
+			autonomous = new TestAuton(this, "AUTON NOT FOUND");
+			Logging.e("Could not get auton from chooser");
+			break;
+		}
 	}
 
 	/**
@@ -86,26 +107,30 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		//run the first periodic if it's the first time
 		if (isFirstPeriodic) {
 			autonomousFirstPeriodic();
 		} else {
 			standardPeriodic();
-			/*
-			 * switch (autoSelected) { default: // Put default auto code here break; }
-			 */
-			
-			opMode.periodic(deltaTime);
+			autonomous.periodic(deltaTime);
 		}
 	}
 	
+	
+	/**
+	 * This function is called once on the first loop of autonomousPeriodic. It calls init in the auton.d
+	 */
 	public void autonomousFirstPeriodic() {
-		opMode.init();
+		autonomous.init();
 		standardFirstPeriodic();
 	}
 	
+	/**
+	 * called once before teleop starts.
+	 */
 	@Override
 	public void teleopInit() {
-		isFirstPeriodic = true;
+		teleop = new Teleop(this);
 	}
 	/**
 	 * This function is called periodically during operator control
@@ -116,10 +141,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			teleopFirstPeriodic();
 		}else {
 			standardPeriodic();
-			ps4.poll();
-			driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
-			Logging.h("left enc.: " + driveBase.left.getPosition());
-			Logging.h("Right enc.:" + driveBase.right.getPosition());
+			teleop.periodic(deltaTime);
 		}
 	}
 	
@@ -128,10 +150,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 	
 	/**
-	 * This function is called periodically during test mode
+	 * This method is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
+		standardInit();
 	}
 
 	/**
@@ -148,11 +171,12 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called to initialize
 	 */
 	public void standardInit() {
-		lastTime = -1;
-		driveBase.left.resetEncoders();
-		driveBase.right.resetEncoders();
+		isFirstPeriodic = true;
 	}
-
+	
+	/**
+	 * This method is always called on the first loop of periodic.
+	 */
 	public void standardFirstPeriodic() {
 		lastTime = timer.get();
 		isFirstPeriodic = false;
