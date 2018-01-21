@@ -1,5 +1,7 @@
 package utilities;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class Logging {
 	// priority of a message to be logged
 	public enum Priority {
@@ -43,7 +45,7 @@ public class Logging {
 	/**
 	 * Disables printing of warnings
 	 */
-	public static void hidewWarnings() {
+	public static void hideWarnings() {
 		enableWarn = false;
 	}
 
@@ -63,7 +65,19 @@ public class Logging {
 	public static void logMessage(Object message) {
 		System.out.println(message.toString());
 	}
-
+	
+	/**
+	 * logs a warning
+	 */
+	public static void logWarning(Object message) {
+		DriverStation.reportWarning("WARNING:" + message.toString(), false);
+	}
+	
+	public static void logError(Object message) {
+		DriverStation.reportError(message.toString(), false);
+	}
+	
+	
 	/**
 	 * Logs a message if the priority is high enough.
 	 * 
@@ -76,11 +90,11 @@ public class Logging {
 		switch (p) {
 		case WARN:
 			if (enableWarn)
-				logMessage(message);
+				logWarning(message);
 			break;
 		case ERROR:
 			if (enableError)
-				logMessage(message);
+				logError(message);
 			break;
 		default:
 			if (p.intValue >= minPriority.intValue) {
