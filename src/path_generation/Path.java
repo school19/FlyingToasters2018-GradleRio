@@ -4,10 +4,15 @@ import java.util.ArrayList;
 
 import utilities.Logging;
 
-
+/**
+ * A path of waypoints with times, velocities, and positions.
+ * @author jack
+ *
+ */
 public class Path {
-	static final double maxVel = 3;
-	static final double maxAccel = 2.5;
+	//default values for path generation
+	static final double maxVel = 2;
+	static final double maxAccel = 1.5;
 	static final int defaultPoints = 50;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
@@ -17,18 +22,61 @@ public class Path {
 	public double endTime;
 	public double endPos;
 	
-	//the different modes of generating profiles
+	/**
+	 * the different velocity profile modes.
+	 * @author jack
+	 *
+	 */
 	public enum VelocityMode{
 		TRIANGULAR,
 		TRAPAZOIDAL,
 		CONSTANT
 	}
 	
+	/**
+	 * Creates a path between the given waypoints
+	 * @param points
+	 */
+	public Path(Waypoint... points) {
+		this(defaultPoints, maxVel, maxAccel, defaultMode, points);
+	}
+	
+	/**
+	 * creates a longer path between multiple points
+	 * @param numberOfPoints the number of points between the waypoints
+	 * @param velocity the max velocity
+	 * @param accel the max acceleration
+	 * @param mode the velocity profile mode
+	 * @param points the waypoints to make a path between
+	 */
+	public Path(int numberOfPoints, double velocity, double accel,
+			VelocityMode mode, Waypoint... points) {
+		waypoints = new ArrayList<Waypoint>();
+		genBezierChainPath(numberOfPoints, 0.5, points);
+		alignWaypoints();
+		getPositions();
+		getVelocities(velocity, accel, mode);
+		getTimes();
+	}
+	
+	/**
+	 * creates a path using default values from start to end
+	 * @param start
+	 * @param end
+	 */
 	public Path(Waypoint start, Waypoint end){
 		this(start, end, defaultPoints, maxVel, maxAccel, defaultMode);
 	}
 	
-	//create a path from two waypoints
+	/**
+	 * create a path from two waypoints
+	 * @param start starting waypoints
+	 * @param end ending waypoint
+	 * @param numberOfPoints the number of points between the waypoints
+	 * @param velocity the max velocity
+	 * @param accel the max acceleration
+	 * @param mode the velocity profile mode
+	 */
 	public Path(Waypoint start, Waypoint end, int numberOfPoints, double velocity, double accel,
 			VelocityMode mode) {
 		waypoints = new ArrayList<Waypoint>();
@@ -57,7 +105,12 @@ public class Path {
 		endPos = distanceAccumulator;
 	}
 	
-	//set the times for every waypoint based on distance
+	/**
+	 * Sets the velocities of the path's points
+	 * @param vel the maximum velocity to use
+	 * @param accel the maximum acceleration to use
+	 * @param mode the velocity profile mode
+	 */
 	private void getVelocities(double vel, double accel, VelocityMode mode) {
 		switch(mode) {
 		case TRIANGULAR:
@@ -110,7 +163,13 @@ public class Path {
 		}
 	}
 	
-	//generates a path with a bezier curve
+	/**
+	 * generates a path with a bezier curve
+	 * @param start the starting point
+	 * @param end the ending point
+	 * @param numberOfPoints the number of points between the start and the end
+	 * @param tightness how close the guide points are put to the start/end
+	 */
 	void genBezierPath(Waypoint start, Waypoint end, int numberOfPoints, double tightness) {
 		//get the location of the start and end points
 		Point startPoint = start.getPoint();
@@ -140,6 +199,53 @@ public class Path {
 		}
 		waypoints.add(end);
 	}
+	
+	/**
+	 * Generates a longer path by chaining together more waypoints.
+	 * @param pointsPerCurve the number of points in each curve
+	 * @param tightness how close the guide points are to the start/end of each individual curve.
+	 * @param points the waypoints to build the curve from
+	 */
+	void genBezierChainPath(int pointsPerCurve, double tightness, Waypoint... points) {
+		if(points.length < 2) {
+			Logging.e("Not enough waypoints to make a path!");
+			return;
+		}
+		
+		//add first point
+		waypoints.add(points[0]);
+		//iterates throught the waypoints in pairs.
+		for(int wp = 0; wp < points.length - 1; wp++) {
+			Waypoint start = points[wp];
+			Waypoint end = points[wp + 1];
+			Point startPoint = start.getPoint();
+			Point endPoint = end.getPoint();
+			double distance = startPoint.distance(endPoint);
+			double gpLength = distance / 2 * tightness;
+
+			Point startOffset = Point.PolarPoint(gpLength, start.rotation);
+			Point endOffset =  Point.PolarPoint(-gpLength, end.rotation);
+
+			Point gp1 = startPoint.sum(startOffset);
+			Point gp2 = endPoint.sum(endOffset);
+
+			for (int i = 1; i < pointsPerCurve; i++) {
+				double alpha = (double) i / (double) pointsPerCurve;
+				Point p1 = Point.lerp(startPoint, gp1, alpha);
+				Point p2 = Point.lerp(gp1, gp2, alpha);
+				Point p3 = Point.lerp(gp2, endPoint, alpha);
+
+				Point p5 = Point.lerp(p1, p2, alpha);
+				Point p6 = Point.lerp(p2, p3, alpha);
+
+				Point p = Point.lerp(p5, p6, alpha); 
+				waypoints.add(new Waypoint(p, 0));
+			}
+		}
+		//add last point
+		waypoints.add(points[points.length - 1]);
+	}
+	
 	//aligns the waypoints all pointing to each other.
 	void alignWaypoints() {
 		for (int i = 1; i < waypoints.size() - 1; i++) {
