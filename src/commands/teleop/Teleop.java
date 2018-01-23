@@ -1,6 +1,5 @@
 package commands.teleop;
 
-import org.usfirst.frc.team3641.robot.PS4;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;

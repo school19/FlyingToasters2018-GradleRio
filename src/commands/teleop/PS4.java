@@ -1,4 +1,4 @@
-package org.usfirst.frc.team3641.robot;
+package commands.teleop;
 import java.util.EnumMap;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
