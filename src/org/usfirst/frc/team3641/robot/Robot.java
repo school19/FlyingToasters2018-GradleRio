@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.DriveBase2016;
+import hardware.Intake;
 import utilities.Logging;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,7 +37,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	SendableChooser<Auton> chooser = new SendableChooser<>();
 
 	public DriveBase2016 driveBase;
-
+	public Intake intake; 
 	double lastTime;
 	double deltaTime = 0;;
 	
