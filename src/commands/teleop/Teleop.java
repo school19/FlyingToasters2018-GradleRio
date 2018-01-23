@@ -12,6 +12,7 @@ import utilities.Logging;
  */
 public class Teleop extends OpMode {
 	private PS4 ps4;
+	final static double triggerDeadzone = .1;
 	
 	public Teleop(Robot bot) {
 		super(bot, "Teleop");
@@ -34,7 +35,9 @@ public class Teleop extends OpMode {
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 		
-		
+		if (ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) >= triggerDeadzone) {
+			
+		}
 	}
 	
 	public void stop() {
