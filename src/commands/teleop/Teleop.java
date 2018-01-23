@@ -24,11 +24,17 @@ public class Teleop extends OpMode {
 	}
 	
 	public void periodic(double deltaTime) {
+		//updates all running commands
 		super.periodic(deltaTime);
+		//get input from ps4 controller
 		ps4.poll();
+		//drive the derivebase
 		robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+		//log position
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
+		
+		
 	}
 	
 	public void stop() {
