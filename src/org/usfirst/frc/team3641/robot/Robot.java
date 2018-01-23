@@ -60,6 +60,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		SmartDashboard.putData("Auto choices", chooser);
 		//initialize drivebase
 		driveBase = new DriveBase2016();
+		intake = new Intake();
 		//initialize timer
 		timer = new Timer();
 		resetTimer();
