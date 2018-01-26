@@ -11,9 +11,9 @@ import utilities.Logging;
  */
 public class Path {
 	//default values for path generation
-	static final double maxVel = 2;
-	static final double maxAccel = 1.5;
-	static final int defaultPoints = 50;
+	static final double maxVel = 0.5;
+	static final double maxAccel = 0.5;
+	static final int defaultPoints = 100;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
 	//a path consists of a list of waypoints.
@@ -52,7 +52,7 @@ public class Path {
 	public Path(int numberOfPoints, double velocity, double accel,
 			VelocityMode mode, Waypoint... points) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierChainPath(numberOfPoints, 0.5, points);
+		genBezierChainPath(numberOfPoints, 1, points);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
@@ -80,7 +80,7 @@ public class Path {
 	public Path(Waypoint start, Waypoint end, int numberOfPoints, double velocity, double accel,
 			VelocityMode mode) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierPath(start, end, numberOfPoints, 0.5);
+		genBezierPath(start, end, numberOfPoints, 1);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
@@ -229,7 +229,7 @@ public class Path {
 			Point gp1 = startPoint.sum(startOffset);
 			Point gp2 = endPoint.sum(endOffset);
 
-			for (int i = 1; i < pointsPerCurve; i++) {
+			for (int i = 1; i <= pointsPerCurve; i++) {
 				double alpha = (double) i / (double) pointsPerCurve;
 				Point p1 = Point.lerp(startPoint, gp1, alpha);
 				Point p2 = Point.lerp(gp1, gp2, alpha);
@@ -242,8 +242,6 @@ public class Path {
 				waypoints.add(new Waypoint(p, 0));
 			}
 		}
-		//add last point
-		waypoints.add(points[points.length - 1]);
 	}
 	
 	//aligns the waypoints all pointing to each other.

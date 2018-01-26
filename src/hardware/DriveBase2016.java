@@ -124,10 +124,26 @@ public class DriveBase2016 extends DriveBase {
 		right.setFeedbackActive(true);
 	}
 	
+	/**
+	 * drive from one waypoint to another
+	 * @param from starting waypoint
+	 * @param to ending waypoint
+	 */
 	public void driveFromTo(Waypoint from, Waypoint to) {
 		//generate path then drive it
 		Path path = new Path(from, to);
-		Logging.h(path);
+		Logging.l(path);
 		drivePath(path);
+	}
+	
+	/**
+	 * Drives a series of waypoints, similar to driveFromTo
+	 * @param waypoints the series of waypoints to drive, at least 2
+	 */
+	public void driveWaypoints(Waypoint... waypoints) {
+		//generate path then drive it
+				Path path = new Path(waypoints);
+				Logging.l(path);
+				drivePath(path);
 	}
 }

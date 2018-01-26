@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3641.robot;
 
 import commands.autonomous.TimeBasedAuton;
+import commands.autonomous.MotionProfileTest;
 import commands.autonomous.SwitchAuton;
 import commands.autonomous.TestAuton;
 import commands.interfaces.Command;
@@ -63,6 +64,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		intake = new Intake();
 		//initialize timer
 		timer = new Timer();
+		
+		autonomous = new TestAuton(this, "none");
+		teleop = new TestAuton(this, "none");
 		resetTimer();
 	}
 	
@@ -90,7 +94,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	public void autonomousInit() {
 		isFirstPeriodic = true;
 		autoSelected = chooser.getSelected();
-		switch(autoSelected) {
+		/*switch(autoSelected) {
 		case AUTO_LINE:
 			autonomous = new TimeBasedAuton(this);
 			break;
@@ -101,7 +105,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
 			Logging.e("Could not get auton from chooser");
 			break;
-		}
+		}*/
+		autonomous = new MotionProfileTest(this);
 	}
 
 	/**

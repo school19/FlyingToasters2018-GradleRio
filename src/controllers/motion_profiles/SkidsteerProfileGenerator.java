@@ -41,8 +41,6 @@ public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 			lastOffsetPoint = offsetPoint;
 		}
 		outProfile.getPoint(0).velocity = outProfile.getPoint(1).velocity;
-		//TODO remove unnecesary logg'g
-		Logging.h(outProfile);
 		//return it!
 		return outProfile;
 	}

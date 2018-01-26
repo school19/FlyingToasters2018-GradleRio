@@ -1,6 +1,5 @@
 package controllers.motion_profiles;
 
-import controllers.motion_profiles.MPPoint;
 import utilities.Utilities;
 
 /**
