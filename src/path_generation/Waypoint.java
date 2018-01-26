@@ -6,6 +6,7 @@ public class Waypoint {
 	public double velocity;
 	public double rotation;
 	public double time;
+
 	public Waypoint(Point waypointPosition, double wpRotation) {
 		position = waypointPosition;
 		rotation = wpRotation;
@@ -36,19 +37,20 @@ public class Waypoint {
 			}
 		} else {
 			rotation = Math.atan(yOffset / xOffset);
-			if (yOffset < 0) {
-				rotation += 2.0 * Math.PI;
+			if (xOffset < 0) {
+				rotation += Math.PI;
 			}
 		}
 		return rotation;
 	}
-	
-	public Point getPoint(){
+
+	public Point getPoint() {
 		return position;
 	}
-	
+
 	@Override
-	public String toString(){
-		return "X: " + position.x + ", Y: " + position.y + ", Angle: " + rotation + ", distance: " + distance + ", time: " + time + ", velocity:" + velocity;
+	public String toString() {
+		return "X: " + position.x + ", Y: " + position.y + ", Angle: " + rotation + ", distance: " + distance
+				+ ", time: " + time + ", velocity:" + velocity;
 	}
 }
