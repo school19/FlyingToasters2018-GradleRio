@@ -7,15 +7,20 @@ import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-public class MotionProfileTest extends OpMode {
+/**
+ * Drives to the left scale plate.
+ * @author jack
+ *
+ */
+public class LeftScaleAuton extends OpMode {
 	final static double dist_m = 4.0;
 	
 	Waypoint start = new Waypoint(new Point(0,0),0);
-	Waypoint mid = new Waypoint(new Point(2, 1.5), Math.PI / 2);
-	Waypoint end = new Waypoint(new Point(0,3), Math.PI);
+	Waypoint mid = new Waypoint(new Point(6,0.2), 0);
+	Waypoint end = new Waypoint(new Point(7.5,-0.5), -Math.PI / 2.0);
 	
-	public MotionProfileTest(Robot bot) {
-		super(bot, "Motion Profile Auton");
+	public LeftScaleAuton(Robot bot) {
+		super(bot, "Left Scale auton");
 	}
 	
 	public void init() {

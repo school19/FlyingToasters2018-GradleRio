@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3641.robot;
 
 import commands.autonomous.TimeBasedAuton;
+import commands.autonomous.LeftScaleAuton;
 import commands.autonomous.MotionProfileTest;
 import commands.autonomous.SwitchAuton;
 import commands.autonomous.TestAuton;
@@ -106,7 +107,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			Logging.e("Could not get auton from chooser");
 			break;
 		}*/
-		autonomous = new MotionProfileTest(this);
+		autonomous = new LeftScaleAuton(this);
 	}
 
 	/**

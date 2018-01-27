@@ -11,8 +11,8 @@ import utilities.Logging;
  */
 public class Path {
 	//default values for path generation
-	static final double maxVel = 0.5;
-	static final double maxAccel = 0.5;
+	static final double maxVel = 3;
+	static final double maxAccel = 1.25;
 	static final int defaultPoints = 100;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
@@ -242,6 +242,8 @@ public class Path {
 				waypoints.add(new Waypoint(p, 0));
 			}
 		}
+		//set last point
+		waypoints.set(waypoints.size() - 1, points[points.length - 1]);
 	}
 	
 	//aligns the waypoints all pointing to each other.
