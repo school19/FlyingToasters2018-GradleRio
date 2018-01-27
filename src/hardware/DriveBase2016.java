@@ -143,6 +143,13 @@ public class DriveBase2016 extends DriveBase {
 		Logging.l(path);
 		drivePath(path, isBackwards);
 	}
+	
+	public void driveFromTo(Waypoint from, Waypoint to, boolean isBackwards, double vel, double accel) {
+		// generate path then drive it
+		Path path = new Path(from, to);
+		Logging.l(path);
+		drivePath(path, isBackwards);
+	}
 
 	/**
 	 * Drives a series of waypoints, similar to driveFromTo

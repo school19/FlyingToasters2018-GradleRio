@@ -30,6 +30,9 @@ public abstract class Command {
 		callback.commandFinished(this);
 	}
 	
+	public String getName() {
+		return readableName;
+	}
 	//toString used for printing
 	@Override
 	public String toString(){

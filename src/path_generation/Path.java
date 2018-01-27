@@ -11,10 +11,10 @@ import utilities.Logging;
  */
 public class Path {
 	//default values for path generation
-	static final double maxVel = 0.75; //TODO find good values or do preset modes (Slow, medium, fast, etc.)
-	static final double maxAccel = 0.5; 
-	static final int defaultPoints = 100;
-	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
+	public static final double maxVel = 0.5; //TODO find good values or do preset modes (Slow, medium, fast, etc.)
+	public static final double maxAccel = 1.25; 
+	public static final int defaultPoints = 100;
+	public static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
 	//a path consists of a list of waypoints.
 	public ArrayList<Waypoint> waypoints;
@@ -52,7 +52,7 @@ public class Path {
 	public Path(int numberOfPoints, double velocity, double accel,
 			VelocityMode mode, Waypoint... points) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierChainPath(numberOfPoints, 1, points);
+		genBezierChainPath(numberOfPoints, 0.5, points);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
@@ -161,6 +161,7 @@ public class Path {
 			
 			lastWaypoint = currentWaypoint;
 		}
+		endTime = waypoints.get(waypoints.size() - 1).time;
 	}
 	
 	/**
