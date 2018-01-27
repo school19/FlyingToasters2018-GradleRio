@@ -25,7 +25,7 @@ public class LeftScaleAuton extends OpMode {
 	
 	public void init() {
 		super.init();
-		robot.driveBase.driveWaypoints(start, mid, end);
+		robot.driveBase.driveWaypoints(false, start, mid, end);
 	}
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);

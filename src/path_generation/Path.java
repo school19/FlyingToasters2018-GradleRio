@@ -11,8 +11,8 @@ import utilities.Logging;
  */
 public class Path {
 	//default values for path generation
-	static final double maxVel = 3;
-	static final double maxAccel = 1.25;
+	static final double maxVel = 0.75; //TODO find good values or do preset modes (Slow, medium, fast, etc.)
+	static final double maxAccel = 0.5; 
 	static final int defaultPoints = 100;
 	static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	

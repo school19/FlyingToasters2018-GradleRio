@@ -53,8 +53,8 @@ public class MotionProfile implements AbstractFeedbackController{
 		}
 	}
 	
-	public void generateProfileFromPath(Path path){
-		profile = wpg.genPoints(path);
+	public void generateProfileFromPath(Path path, boolean isBackwards){
+		profile = wpg.genPoints(path, isBackwards);
 		
 		lastTarget = profile.start();
 	}
@@ -114,7 +114,8 @@ public class MotionProfile implements AbstractFeedbackController{
 	}
 	
 	public void reset(){
-		
+		totalTime = 0;
+		offset = 0;
 	}
 
 	public void logStatus(){

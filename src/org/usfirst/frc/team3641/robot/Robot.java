@@ -66,8 +66,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		//initialize timer
 		timer = new Timer();
 		
-		autonomous = new TestAuton(this, "none");
-		teleop = new TestAuton(this, "none");
 		resetTimer();
 	}
 	
@@ -83,8 +81,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * called when the robot is disabled. Stops the commands and disables closed loop control.
 	 */
 	public void disabledInit() {
-		autonomous.stop();
-		teleop.stop();
+		if(autonomous != null) autonomous.stop();
+		if (teleop != null) teleop.stop();
+		autonomous = null;
+		teleop = null;
 		driveBase.setFeedbackActive(false);
 	}
 
@@ -107,7 +107,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			Logging.e("Could not get auton from chooser");
 			break;
 		}*/
-		autonomous = new LeftScaleAuton(this);
+		autonomous = new MotionProfileTest(this);
 	}
 
 	/**
@@ -192,6 +192,5 @@ public class Robot extends IterativeRobot implements CommandCallback {
 
 	@Override
 	public void commandFinished(Command cmd) {
-		Logging.h("Auton finished!");
 	}
 }

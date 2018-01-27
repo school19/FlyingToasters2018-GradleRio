@@ -26,6 +26,7 @@ public class Teleop extends OpMode {
 	}
 
 	public void periodic(double deltaTime) {
+		Logging.h("Teleop periodic run");
 		// updates all running commands
 		super.periodic(deltaTime);
 		// get input from ps4 controller

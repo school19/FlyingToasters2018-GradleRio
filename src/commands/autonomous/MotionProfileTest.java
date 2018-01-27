@@ -11,8 +11,8 @@ public class MotionProfileTest extends OpMode {
 	final static double dist_m = 4.0;
 	
 	Waypoint start = new Waypoint(new Point(0,0),0);
-	Waypoint mid = new Waypoint(new Point(2, 1.5), Math.PI / 2);
-	Waypoint end = new Waypoint(new Point(0,3), Math.PI);
+	Waypoint mid = new Waypoint(new Point(1.5, 1), Math.PI / 2);
+	Waypoint end = new Waypoint(new Point(0,2), Math.PI);
 	
 	public MotionProfileTest(Robot bot) {
 		super(bot, "Motion Profile Auton");
@@ -20,7 +20,7 @@ public class MotionProfileTest extends OpMode {
 	
 	public void init() {
 		super.init();
-		robot.driveBase.driveWaypoints(start, mid, end);
+		robot.driveBase.driveWaypoints(true, start, mid, end);
 	}
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);

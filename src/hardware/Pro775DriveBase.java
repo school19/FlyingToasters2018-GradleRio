@@ -82,10 +82,10 @@ public class Pro775DriveBase extends DriveBase{
 		}
 	}
 	
-	public void drivePath(Path p) {
+	public void drivePath(Path p, boolean isBackwards) {
 		//generate profiles
-		leftMotionProfile.generateProfileFromPath(p);
-		rightMotionProfile.generateProfileFromPath(p);
+		leftMotionProfile.generateProfileFromPath(p, isBackwards);
+		rightMotionProfile.generateProfileFromPath(p, isBackwards);
 
 		//set offsets
 		leftMotionProfile.setOffset(left.getPosition());
@@ -98,11 +98,11 @@ public class Pro775DriveBase extends DriveBase{
 		right.setFeedbackActive(true);
 	}
 	
-	public void driveFromTo(Waypoint from, Waypoint to) {
+	public void driveFromTo(Waypoint from, Waypoint to, boolean isBackwards) {
 		//generate path then drive it
 		Path path = new Path(from, to, 10, 1, 1, Path.VelocityMode.TRIANGULAR);
 		Logging.h(path);
-		drivePath(path);
+		drivePath(path, isBackwards);
 		
 	}
 }

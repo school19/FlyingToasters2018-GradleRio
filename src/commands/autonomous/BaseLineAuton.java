@@ -20,7 +20,7 @@ public class BaseLineAuton extends OpMode {
 	public void init() {
 		Logging.h("Starting baseline auton");
 		super.init();
-		robot.driveBase.driveFromTo(start, end);
+		robot.driveBase.driveFromTo(start, end, false);
 	}
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);

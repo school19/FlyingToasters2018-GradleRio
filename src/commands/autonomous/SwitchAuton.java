@@ -34,7 +34,7 @@ public class SwitchAuton extends OpMode {
 			end = new Waypoint(new Point(switch_dist,switch_right), 0.0);
 		}
 		super.init();
-		robot.driveBase.driveFromTo(start, end);
+		robot.driveBase.driveFromTo(start, end, false);
 	}
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
