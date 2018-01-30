@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.DriveBase2016;
+import hardware.DriveBase2018;
 import hardware.Intake;
 import utilities.Logging;
 /**
@@ -38,7 +39,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	Auton autoSelected;
 	SendableChooser<Auton> chooser = new SendableChooser<>();
 
-	public DriveBase2016 driveBase;
+	public DriveBase2018 driveBase;
 	public Intake intake; 
 	double lastTime;
 	double deltaTime = 0;;
@@ -61,7 +62,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addObject(Auton.AUTO_SWITCH.name, Auton.AUTO_SWITCH);
 		SmartDashboard.putData("Auto choices", chooser);
 		//initialize drivebase
-		driveBase = new DriveBase2016();
+		driveBase = new DriveBase2018();
 		intake = new Intake();
 		//initialize timer
 		timer = new Timer();

@@ -9,7 +9,7 @@ import path_generation.Waypoint;
 import utilities.Logging;
 
 public class MotionProfileCommand extends Command {
-	public static double END_TIME_EXTRA = 1;
+	public static double END_TIME_EXTRA = 0;
 	
 	private Waypoint[] wp;
 	private boolean backwards;

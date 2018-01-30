@@ -10,7 +10,7 @@ import path_generation.Path;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-public class DriveBase2016 extends DriveBase {
+public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
 
@@ -29,24 +29,28 @@ public class DriveBase2016 extends DriveBase {
 	public double leftPower = 0;
 	public double rightPower = 0;
 
-	public enum Talons {
+	public enum Motors {
 		LEFT0(3), LEFT1(4), RIGHT0(1), RIGHT1(2);
 
 		public int id;
 
-		Talons(int talonID) {
+		Motors(int talonID) {
 			id = talonID;
 		}
 
-		public Talon get() {
+		public Talon getTalon() {
 			return new Talon(id);
+		}
+		
+		public Victor getVictor() {
+			return new Victor(id);
 		}
 	}
 
-	public DriveBase2016() {
+	public DriveBase2018() {
 		super();
-		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Talons.LEFT1.id, Talons.LEFT0.get());
-		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Talons.RIGHT1.id, Talons.RIGHT0.get());
+		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id, Motors.LEFT0.getVictor());
+		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id, Motors.RIGHT0.getVictor());
 		left.setInverted(true);
 		left.setEncoderReversed(true);
 		// add the motor controllers to the list to be updated

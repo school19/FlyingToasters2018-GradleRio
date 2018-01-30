@@ -11,8 +11,8 @@ import utilities.Logging;
  */
 public class Path {
 	//default values for path generation
-	public static final double maxVel = 0.5; //TODO find good values or do preset modes (Slow, medium, fast, etc.)
-	public static final double maxAccel = 1.25; 
+	public static final double maxVel = 3.0; //TODO find good values or do preset modes (Slow, medium, fast, etc.)
+	public static final double maxAccel = 1.2; 
 	public static final int defaultPoints = 100;
 	public static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
 	
@@ -52,7 +52,7 @@ public class Path {
 	public Path(int numberOfPoints, double velocity, double accel,
 			VelocityMode mode, Waypoint... points) {
 		waypoints = new ArrayList<Waypoint>();
-		genBezierChainPath(numberOfPoints, 0.5, points);
+		genBezierChainPath(numberOfPoints, 0.8, points);
 		alignWaypoints();
 		getPositions();
 		getVelocities(velocity, accel, mode);
