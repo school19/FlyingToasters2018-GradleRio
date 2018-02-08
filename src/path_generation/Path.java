@@ -30,7 +30,7 @@ public class Path {
 	public enum VelocityMode{
 		TRIANGULAR,
 		TRAPAZOIDAL,
-		CONSTANT
+		CONSTANT,
 	}
 	
 	/**

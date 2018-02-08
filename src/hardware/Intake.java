@@ -10,7 +10,7 @@ public class Intake {
 
 	/* 2 motors for intake */
 	static final int leftMotorID = 5;
-	static final int rightMotorID = 6;
+	static final int rightMotorID = 8;
 
 	private Talon leftTalon;
 	private Talon rightTalon;
