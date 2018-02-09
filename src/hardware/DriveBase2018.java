@@ -53,7 +53,7 @@ public class DriveBase2018 extends DriveBase {
 		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id, Motors.LEFT0.getVictor());
 		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id, Motors.RIGHT0.getVictor());
 		right.setInverted(true);
-		right.setEncoderReversed(true);
+		left.setEncoderReversed(true);
 		// add the motor controllers to the list to be updated
 		registerMotorController(left);
 		registerMotorController(right);
@@ -73,6 +73,8 @@ public class DriveBase2018 extends DriveBase {
 		super.update(dT);
 		SmartDashboard.putNumber("left position", left.getPosition());
 		SmartDashboard.putNumber("right position", right.getPosition());
+		leftMotionProfile.writeErrorToDashboard("left MP error");
+		rightMotionProfile.writeErrorToDashboard("right MP error");
 	}
 
 	@Override

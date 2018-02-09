@@ -3,6 +3,7 @@ package controllers.motion_profiles;
 import utilities.Logging;
 import controllers.AbstractFeedbackController;
 import controllers.PIDcontroller;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import path_generation.*;
 /**
  * class for generation and excecution of motion profiles.
@@ -12,6 +13,7 @@ import path_generation.*;
 
 //TODO FIX EVERYTHING
 public class MotionProfile implements AbstractFeedbackController{
+	private double error = 0;
 	private Profile profile;
 	private double totalTime = 0;
 	private MPPoint lastTarget;
@@ -89,12 +91,11 @@ public class MotionProfile implements AbstractFeedbackController{
 		//update current time
 		totalTime += deltaTime;
 		
-		
 		//stores the target position/velocity
 		MPPoint target;
 		double accel;
 		if(totalTime >= profile.getEndTime()){
-			Logging.l("Motion profile finished runnig");
+			Logging.l("Motion profile finished running");
 			target = profile.end();
 			accel = 0;
 		}else{
@@ -102,6 +103,8 @@ public class MotionProfile implements AbstractFeedbackController{
 			accel = (target.velocity - lastTarget.velocity) / deltaTime;
 		}
 		
+		//calculate error
+		error = offsetCurrent - target.position;
 		//set up the PIDs
 		pid.setSetpoint(target.position);
 		
@@ -128,5 +131,9 @@ public class MotionProfile implements AbstractFeedbackController{
 		}else {
 			return "Generator: " + wpg.toString() + ", no profile generated";
 		}
+	}
+	
+	public void writeErrorToDashboard(String key) {
+		SmartDashboard.putNumber(key, error);
 	}
 }

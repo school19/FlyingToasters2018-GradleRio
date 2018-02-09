@@ -7,13 +7,13 @@ import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-public class BaseLineAuton extends OpMode {
+public class AutoLineAuton extends OpMode {
 	final static double dist_m = 4.0;
 	
 	Waypoint start = new Waypoint(new Point(0,0),0);
 	Waypoint end = new Waypoint(new Point(2.5,0), 0);
 	
-	public BaseLineAuton(Robot bot) {
+	public AutoLineAuton(Robot bot) {
 		super(bot, "Motion Profile Auton");
 	}
 	
