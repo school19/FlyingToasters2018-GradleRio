@@ -17,13 +17,23 @@ import utilities.Logging;
  * functions corresponding to each mode, as described in the IterativeRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
- * directory.
+ * directory. This class implements the CommandCallback interface which allows
+ * it to have a function called upon autonomous or teleop finishing.
  */
 public class Robot extends IterativeRobot implements CommandCallback {
+	/**
+	 * An enum of the possible autonomous commands to follow. This is passed to the
+	 * SendableChooser which is put on the dashboard.
+	 * 
+	 * @author jack
+	 *
+	 */
 	enum Auton {
 		AUTO_LINE("Auto Line auton"), AUTO_SWITCH("Switch auton"), AUTO_SCALE_L("Left Scale auton"), AUTO_SCALE_R(
 				"Right Scale auton"), AUTO_MP_TEST("Motion profile test auton"), AUTO_TEST("Test Auton");
-
+		/**
+		 * The name of the auton to display on the dashboard
+		 */
 		String name;
 
 		Auton(String n) {
@@ -31,25 +41,67 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}
 	}
 
+	/**
+	 * The autonomous mode selected by the smartDashboard
+	 */
 	Auton autoSelected;
+	/**
+	 * The chooser is given the items from the Auton enum and sent to the
+	 * SmartDashboard.
+	 */
 	SendableChooser<Auton> chooser = new SendableChooser<>();
 
-	PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+	/**
+	 * The robot's drivebase. Has the motor controllers, encoder feedback, and
+	 * motion profile following code.
+	 */
 	public DriveBase2018 driveBase;
+	/**
+	 * The robot's intake mechanism.
+	 */
 	public Intake intake;
+
+	// TODO add units to documentation
+	/**
+	 * The timestamp (in ??? units) of the last run of standardPeriodic or
+	 * standardFirstPeriodic if it is the first run of standardPeriodic.
+	 */
 	double lastTime;
+	/**
+	 * Stores the time since the last run of standardPeriodic or
+	 * standardFirstPeriodic.
+	 */
 	double deltaTime = 0;
-
+	/**
+	 * The timer is used to read the timestamp every time periodic/FirstPeriodic is
+	 * run.
+	 */
 	Timer timer;
-
+	/**
+	 * Boolean flag to determine whether to run periodic or firstPeriodic.
+	 * firstPeriodic is used because of inconsistent timing between init and
+	 * periodic that caused errors with feedback control (like PIDs/Motion profiles)
+	 */
 	boolean isFirstPeriodic;
 
+	/**
+	 * The autonomous opMode that is run during autonomous. This and teleop should
+	 * probably be replaced with a single OpMode in the future, since the two should
+	 * never be used concurrently.
+	 */
 	OpMode autonomous;
+	/**
+	 * The OopMode that is run during teleop. This and autonomous should probably be
+	 * replaced with a single OpMode in the future, since the two should never be
+	 * used concurrently.
+	 */
 	OpMode teleop;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
-	 * for any initialization code.
+	 * for any initialization code. This method sets up the autonomous chooser and
+	 * puts it on the smart dashboard, then initializes the components of the robot
+	 * (like drivebase and intake), then initializes and resets the timer.
 	 */
 	@Override
 	public void robotInit() {
@@ -67,7 +119,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * Resets and starts the timer.
+	 * Resets and starts the timer at 0. Not entirely necessary, but helpful for
+	 * debugging timing issues.
 	 */
 	public void resetTimer() {
 		timer.reset();
@@ -75,8 +128,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * called when the robot is disabled. Stops the commands and disables closed
-	 * loop control.
+	 * called when the robot is disabled first. Stops the commands and disables
+	 * closed loop control. Also sets auton and teleop to null to free memory for
+	 * the next garbage collection. This helps prevent any slowdown next time they
+	 * are initialized.
 	 */
 	public void disabledInit() {
 		if (autonomous != null)
@@ -89,12 +144,13 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * Called once when auton starts. Sets up the auton and sets the isFirstPeriodic
-	 * flag to true to be called on the first periodic.
+	 * Called once when auton starts. This method reads the selected auton from the
+	 * chooser on the smart dashboard, then initializes it and sets the
+	 * isFirstPeriodic flag to true so the first periodic method will be run.
 	 */
 	@Override
 	public void autonomousInit() {
-		isFirstPeriodic = true;
+		standardInit();
 		autoSelected = chooser.getSelected();
 		switch (autoSelected) {
 		case AUTO_LINE:
@@ -118,7 +174,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * This function is called periodically during autonomous
+	 * This method is called periodically during autonomous. It will call
+	 * firstPeriodic if it is the first time since autonomousInit, and otherwise
+	 * call the periodic method in the autonomous opmode.
 	 */
 	@Override
 	public void autonomousPeriodic() {
@@ -132,8 +190,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * This function is called once on the first loop of autonomousPeriodic. It
-	 * calls init in the auton.d
+	 * This method is called once on the first loop of autonomousPeriodic. It calls
+	 * init in the auton command.
 	 */
 	public void autonomousFirstPeriodic() {
 		autonomous.init();
@@ -141,15 +199,18 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * called once before teleop starts.
+	 * called once before teleop starts. this method initializes the teleop opmode.
 	 */
 	@Override
 	public void teleopInit() {
 		teleop = new Teleop(this);
+		standardInit();
 	}
 
 	/**
-	 * This function is called periodically during operator control
+	 * This method is called periodically during operator control. If it is the
+	 * first time the method is run since teleopInit, it calls teleopFirstPeriodic,
+	 * and otherwise calls the periodic function of the opmode.
 	 */
 	@Override
 	public void teleopPeriodic() {
@@ -161,12 +222,16 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}
 	}
 
+	/**
+	 * This method is called on the first run of teleopPeriodic. It doesn't do
+	 * anything special now.
+	 */
 	private void teleopFirstPeriodic() {
 		standardFirstPeriodic();
 	}
 
 	/**
-	 * This method is called periodically during test mode
+	 * This method is called periodically during test mode.
 	 */
 	@Override
 	public void testPeriodic() {
@@ -174,7 +239,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * This method is always called periodically
+	 * This method is always called periodically in auton or teleop.
 	 */
 	public void standardPeriodic() {
 		double currentTime = timer.get();
@@ -184,20 +249,27 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 
 	/**
-	 * This method is always called to initialize
+	 * This method is always called to initialize auton or teleop. It sets
+	 * isFirstPeriodic to true and resets the timer.
 	 */
 	public void standardInit() {
 		isFirstPeriodic = true;
+		resetTimer();
 	}
 
 	/**
-	 * This method is always called on the first loop of periodic.
+	 * This method is always called on the first loop of periodic. It will set
+	 * lastTime and set isFirstPeriodic to false.
 	 */
 	public void standardFirstPeriodic() {
 		lastTime = timer.get();
 		isFirstPeriodic = false;
 	}
 
+	/**
+	 * Called when a command is finished. Sets the command to null to free it up for
+	 * garbage collection and prints a message that the command is finished.
+	 */
 	@Override
 	public void commandFinished(Command cmd) {
 		if (cmd == autonomous) {
