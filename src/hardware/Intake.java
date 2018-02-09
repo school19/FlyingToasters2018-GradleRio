@@ -33,7 +33,7 @@ public class Intake {
 	 *            assigned to the motor
 	 */
 	public void setPower(double power) {
-		leftTalon.setPower(power);
+		leftTalon.setPower(-power);
 		rightTalon.setPower(power);
 		
 	}
