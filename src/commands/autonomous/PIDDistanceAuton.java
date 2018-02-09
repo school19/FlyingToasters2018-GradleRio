@@ -7,17 +7,25 @@ import controllers.AbstractFeedbackController;
 import controllers.PIDcontroller;
 import utilities.Logging;
 
+/**
+ * An autonomous mode which tries to drive a distance using only a PID
+ * controller. This is terrible and should never be used in competition.
+ * 
+ * @author jack
+ *
+ */
 public class PIDDistanceAuton extends OpMode {
 	final static double dist_m = 4.0;
-	
+
 	public PIDcontroller leftPID;
 	public PIDcontroller rightPID;
+
 	public PIDDistanceAuton(Robot bot) {
 		super(bot, "PID distance auton");
-		leftPID = new PIDcontroller(0.5,0.1,.1);
-		rightPID = new PIDcontroller(0.5,0.1,.1);
+		leftPID = new PIDcontroller(0.5, 0.1, .1);
+		rightPID = new PIDcontroller(0.5, 0.1, .1);
 	}
-	
+
 	public void init() {
 		super.init();
 		robot.driveBase.left.setFeedbackController(leftPID);
@@ -29,10 +37,13 @@ public class PIDDistanceAuton extends OpMode {
 		robot.driveBase.left.setFeedbackActive(true);
 		robot.driveBase.right.setFeedbackActive(true);
 	}
+
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
-		Logging.h("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: " + robot.driveBase.right.getPosition());
+		Logging.h("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
+				+ robot.driveBase.right.getPosition());
 	}
+
 	public void stop() {
 		robot.driveBase.left.setFeedbackActive(false);
 		robot.driveBase.right.setFeedbackActive(false);
