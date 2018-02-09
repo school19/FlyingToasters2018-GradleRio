@@ -10,43 +10,83 @@ import org.usfirst.frc.team3641.robot.Robot;
  * @author jackf
  *
  */
-public abstract class OpMode extends Command implements CommandCallback{
+public abstract class OpMode extends Command implements CommandCallback {
+	/**
+	 * A list of running commands. On periodic, all commands are updated.
+	 */
 	private ArrayList<Command> commands;
+	/**
+	 * The robot that the command is running on.
+	 */
 	protected Robot robot;
-	public OpMode(Robot bot, String name){
+
+	/**
+	 * Constructor for a defined name.
+	 * 
+	 * @param bot
+	 *            The robot the command is running in
+	 * @param name
+	 *            the name of the opmode.
+	 */
+	public OpMode(Robot bot, String name) {
 		super(bot, name);
 		commands = new ArrayList<Command>();
 		robot = bot;
 	}
-	
-	public OpMode(Robot bot){
-		super(bot);
+
+	/**
+	 * Constructor using no defined name. Avoid this.
+	 * 
+	 * @param bot
+	 *            the robot the opmode is running on
+	 */
+	public OpMode(Robot bot) {
+		super(bot, "Default opmode name");
 		commands = new ArrayList<Command>();
 		robot = bot;
 	}
-	//called once
-	public void init(){
-		//No initing of commands, since they may not start immediately.
+
+	/**
+	 * called once when the command is started (during firstPeriodic in Robot)
+	 */
+	public void init() {
+		// No auto-initing of commands, since they may not start immediately.
 	}
-	//called periodically
-	public void periodic(double deltaTime){
-		for(Command cmd:commands){
+
+	/**
+	 * called periodically during teleop/autonomous periodic.
+	 */
+	public void periodic(double deltaTime) {
+		for (Command cmd : commands) {
 			cmd.periodic(deltaTime);
 		}
 	}
-	//called once or never, to stop the command
-	public void stop(){
-		for(Command cmd:commands){
+
+	/**
+	 * called once or never, to stop the opmode.
+	 */
+	public void stop() {
+		for (Command cmd : commands) {
 			cmd.stop();
 		}
 	}
-	
+
+	/**
+	 * Add a new command to the list of commands
+	 * 
+	 * @param cmd
+	 *            the command to add
+	 */
 	protected void addCommand(Command cmd) {
 		commands.add(cmd);
 		cmd.init();
 	}
-	
-	public void commandFinished(Command cmd){
+
+	/**
+	 * Callback for commands that finish. Removes the command from the list of
+	 * commands.
+	 */
+	public void commandFinished(Command cmd) {
 		commands.remove(cmd);
 	}
 }
