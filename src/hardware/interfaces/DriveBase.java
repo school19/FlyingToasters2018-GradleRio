@@ -37,7 +37,6 @@ public abstract class DriveBase {
 
 	// udpate should be called periodically.
 	public void update(double dT) {
-
 		for (FeedbackMotorController c : feedbackControllers) {
 			if (c.getFeedbackActive()) {
 				c.runFeedback(dT);

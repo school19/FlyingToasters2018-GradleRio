@@ -5,6 +5,7 @@ import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
 import controllers.motion_profiles.WheelProfileGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.interfaces.DriveBase;
 import path_generation.Path;
 import path_generation.Waypoint;
@@ -51,7 +52,7 @@ public class DriveBase2018 extends DriveBase {
 		super();
 		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id, Motors.LEFT0.getVictor());
 		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id, Motors.RIGHT0.getVictor());
-		left.setInverted(true);
+		right.setInverted(true);
 		left.setEncoderReversed(true);
 		// add the motor controllers to the list to be updated
 		registerMotorController(left);
@@ -66,6 +67,14 @@ public class DriveBase2018 extends DriveBase {
 
 		leftMotionProfile = new MotionProfile(leftMotionProfilePID, velGain, accelGain, leftProfileGen);
 		rightMotionProfile = new MotionProfile(rightMotionProfilePID, velGain, accelGain, rightProfileGen);
+	}
+	
+	public void update(double dT) {
+		super.update(dT);
+		SmartDashboard.putNumber("left position", left.getPosition());
+		SmartDashboard.putNumber("right position", right.getPosition());
+		leftMotionProfile.writeErrorToDashboard("left MP error");
+		rightMotionProfile.writeErrorToDashboard("right MP error");
 	}
 
 	@Override
