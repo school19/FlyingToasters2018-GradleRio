@@ -37,13 +37,7 @@ public class Teleop extends OpMode {
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 
-		double rightTrigger = ps4.getAxis(PS4.Axis.RIGHT_TRIGGER);
-		double leftTrigger = ps4.getAxis(PS4.Axis.LEFT_TRIGGER);
-		if (rightTrigger >= TRIGGER_DEADZONE) {
-			robot.intake.setPower(rightTrigger);
-		} else if (leftTrigger >= TRIGGER_DEADZONE) {
-			robot.intake.setPower(-leftTrigger);
-		}
+		robot.intake.setPower(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER)-ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
 	}
 
 	public void stop() {

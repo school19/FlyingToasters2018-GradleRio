@@ -1,5 +1,6 @@
 package hardware;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 /**
  * Intake class
  * 
@@ -10,15 +11,18 @@ public class Intake {
 
 	/* 2 motors for intake */
 	static final int leftMotorID = 5;
-	static final int rightMotorID = 6;
+	static final int rightMotorID = 8;
+	static final int cubeSwitchPort = 0;
 
 	private Talon leftTalon;
 	private Talon rightTalon;
+	private DigitalInput cubeSwitch;
 
 	public Intake() {
 
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
+		cubeSwitch = new DigitalInput(cubeSwitchPort);
 
 	}
 
@@ -33,4 +37,9 @@ public class Intake {
 		rightTalon.setPower(power);
 		
 	}
+	
+	public boolean hasCube() {
+		return cubeSwitch.get();
+	}
+
 }

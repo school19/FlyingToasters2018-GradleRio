@@ -1,9 +1,9 @@
 package commands.teleop;
 import java.util.EnumMap;
 import edu.wpi.first.wpilibj.Joystick;
+import utilities.Coords;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
-//i'm not sure what's going on here, but it works, so I won't touch it.
 public class PS4
 {
 	private EnumMap<Button, Boolean> current, last;
@@ -190,10 +190,10 @@ public class PS4
 		current.put(Button.DPAD_RIGHT, (rawJoystick.getPOV(0) == 90));
 		current.put(Button.DPAD_UP, (rawJoystick.getPOV(0) == 0));
 		current.put(Button.DPAD_DOWN, (rawJoystick.getPOV(0) == 180));
-//		
-//		leftMagnitude = Coords.rectToPolarRadius(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
-//		leftAngle = Coords.rectToPolarAngle(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
-//		rightMagnitude = Coords.rectToPolarRadius(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
-//		rightAngle = Coords.rectToPolarAngle(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
+		
+		leftMagnitude = Coords.rectToPolarRadius(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
+		leftAngle = Coords.rectToPolarAngle(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
+		rightMagnitude = Coords.rectToPolarRadius(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
+		rightAngle = Coords.rectToPolarAngle(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
 	}
 }
