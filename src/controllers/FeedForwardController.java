@@ -12,6 +12,7 @@ import utilities.Logging;
 public class FeedForwardController implements AbstractFeedbackController {
 	protected double kFeedForward = 0;
 	protected double setpoint;
+
 	/**
 	 * create a new feedforward controller with the proper gain
 	 * 
@@ -37,18 +38,12 @@ public class FeedForwardController implements AbstractFeedbackController {
 	}
 
 	@Override
-	/**
-	 * read the gains from a preferences file
-	 */
 	public void readFromPrefs(String name) {
 		// TODO add config reading
 
 	}
 
 	@Override
-	/**
-	 * returns the proper output based on the error
-	 */
 	public double run(double current, double deltaTime) {
 		double error = current - setpoint;
 		boolean sign = error > 0;
@@ -57,17 +52,15 @@ public class FeedForwardController implements AbstractFeedbackController {
 		else
 			return kFeedForward;
 	}
-	
+
 	@Override
 	/**
 	 * does literally nothing.
 	 */
-	public void reset(){}
+	public void reset() {
+	}
 
 	@Override
-	/**
-	 * log the current status of the controller
-	 */
 	public void logStatus() {
 		Logging.logMessage("FeedForward controller running with gain " + kFeedForward, Logging.Priority.LOW);
 	}

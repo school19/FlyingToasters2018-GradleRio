@@ -2,10 +2,17 @@ package controllers;
 
 import utilities.Logging;
 
+/**
+ * proportional feedback controller. Sets the output based on a feedforward term
+ * and a constant multiplied by the error.
+ * 
+ * @author jack
+ *
+ */
 public class ProportionalController extends FeedForwardController {
 
 	protected double kP;
-	
+
 	/**
 	 * create a proportional controller with the given gains
 	 * 

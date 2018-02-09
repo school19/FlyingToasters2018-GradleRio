@@ -12,7 +12,7 @@ import utilities.Logging;
  */
 
 // TODO add fancy class that does all the stuff the old PID did
-public class PIDcontroller extends ProportionalController implements AbstractFeedbackController{
+public class PIDcontroller extends ProportionalController implements AbstractFeedbackController {
 	private double kI, kD;
 	private boolean dOnMeasurement = false;
 	private double maxIntegral;
@@ -31,34 +31,76 @@ public class PIDcontroller extends ProportionalController implements AbstractFee
 	public PIDcontroller(double pGain, double iGain, double dGain) {
 		this(pGain, iGain, dGain, 0);
 	}
-	
+
+	/**
+	 * create a pid with no feedforward and an I limit
+	 * 
+	 * @param pGain
+	 * @param iGain
+	 * @param dGain
+	 * @param maxI
+	 * @param limitI
+	 *            whether to use an I limit. Probably should be true if you're using
+	 *            this constructor
+	 */
 	public PIDcontroller(double pGain, double iGain, double dGain, double maxI, boolean limitI) {
 		this(pGain, iGain, dGain, 0);
 		maxIntegral = maxI;
 		limitIntegral = limitI;
 	}
-	
+
+	/**
+	 * create a pid with no feedforward and an I limit and a feedforward gain
+	 * 
+	 * @param pGain
+	 * @param iGain
+	 * @param dGain
+	 * @param ffGain
+	 * @param maxI
+	 * @param limitI
+	 *            whether to use an I limit.
+	 */
 	public PIDcontroller(double pGain, double iGain, double dGain, double ffGain, double maxI, boolean limitI) {
 		this(pGain, iGain, dGain, ffGain);
 		maxIntegral = maxI;
 		limitIntegral = limitI;
 	}
-	
-	public void setILimit(double maxI){
+
+	/**
+	 * set the I limit
+	 * 
+	 * @param maxI
+	 *            the maximum output from the integral term
+	 */
+	public void setILimit(double maxI) {
 		maxIntegral = maxI;
 		limitIntegral = true;
 	}
-	
-	public void limitI(boolean limit){
+
+	/**
+	 * set whether to use the integral term limit
+	 * 
+	 * @param limit
+	 *            whether or not to limit it
+	 */
+	public void limitI(boolean limit) {
 		limitIntegral = limit;
 	}
-	
-	public void setDOnMeasurement(boolean onMeasurement){
+
+	/**
+	 * set whether to calculate the derivative term from the derivative of the error
+	 * or the derivative of the measurement.
+	 * 
+	 * @param onMeasurement
+	 *            set true to use the derivative of the measurement, set false for
+	 *            derivative of error.
+	 */
+	public void setDOnMeasurement(boolean onMeasurement) {
 		dOnMeasurement = onMeasurement;
 	}
-	
+
 	/**
-	 * create a PID controller
+	 * create a PID controller with feedforward
 	 * 
 	 * @param pGain
 	 * @param iGain
@@ -82,19 +124,18 @@ public class PIDcontroller extends ProportionalController implements AbstractFee
 			Logging.logMessage("Invalid number of parameters for PIDcontroller.setGains", Logging.Priority.ERROR);
 
 		} else {
-			if(gains.length == 4){
+			if (gains.length == 4) {
 				super.setGains(gains[0], gains[1]);
 				kI = gains[2];
 				kD = gains[3];
-			}else{
+			} else {
 				super.setGains(0, gains[0]);
 				kI = gains[1];
 				kD = gains[2];
 			}
 		}
 	}
-	
-	
+
 	@Override
 	/**
 	 * calculate the output of the PID loop
@@ -112,12 +153,12 @@ public class PIDcontroller extends ProportionalController implements AbstractFee
 				}
 			}
 		}
-		
+
 		double deltaError;
-		if(dOnMeasurement){
+		if (dOnMeasurement) {
 			// find the change in reading / time (dError / dT)
-			deltaError = (current- lastReading) / deltaTime;
-		}else{
+			deltaError = (current - lastReading) / deltaTime;
+		} else {
 			deltaError = (error - lastError) / deltaTime;
 		}
 
@@ -127,7 +168,7 @@ public class PIDcontroller extends ProportionalController implements AbstractFee
 		// calculate the integral + derivative parts
 		double integralValue = -integral * kI;
 		double derivativeValue = -deltaError * kD;
-		
+
 		// set the last error for next loop
 		lastReading = current;
 		lastError = error;

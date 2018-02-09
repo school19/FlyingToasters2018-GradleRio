@@ -3,17 +3,30 @@ package controllers.motion_profiles;
 import path_generation.*;
 import utilities.Logging;
 
-//wheel profile generator for robots with wheels on either side
+/**
+ * wheel profile generator for robots with wheels on either side
+ * 
+ * @author jack
+ *
+ */
 public class SkidsteerProfileGenerator extends WheelProfileGenerator {
-	// how far to the right the wheel is, negative for left
+	/**
+	 * how far to the right the wheel is, negative for left
+	 */
 	private double rightOffset;
 
-	// constructor
+	/**
+	 * constructor
+	 * 
+	 * @param rightOffset
+	 *            how far to the right the wheel is (negative for wheels on the
+	 *            left)
+	 * 
+	 */
 	public SkidsteerProfileGenerator(double rightOffset) {
 		this.rightOffset = rightOffset;
 	}
 
-	// generate the motion profile for the path
 	@Override
 	public Profile genPoints(Path p, boolean isBackwards) {
 		Profile outProfile = new Profile(p.waypoints.size());
@@ -54,6 +67,16 @@ public class SkidsteerProfileGenerator extends WheelProfileGenerator {
 		return outProfile;
 	}
 
+	/**
+	 * used to generate the position of a given point when offset to the positio of
+	 * the wheel.
+	 * 
+	 * @param wp
+	 *            the waypoint to offset
+	 * @param backwards
+	 *            whether the robot is moving backwards
+	 * @return the position of the offset point
+	 */
 	private Point getOffsetPoint(Waypoint wp, boolean backwards) {
 		if (backwards) {
 			return wp.position.sum(Point.PolarPoint(-rightOffset, 3 * Math.PI / 2 + wp.rotation));
