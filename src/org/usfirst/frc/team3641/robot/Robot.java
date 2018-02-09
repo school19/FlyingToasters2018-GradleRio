@@ -66,36 +66,36 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * The timestamp (in ??? units) of the last run of standardPeriodic or
 	 * standardFirstPeriodic if it is the first run of standardPeriodic.
 	 */
-	double lastTime;
+	private double lastTime;
 	/**
 	 * Stores the time since the last run of standardPeriodic or
 	 * standardFirstPeriodic.
 	 */
-	double deltaTime = 0;
+	private double deltaTime = 0;
 	/**
 	 * The timer is used to read the timestamp every time periodic/FirstPeriodic is
 	 * run.
 	 */
-	Timer timer;
+	private Timer timer;
 	/**
 	 * Boolean flag to determine whether to run periodic or firstPeriodic.
 	 * firstPeriodic is used because of inconsistent timing between init and
 	 * periodic that caused errors with feedback control (like PIDs/Motion profiles)
 	 */
-	boolean isFirstPeriodic;
+	private boolean isFirstPeriodic;
 
 	/**
 	 * The autonomous opMode that is run during autonomous. This and teleop should
 	 * probably be replaced with a single OpMode in the future, since the two should
 	 * never be used concurrently.
 	 */
-	OpMode autonomous;
+	private OpMode autonomous;
 	/**
 	 * The OopMode that is run during teleop. This and autonomous should probably be
 	 * replaced with a single OpMode in the future, since the two should never be
 	 * used concurrently.
 	 */
-	OpMode teleop;
+	private OpMode teleop;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -120,9 +120,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 
 	/**
 	 * Resets and starts the timer at 0. Not entirely necessary, but helpful for
-	 * debugging timing issues.
+	 * debugging timing issues. Will change lastTime to avoid negative deltaTime.
 	 */
-	public void resetTimer() {
+	private void resetTimer() {
+		lastTime -= timer.get();
 		timer.reset();
 		timer.start();
 	}
@@ -150,8 +151,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void autonomousInit() {
+		//call the standard initialization method
 		standardInit();
+		//get the selected auton
 		autoSelected = chooser.getSelected();
+		//call the constructor of the auton.
 		switch (autoSelected) {
 		case AUTO_LINE:
 			autonomous = new AutoLineAuton(this);
@@ -170,7 +174,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			Logging.e("Could not get auton from chooser");
 			break;
 		}
-		autonomous = new MotionProfileTest(this);
 	}
 
 	/**
@@ -241,7 +244,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	/**
 	 * This method is always called periodically in auton or teleop.
 	 */
-	public void standardPeriodic() {
+	private void standardPeriodic() {
 		double currentTime = timer.get();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
@@ -252,7 +255,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called to initialize auton or teleop. It sets
 	 * isFirstPeriodic to true and resets the timer.
 	 */
-	public void standardInit() {
+	private void standardInit() {
 		isFirstPeriodic = true;
 		resetTimer();
 	}
@@ -261,7 +264,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called on the first loop of periodic. It will set
 	 * lastTime and set isFirstPeriodic to false.
 	 */
-	public void standardFirstPeriodic() {
+	private void standardFirstPeriodic() {
 		lastTime = timer.get();
 		isFirstPeriodic = false;
 	}
