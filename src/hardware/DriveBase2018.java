@@ -11,6 +11,12 @@ import path_generation.Path;
 import path_generation.Waypoint;
 import utilities.Logging;
 
+/**
+ * The 2018 robot drivertrain.
+ * 
+ * @author jack
+ *
+ */
 public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
@@ -42,7 +48,7 @@ public class DriveBase2018 extends DriveBase {
 		public Talon getTalon() {
 			return new Talon(id);
 		}
-		
+
 		public Victor getVictor() {
 			return new Victor(id);
 		}
@@ -50,8 +56,10 @@ public class DriveBase2018 extends DriveBase {
 
 	public DriveBase2018() {
 		super();
-		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id, Motors.LEFT0.getVictor());
-		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id, Motors.RIGHT0.getVictor());
+		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id,
+				Motors.LEFT0.getVictor());
+		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id,
+				Motors.RIGHT0.getVictor());
 		right.setInverted(true);
 		left.setEncoderReversed(true);
 		// add the motor controllers to the list to be updated
@@ -68,7 +76,7 @@ public class DriveBase2018 extends DriveBase {
 		leftMotionProfile = new MotionProfile(leftMotionProfilePID, velGain, accelGain, leftProfileGen);
 		rightMotionProfile = new MotionProfile(rightMotionProfilePID, velGain, accelGain, rightProfileGen);
 	}
-	
+
 	public void update(double dT) {
 		super.update(dT);
 		SmartDashboard.putNumber("left position", left.getPosition());
@@ -123,10 +131,10 @@ public class DriveBase2018 extends DriveBase {
 	}
 
 	public void drivePath(Path p, boolean isBackwards) {
-		//reset motion profiles
+		// reset motion profiles
 		leftMotionProfile.reset();
 		rightMotionProfile.reset();
-		
+
 		// generate profiles
 		leftMotionProfile.generateProfileFromPath(p, isBackwards);
 		rightMotionProfile.generateProfileFromPath(p, isBackwards);
@@ -156,7 +164,7 @@ public class DriveBase2018 extends DriveBase {
 		Logging.l(path);
 		drivePath(path, isBackwards);
 	}
-	
+
 	public void driveFromTo(Waypoint from, Waypoint to, boolean isBackwards, double vel, double accel) {
 		// generate path then drive it
 		Path path = new Path(from, to);

@@ -9,7 +9,11 @@ import hardware.interfaces.DriveBase;
 import path_generation.Path;
 import path_generation.Waypoint;
 import utilities.Logging;
-
+/**
+ * The 2016 drivebase (Same as 2017)
+ * @author jack
+ *
+ */
 public class DriveBase2016 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
