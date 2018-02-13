@@ -61,7 +61,10 @@ public class Teleop extends OpMode {
 			robot.lift.trackToPos(Lift.Positions.SWITCH);
 		else if (ps4.isPressed(PS4.Button.DPAD_UP))
 			robot.lift.trackToPos(Lift.Positions.SCALE);
+		// update the lift
 		robot.lift.update();
+		// log data about the lift's position, velocity, and error to the smartdashboard
+		// to help tune PIDs
 		robot.lift.logToDashboard();
 	}
 

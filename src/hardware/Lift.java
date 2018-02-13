@@ -15,48 +15,81 @@ public class Lift {
 	/**
 	 * Id of the talon driving the lift motor
 	 */
-	static final int TALON_ID = 4;
+	static final int LIFT_TALON_ID = 9999;
 	/**
-	 * top sensor reading of the lift
+	 * Id of the talon driving the flip motor
 	 */
-	static final double TOP_POS = 1;
-	/**
-	 * bottom sensor reading of the lift
-	 */
-	static final double BOTTOM_POS = 0;
-
-	static final double kF = 0;
-	static final double kP = 0;
-	static final double kI = 0;
-	static final double kD = 0;
-	static final int vel = 1;
-	static final int accel = 1;
+	static final int FLIP_TALON_ID = 9999;
 
 	/**
-	 * The different positions to go to
+	 * The parameters used in initialization of the lift talon, like PID values
+	 * 
+	 * @author jack
+	 *
+	 */
+	private static class LiftTalonParams {
+		static final double kF = 0;
+		static final double kP = 0;
+		static final double kI = 0;
+		static final double kD = 0;
+		static final int vel = 1;
+		static final int accel = 1;
+	}
+
+	/**
+	 * The parameters used in initialization of the lift talon, like PID values
+	 * 
+	 * @author jack
+	 *
+	 */
+	private static class FlipTalonParams {
+		static final double kF = 0;
+		static final double kP = 0;
+		static final double kI = 0;
+		static final double kD = 0;
+		static final int vel = 1;
+		static final int accel = 1;
+
+		static final double startPos = 0;
+	}
+
+	/**
+	 * The minimum position at which the thing can flip at.
+	 */
+	static final double FLIP_MIN_POS = 0.7;
+
+	/**
+	 * The different positions to go to, in raw potentiometer values.
 	 * 
 	 * @author jack
 	 *
 	 */
 	public enum Positions {
-		GROUND(0), SWITCH(0.5), SCALE(1);
+		GROUND(0, 1), SWITCH(0.5, 0), SCALE(1, 1);
 
-		double pos;
+		double liftPos;
+		double flipPos;
 
-		Positions(double p) {
-			pos = p;
+		Positions(double lP, double fP) {
+			liftPos = lP;
+			flipPos = fP;
 		}
 	}
 
 	/**
 	 * The position that the lift will start at.
 	 */
-	private Positions startingPos = Positions.GROUND;
+	static final Positions startingPos = Positions.GROUND;
 
+	/**
+	 * The current position of the stuff
+	 */
+	private Positions currentPos;
 	/**
 	 * the motor which drives the lift
 	 */
 	private FeedbackTalon liftMotor;
+	private FeedbackTalon flipMotor;
 	/**
 	 * Whether the lift is active. If true, feedback loop is run, if false it's set
 	 * to 0 all the time.
@@ -67,8 +100,14 @@ public class Lift {
 	 * Constructor. creates a new lift object and initializes the motors
 	 */
 	public Lift() {
-		liftMotor = new FeedbackTalon(TALON_ID, FeedbackDevice.Analog);
-		liftMotor.setupMotionMagic(kF, kP, kI, kD, vel, accel);
+		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
+		liftMotor.setupMotionMagic(LiftTalonParams.kF, LiftTalonParams.kP, LiftTalonParams.kI, LiftTalonParams.kD,
+				LiftTalonParams.vel, LiftTalonParams.accel);
+
+		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
+		flipMotor.setupMotionMagic(FlipTalonParams.kF, FlipTalonParams.kP, FlipTalonParams.kI, FlipTalonParams.kD,
+				FlipTalonParams.vel, FlipTalonParams.accel);
+
 		trackToPos(startingPos);
 	}
 
@@ -90,17 +129,31 @@ public class Lift {
 	 *            The position to go to.
 	 */
 	public void trackToPos(Positions position) {
-		liftMotor.setSetpoint(position.pos);
+		currentPos = position;
+		liftMotor.setSetpoint(position.liftPos);
+		if (liftMotor.getRawPosition() > FLIP_MIN_POS) {
+			flipMotor.setSetpoint(position.flipPos);
+		} else {
+			flipMotor.setSetpoint(Positions.GROUND.flipPos);
+		}
 	}
 
 	/**
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
 	public void update() {
-		if (active)
+		if (active) {
 			liftMotor.runFeedback(0);
-		else
+			flipMotor.runFeedback(0);
+			if (liftMotor.getRawPosition() > FLIP_MIN_POS) {
+				flipMotor.setSetpoint(currentPos.flipPos);
+			} else {
+				flipMotor.setSetpoint(Positions.GROUND.flipPos);
+			}
+		} else {
 			liftMotor.setPower(0);
+			flipMotor.setPower(0);
+		}
 	}
 
 	/**
