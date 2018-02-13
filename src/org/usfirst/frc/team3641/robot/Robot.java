@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.DriveBase2018;
 import hardware.Intake;
+import hardware.Lift;
 import utilities.Logging;
 
 /**
@@ -60,7 +61,12 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * The robot's intake mechanism.
 	 */
 	public Intake intake;
-
+	
+	/**
+	 * The robot's lift mechanism
+	 */
+	public Lift lift;
+	
 	// TODO add units to documentation
 	/**
 	 * The timestamp (in ??? units) of the last run of standardPeriodic or
@@ -112,6 +118,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		// initialize drivebase
 		driveBase = new DriveBase2018();
 		intake = new Intake();
+		lift = new Lift();
 		// initialize timer
 		timer = new Timer();
 

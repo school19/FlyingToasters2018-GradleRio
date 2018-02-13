@@ -3,6 +3,7 @@ package commands.teleop;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
+import hardware.Lift;
 import utilities.Logging;
 
 /**
@@ -16,16 +17,18 @@ public class Teleop extends OpMode {
 	 * The PS4 controller the driver uses to control the robot
 	 */
 	private PS4 ps4;
-	
+
 	/**
 	 * Constructor
-	 * @param bot the Robot that's being controlled.
+	 * 
+	 * @param bot
+	 *            the Robot that's being controlled.
 	 */
 	public Teleop(Robot bot) {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
 	}
-	
+
 	/**
 	 * Called once when the opmode starts. Doesn't really do anything yet.
 	 */
@@ -33,8 +36,10 @@ public class Teleop extends OpMode {
 		super.init();
 		Logging.h("Starting teleop");
 	}
+
 	/**
-	 * Called periodically during teleop period. Reads user inputs from controllers and controls the robot.
+	 * Called periodically during teleop period. Reads user inputs from controllers
+	 * and controls the robot.
 	 */
 	public void periodic(double deltaTime) {
 		Logging.l("Teleop periodic run");
@@ -47,10 +52,19 @@ public class Teleop extends OpMode {
 		// log position
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
-		//set the power of the intake based on the user inputs.
-		robot.intake.setPower(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER)-ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
+		// set the power of the intake based on the user inputs.
+		robot.intake.setPower(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
+		// move the lift
+		if (ps4.isPressed(PS4.Button.DPAD_DOWN))
+			robot.lift.trackToPos(Lift.Positions.GROUND);
+		else if (ps4.isPressed(PS4.Button.DPAD_LEFT))
+			robot.lift.trackToPos(Lift.Positions.SWITCH);
+		else if (ps4.isPressed(PS4.Button.DPAD_UP))
+			robot.lift.trackToPos(Lift.Positions.SCALE);
+		robot.lift.update();
+		robot.lift.logToDashboard();
 	}
-	
+
 	/**
 	 * Called when the opmode is stopped.
 	 */

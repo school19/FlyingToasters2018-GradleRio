@@ -2,6 +2,8 @@ package hardware;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Class for the lift mechanism. Set P/I/D/F in talon firmware for now, code in
  * later once values are tuned.
@@ -47,9 +49,19 @@ public class Lift {
 	}
 
 	/**
+	 * The position that the lift will start at.
+	 */
+	private Positions startingPos = Positions.GROUND;
+
+	/**
 	 * the motor which drives the lift
 	 */
 	private FeedbackTalon liftMotor;
+	/**
+	 * Whether the lift is active. If true, feedback loop is run, if false it's set
+	 * to 0 all the time.
+	 */
+	private boolean active = false;
 
 	/**
 	 * Constructor. creates a new lift object and initializes the motors
@@ -57,6 +69,18 @@ public class Lift {
 	public Lift() {
 		liftMotor = new FeedbackTalon(TALON_ID, FeedbackDevice.Analog);
 		liftMotor.setupMotionMagic(kF, kP, kI, kD, vel, accel);
+		trackToPos(startingPos);
+	}
+
+	/**
+	 * Sets the lift to be active(runs feedback control stuff) or inactive (motor at
+	 * 0)
+	 * 
+	 * @param isActive
+	 *            whether to be active
+	 */
+	public void setActive(boolean isActive) {
+		active = isActive;
 	}
 
 	/**
@@ -67,5 +91,25 @@ public class Lift {
 	 */
 	public void trackToPos(Positions position) {
 		liftMotor.setSetpoint(position.pos);
+	}
+
+	/**
+	 * Runs the closed loop motion magic controller thingy on the lift
+	 */
+	public void update() {
+		if (active)
+			liftMotor.runFeedback(0);
+		else
+			liftMotor.setPower(0);
+	}
+
+	/**
+	 * Writes the current position, velocity, and closed loop error to the
+	 * dashboard.
+	 */
+	public void logToDashboard() {
+		SmartDashboard.putNumber("lift pos", liftMotor.getRawPosition());
+		SmartDashboard.putNumber("lift vel", liftMotor.getRawVelocity());
+		SmartDashboard.putNumber("lift closed loop error", liftMotor.getRawCLError());
 	}
 }

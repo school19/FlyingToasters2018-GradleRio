@@ -14,6 +14,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	private boolean feedbackActive = false;
 	private boolean isMotionMagicMode = false;
 	private double lastSetpoint = 0;
+
 	public FeedbackTalon(int talonID) {
 		super(talonID);
 	}
@@ -32,13 +33,21 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 		talon.configMotionAcceleration(rawAccel, 1000);
 		isMotionMagicMode = true;
 	}
-	
+
 	public void stopMotionMagic() {
 		isMotionMagicMode = false;
 	}
-	
+
 	public double getRawPosition() {
 		return talon.getSelectedSensorPosition(0);
+	}
+
+	public double getRawVelocity() {
+		return talon.getSelectedSensorVelocity(0);
+	}
+
+	public double getRawCLError() {
+		return talon.getClosedLoopError(0);
 	}
 
 	@Override
