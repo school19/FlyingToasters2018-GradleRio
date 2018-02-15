@@ -110,6 +110,7 @@ public class Lift {
 		readTuningValuesFromDashboard();
 		
 		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
+
 		liftMotor.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
 				liftParams.vel, liftParams.accel);
 
@@ -117,7 +118,7 @@ public class Lift {
 		flipMotor.setupMotionMagic(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD,
 				flipParams.vel, flipParams.accel);
 
-		trackToPos(startingPos);
+		//trackToPos(startingPos);
 	}
 
 	/**
