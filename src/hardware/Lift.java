@@ -101,14 +101,14 @@ public class Lift {
 	 */
 	public Lift() {
 		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
-		liftMotor.setupMotionMagic(LiftTalonParams.kF, LiftTalonParams.kP, LiftTalonParams.kI, LiftTalonParams.kD,
-				LiftTalonParams.vel, LiftTalonParams.accel);
+		//liftMotor.setupMotionMagic(LiftTalonParams.kF, LiftTalonParams.kP, LiftTalonParams.kI, LiftTalonParams.kD,
+		//		LiftTalonParams.vel, LiftTalonParams.accel);
 
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
-		flipMotor.setupMotionMagic(FlipTalonParams.kF, FlipTalonParams.kP, FlipTalonParams.kI, FlipTalonParams.kD,
-				FlipTalonParams.vel, FlipTalonParams.accel);
+		//flipMotor.setupMotionMagic(FlipTalonParams.kF, FlipTalonParams.kP, FlipTalonParams.kI, FlipTalonParams.kD,
+		//		FlipTalonParams.vel, FlipTalonParams.accel);
 
-		trackToPos(startingPos);
+		//trackToPos(startingPos);
 	}
 
 	/**

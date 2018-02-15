@@ -17,6 +17,7 @@ public class Teleop extends OpMode {
 	 * The PS4 controller the driver uses to control the robot
 	 */
 	private PS4 ps4;
+	private E3D e3d;
 
 	/**
 	 * Constructor
@@ -27,6 +28,7 @@ public class Teleop extends OpMode {
 	public Teleop(Robot bot) {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
+		e3d = new E3D(1);
 	}
 
 	/**
@@ -47,15 +49,19 @@ public class Teleop extends OpMode {
 		super.periodic(deltaTime);
 		// get input from ps4 controller
 		ps4.poll();
+		e3d.poll();
 		// drive the derivebase
 		robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
 		// log position
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
+		
 		// set the power of the intake based on the user inputs.
-		robot.intake.setPower(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
+		//robot.intake.setPower(ps4.getAxis(PS4.Axis.LEFT_TRIGGER) - ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
+		robot.intake.setPower(e3d.getAxis(E3D.Axis.Y));
+	
 		// move the lift
-		if (ps4.isPressed(PS4.Button.DPAD_DOWN))
+		/*if (ps4.isPressed(PS4.Button.DPAD_DOWN))
 			robot.lift.trackToPos(Lift.Positions.GROUND);
 		else if (ps4.isPressed(PS4.Button.DPAD_LEFT))
 			robot.lift.trackToPos(Lift.Positions.SWITCH);
@@ -65,7 +71,7 @@ public class Teleop extends OpMode {
 		robot.lift.update();
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
-		robot.lift.logToDashboard();
+		robot.lift.logToDashboard();*/
 	}
 
 	/**
