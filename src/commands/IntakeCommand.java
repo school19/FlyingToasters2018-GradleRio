@@ -61,8 +61,11 @@ public class IntakeCommand extends Command {
 	 * sensor, and sets the motor/ends the command appropriately.
 	 */
 	public void periodic(double deltaTime) {
-		bot.intake.perodic(deltaTime);
-		if(bot.intake.getState() == Intake.State.RESTING) stop();
+		// Check if the cube is gotten, and and the command if so.
+		Intake.State intakeState = bot.intake.getState();
+		if (intakeState == Intake.State.RESTING || intakeState == Intake.State.RESTING_WITH_CUBE) {
+			endCommand();
+		}
 	}
 
 	/**
@@ -70,6 +73,7 @@ public class IntakeCommand extends Command {
 	 */
 	public void stop() {
 		bot.intake.setPower(0);
-		super.stop();;
+		super.stop();
+		;
 	}
 }

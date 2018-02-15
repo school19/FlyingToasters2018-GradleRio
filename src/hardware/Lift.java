@@ -91,7 +91,7 @@ public class Lift {
 	 * Whether the lift is active. If true, feedback loop is run, if false it's set
 	 * to 0 all the time.
 	 */
-	private boolean active = false;
+	private boolean active = true;
 	
 	/**
 	 * Stores the parameters for the lift talon
@@ -149,7 +149,7 @@ public class Lift {
 	/**
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
-	public void update() {
+	public void periodic() {
 		if (active) {
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
@@ -192,7 +192,9 @@ public class Lift {
 		flipParams.accel = (int) SmartDashboard.getNumber("flip_vel", flipParams.accel);
 		
 	}
-	
+	/**
+	 * write PIDF values to the dashboard
+	 */
 	public void addTuningToDashboard() {
 		SmartDashboard.putNumber("lift_kp", liftParams.kP);
 		SmartDashboard.putNumber("lift_ki", liftParams.kI);

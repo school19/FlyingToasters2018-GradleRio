@@ -37,6 +37,7 @@ public class Teleop extends OpMode {
 	public void init() {
 		super.init();
 		Logging.h("Starting teleop");
+		robot.lift.readTuningValuesFromDashboard();
 	}
 
 	/**
@@ -63,7 +64,6 @@ public class Teleop extends OpMode {
 		else if(e3d.isReleased(3) && robot.intake.getState() == Intake.State.INTAKING) robot.intake.setState(Intake.State.RECOVERY); 
 		else if(e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING) robot.intake.setState(Intake.State.RESET); 
 		else if(robot.intake.getState() == Intake.State.RESTING) robot.intake.setPower(e3d.getAxis(E3D.Axis.Y));
-		robot.intake.perodic(deltaTime);
 	
 		// move the lift
 		/*if (ps4.isPressed(PS4.Button.DPAD_DOWN))

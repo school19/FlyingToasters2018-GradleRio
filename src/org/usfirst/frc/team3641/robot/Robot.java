@@ -274,6 +274,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * lastTime and set isFirstPeriodic to false.
 	 */
 	private void standardFirstPeriodic() {
+		intake.perodic(deltaTime);
+		lift.periodic();
 		lastTime = timer.get();
 		isFirstPeriodic = false;
 	}
