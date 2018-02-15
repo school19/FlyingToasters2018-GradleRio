@@ -24,8 +24,8 @@ public class DriveBase2018 extends DriveBase {
 	final static double velGain = 0.25;
 	final static double accelGain = 0.0;
 
-	private PIDcontroller leftMotionProfilePID = new PIDcontroller(8.4, 33.6, 0.525);
-	private PIDcontroller rightMotionProfilePID = new PIDcontroller(8.4, 33.6, 0.525);
+	private PIDcontroller leftMotionProfilePID = new PIDcontroller(8.4, 33.6, 0.25);
+	private PIDcontroller rightMotionProfilePID = new PIDcontroller(8.4, 33.6, 0.25);
 
 	private WheelProfileGenerator leftProfileGen;
 	private WheelProfileGenerator rightProfileGen;

@@ -2,6 +2,9 @@ package commands.autonomous;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import commands.IntakeCommand;
+import commands.MotionProfileCommand;
+import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import path_generation.Point;
@@ -26,12 +29,10 @@ public class SwitchAuton extends OpMode {
 	Waypoint start = new Waypoint(new Point(0, 0), 0);
 	Waypoint end;
 
+	MotionProfileCommand motionProfileCmd;
+
 	public SwitchAuton(Robot bot) {
 		super(bot, "Motion Profile Auton");
-	}
-
-	public void init() {
-		Logging.h("Init run!");
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
 		if (gameData.charAt(0) == 'L') {
@@ -39,8 +40,14 @@ public class SwitchAuton extends OpMode {
 		} else {
 			end = new Waypoint(new Point(switch_dist, switch_right), 0.0);
 		}
+		motionProfileCmd = new MotionProfileCommand(this, robot, "drive to switch", false, start, end);
+	}
+
+	public void init() {
+		Logging.h("Init run!");
+
 		super.init();
-		robot.driveBase.driveFromTo(start, end, false);
+		addCommand(motionProfileCmd);
 	}
 
 	public void periodic(double deltaTime) {
@@ -51,5 +58,14 @@ public class SwitchAuton extends OpMode {
 
 	public void stop() {
 		robot.driveBase.setFeedbackActive(false);
+	}
+
+	public void commandFinished(Command cmd) {
+		super.commandFinished(cmd);
+		//Add the intake command to output the cube.
+		//TODO set mode properly
+		if (cmd == motionProfileCmd) {
+			addCommand(new IntakeCommand(this, robot, mode));
+		}
 	}
 }
