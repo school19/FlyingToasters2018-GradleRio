@@ -15,8 +15,7 @@ import utilities.Logging;
  *
  */
 public class AutoLineAuton extends OpMode {
-	//private final static double dist_m = 2.5;
-	private final static double dist_m = 2;
+	private final static double dist_m = 2.5;
 
 	private Waypoint start = new Waypoint(new Point(0, 0), 0);
 	private Waypoint end = new Waypoint(new Point(dist_m, 0), 0);

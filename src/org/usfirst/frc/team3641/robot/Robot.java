@@ -114,7 +114,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		for (Auton a : Auton.values()) {
 			chooser.addObject(a.name, a);
 		}
+		chooser.addDefault(Auton.AUTO_LINE.name, Auton.AUTO_LINE);
 		SmartDashboard.putData("Auto choices", chooser);
+		
 		// initialize drivebase
 		driveBase = new DriveBase2018();
 		intake = new Intake();

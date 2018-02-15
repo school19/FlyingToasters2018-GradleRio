@@ -14,11 +14,11 @@ public class Lift {
 	/**
 	 * Id of the talon driving the lift motor
 	 */
-	static final int LIFT_TALON_ID = 9999;
+	static final int LIFT_TALON_ID = 9;
 	/**
 	 * Id of the talon driving the flip motor
 	 */
-	static final int FLIP_TALON_ID = 9999;
+	static final int FLIP_TALON_ID = 10;
 
 	/**
 	 * The parameters used in initialization of the lift talon, like PID values
@@ -48,8 +48,6 @@ public class Lift {
 		double kD = 0;
 		int vel = 1;
 		int accel = 1;
-
-		double startPos = 0;
 	}
 
 	/**
@@ -107,7 +105,7 @@ public class Lift {
 	 * Constructor. creates a new lift object and initializes the motors
 	 */
 	public Lift() {
-		readTuningValuesFromDashboard();
+		addTuningToDashboard();
 		
 		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 
@@ -193,5 +191,21 @@ public class Lift {
 		flipParams.vel = (int) SmartDashboard.getNumber("flip_accel", flipParams.vel);
 		flipParams.accel = (int) SmartDashboard.getNumber("flip_vel", flipParams.accel);
 		
+	}
+	
+	public void addTuningToDashboard() {
+		SmartDashboard.putNumber("lift_kp", liftParams.kP);
+		SmartDashboard.putNumber("lift_ki", liftParams.kI);
+		SmartDashboard.putNumber("lift_kd", liftParams.kD);
+		SmartDashboard.putNumber("lift_kf", liftParams.kF);
+		SmartDashboard.putNumber("lift_accel", liftParams.vel);
+		SmartDashboard.putNumber("lift_vel", liftParams.accel);
+		
+		SmartDashboard.putNumber("flip_kp", flipParams.kP);
+		SmartDashboard.putNumber("flip_ki", flipParams.kI);
+		SmartDashboard.putNumber("flip_kd", flipParams.kD);
+		SmartDashboard.putNumber("flip_kf", flipParams.kF);
+		SmartDashboard.putNumber("flip_accel", flipParams.vel);
+		SmartDashboard.putNumber("flip_vel", flipParams.accel);
 	}
 }
