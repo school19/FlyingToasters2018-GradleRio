@@ -5,8 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Class for the lift mechanism. Set P/I/D/F in talon firmware for now, code in
- * later once values are tuned.
+ * Class for the lift mechanism.
  * 
  * @author jack
  *
@@ -28,12 +27,12 @@ public class Lift {
 	 *
 	 */
 	private static class LiftTalonParams {
-		static final double kF = 0;
-		static final double kP = 0;
-		static final double kI = 0;
-		static final double kD = 0;
-		static final int vel = 1;
-		static final int accel = 1;
+		double kF = 0;
+		double kP = 0;
+		double kI = 0;
+		double kD = 0;
+		int vel = 1;
+		int accel = 1;
 	}
 
 	/**
@@ -42,15 +41,15 @@ public class Lift {
 	 * @author jack
 	 *
 	 */
-	private static class FlipTalonParams {
-		static final double kF = 0;
-		static final double kP = 0;
-		static final double kI = 0;
-		static final double kD = 0;
-		static final int vel = 1;
-		static final int accel = 1;
+	private class FlipTalonParams {
+		double kF = 0;
+		double kP = 0;
+		double kI = 0;
+		double kD = 0;
+		int vel = 1;
+		int accel = 1;
 
-		static final double startPos = 0;
+		double startPos = 0;
 	}
 
 	/**
@@ -95,18 +94,28 @@ public class Lift {
 	 * to 0 all the time.
 	 */
 	private boolean active = false;
-
+	
+	/**
+	 * Stores the parameters for the lift talon
+	 */
+	LiftTalonParams liftParams = new LiftTalonParams();
+	/**
+	 * Stores the parameters for the flip talon
+	 */
+	FlipTalonParams flipParams = new FlipTalonParams();
 	/**
 	 * Constructor. creates a new lift object and initializes the motors
 	 */
 	public Lift() {
+		readTuningValuesFromDashboard();
+		
 		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
-		liftMotor.setupMotionMagic(LiftTalonParams.kF, LiftTalonParams.kP, LiftTalonParams.kI, LiftTalonParams.kD,
-				LiftTalonParams.vel, LiftTalonParams.accel);
+		liftMotor.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
+				liftParams.vel, liftParams.accel);
 
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
-		flipMotor.setupMotionMagic(FlipTalonParams.kF, FlipTalonParams.kP, FlipTalonParams.kI, FlipTalonParams.kD,
-				FlipTalonParams.vel, FlipTalonParams.accel);
+		flipMotor.setupMotionMagic(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD,
+				flipParams.vel, flipParams.accel);
 
 		trackToPos(startingPos);
 	}
@@ -164,5 +173,24 @@ public class Lift {
 		SmartDashboard.putNumber("lift pos", liftMotor.getRawPosition());
 		SmartDashboard.putNumber("lift vel", liftMotor.getRawVelocity());
 		SmartDashboard.putNumber("lift closed loop error", liftMotor.getRawCLError());
+	}
+	/**
+	 * Read PIDF values from the dashboard
+	 */
+	public void readTuningValuesFromDashboard() {
+		liftParams.kP = SmartDashboard.getNumber("lift_kp", liftParams.kP);
+		liftParams.kI = SmartDashboard.getNumber("lift_ki", liftParams.kI);
+		liftParams.kD = SmartDashboard.getNumber("lift_kd", liftParams.kD);
+		liftParams.kF = SmartDashboard.getNumber("lift_kf", liftParams.kF);
+		liftParams.vel = (int) SmartDashboard.getNumber("lift_accel", liftParams.vel);
+		liftParams.accel = (int) SmartDashboard.getNumber("lift_vel", liftParams.accel);
+		
+		flipParams.kP = SmartDashboard.getNumber("flip_kp", flipParams.kP);
+		flipParams.kI = SmartDashboard.getNumber("flip_ki", flipParams.kI);
+		flipParams.kD = SmartDashboard.getNumber("flip_kd", flipParams.kD);
+		flipParams.kF = SmartDashboard.getNumber("flip_kf", flipParams.kF);
+		flipParams.vel = (int) SmartDashboard.getNumber("flip_accel", flipParams.vel);
+		flipParams.accel = (int) SmartDashboard.getNumber("flip_vel", flipParams.accel);
+		
 	}
 }
