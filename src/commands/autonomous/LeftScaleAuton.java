@@ -16,8 +16,8 @@ import utilities.Logging;
 public class LeftScaleAuton extends OpMode {
 	
 	private Waypoint start = new Waypoint(new Point(0,0),0);
-	private Waypoint mid = new Waypoint(new Point(6,0.2), 0);
-	private Waypoint end = new Waypoint(new Point(7.5,-0.5), -Math.PI / 2.0);
+	private Waypoint mid = new Waypoint(new Point(5.5,0), 0);
+	private Waypoint end = new Waypoint(new Point(7,-0.5), -Math.PI / 4.0);
 	
 	/**
 	 * constructor for the left scale plate auton.

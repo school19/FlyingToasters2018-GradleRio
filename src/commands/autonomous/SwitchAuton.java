@@ -65,7 +65,7 @@ public class SwitchAuton extends OpMode {
 		//Add the intake command to output the cube.
 		//TODO set mode properly
 		if (cmd == motionProfileCmd) {
-			addCommand(new IntakeCommand(this, robot, mode));
+			//addCommand(new IntakeCommand(this, robot, mode));
 		}
 	}
 }
