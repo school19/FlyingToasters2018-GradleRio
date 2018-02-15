@@ -7,6 +7,7 @@ import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
+import hardware.Intake;
 import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
@@ -65,7 +66,7 @@ public class SwitchAuton extends OpMode {
 		//Add the intake command to output the cube.
 		//TODO set mode properly
 		if (cmd == motionProfileCmd) {
-			addCommand(new IntakeCommand(this, robot, mode));
+			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
 		}
 	}
 }

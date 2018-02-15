@@ -3,7 +3,7 @@ package commands.teleop;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
-import hardware.Lift;
+import hardware.Intake;
 import utilities.Logging;
 
 /**
@@ -57,8 +57,13 @@ public class Teleop extends OpMode {
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 		
 		// set the power of the intake based on the user inputs.
-		//robot.intake.setPower(ps4.getAxis(PS4.Axis.LEFT_TRIGGER) - ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
-		robot.intake.setPower(e3d.getAxis(E3D.Axis.Y));
+		
+		if(e3d.isPressed(3)) robot.intake.setState(Intake.State.INTAKING);
+		else if(e3d.isPressed(4)) robot.intake.setState(Intake.State.OUTPUTTING);
+		else if(e3d.isReleased(3) && robot.intake.getState() == Intake.State.INTAKING) robot.intake.setState(Intake.State.RECOVERY); 
+		else if(e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING) robot.intake.setState(Intake.State.RESET); 
+		else if(robot.intake.getState() == Intake.State.RESTING) robot.intake.setPower(e3d.getAxis(E3D.Axis.Y));
+		robot.intake.perodic(deltaTime);
 	
 		// move the lift
 		/*if (ps4.isPressed(PS4.Button.DPAD_DOWN))
