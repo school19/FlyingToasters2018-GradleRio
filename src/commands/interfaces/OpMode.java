@@ -14,7 +14,7 @@ public abstract class OpMode extends Command implements CommandCallback {
 	/**
 	 * A list of running commands. On periodic, all commands are updated.
 	 */
-	private ArrayList<Command> commands;
+	protected ArrayList<Command> commands;
 	/**
 	 * The robot that the command is running on.
 	 */
