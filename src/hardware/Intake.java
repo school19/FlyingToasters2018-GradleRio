@@ -12,8 +12,8 @@ import utilities.Logging;
 public class Intake {
 
 	/* 2 motors for intake */
-	static final int leftMotorID = 5;
-	static final int rightMotorID = 8;
+	static final int leftMotorID = 6;
+	static final int rightMotorID = 9;
 	static final int cubeSwitchPort = 0;
 
 	private Talon leftTalon;
