@@ -88,7 +88,11 @@ public class Waypoint {
 		}
 		return rotation;
 	}
-
+	
+	public Waypoint backwards() {
+		return new Waypoint(this.position, this.rotation + Math.PI);
+	}
+	
 	/**
 	 * 
 	 * @return the position of the point

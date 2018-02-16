@@ -91,7 +91,9 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		feedbackController.setSetpoint(setpoint);
+		if (feedbackController != null) {
+			feedbackController.setSetpoint(setpoint);
+		}
 		lastSetpoint = setpoint;
 	}
 

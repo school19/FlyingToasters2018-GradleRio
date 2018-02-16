@@ -57,7 +57,8 @@ public abstract class OpMode extends Command implements CommandCallback {
 	 * called periodically during teleop/autonomous periodic.
 	 */
 	public void periodic(double deltaTime) {
-		for (Command cmd : commands) {
+		Command[] cmdArray = commands.toArray(new Command[commands.size()]);
+		for (Command cmd : cmdArray) {
 			cmd.periodic(deltaTime);
 		}
 	}
@@ -68,6 +69,7 @@ public abstract class OpMode extends Command implements CommandCallback {
 	public void stop() {
 		for (Command cmd : commands) {
 			cmd.stop();
+			commands.remove(cmd);
 		}
 	}
 

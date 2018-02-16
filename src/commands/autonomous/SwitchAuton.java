@@ -22,7 +22,7 @@ import utilities.Logging;
  */
 public class SwitchAuton extends OpMode {
 	// meters from wall to switch
-	final static double switch_dist = 2.5;
+	final static double switch_dist = 2.7;
 
 	final static double switch_left = 2.0;
 	final static double switch_right = -1.0;
@@ -53,7 +53,7 @@ public class SwitchAuton extends OpMode {
 
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
-		Logging.h("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
+		Logging.l("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
 				+ robot.driveBase.right.getPosition());
 	}
 
@@ -62,11 +62,10 @@ public class SwitchAuton extends OpMode {
 	}
 
 	public void commandFinished(Command cmd) {
-		super.commandFinished(cmd);
 		//Add the intake command to output the cube.
-		//TODO set mode properly
 		if (cmd == motionProfileCmd) {
 			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
 		}
+		super.commandFinished(cmd);
 	}
 }

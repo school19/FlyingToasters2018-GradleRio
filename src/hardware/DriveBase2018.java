@@ -20,13 +20,14 @@ import utilities.Logging;
 public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
-
+	
+	final static double wheelDistance = 0.73;
+	
 	final static double velGain = 0.25;
-	final static double accelGain = 0.0;
+	final static double accelGain = 0.005;
 
-	private PIDcontroller leftMotionProfilePID = new PIDcontroller(10, 25, 0.25);
-	private PIDcontroller rightMotionProfilePID = new PIDcontroller(10, 25, 0.25);
-
+	private PIDcontroller leftMotionProfilePID = new PIDcontroller(8.5, 20, 0.375);
+	private PIDcontroller rightMotionProfilePID = new PIDcontroller(8.5, 20, 0.375);
 	private WheelProfileGenerator leftProfileGen;
 	private WheelProfileGenerator rightProfileGen;
 
@@ -67,8 +68,8 @@ public class DriveBase2018 extends DriveBase {
 		registerMotorController(right);
 
 		// TODO set offsets appropriately
-		leftProfileGen = new SkidsteerProfileGenerator(-0.35);
-		rightProfileGen = new SkidsteerProfileGenerator(0.35);
+		leftProfileGen = new SkidsteerProfileGenerator(-wheelDistance / 2);
+		rightProfileGen = new SkidsteerProfileGenerator(wheelDistance / 2);
 
 		leftMotionProfilePID.setDOnMeasurement(false);
 		rightMotionProfilePID.setDOnMeasurement(false);

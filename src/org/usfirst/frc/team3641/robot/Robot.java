@@ -30,8 +30,12 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 *
 	 */
 	enum Auton {
-		AUTO_LINE("Auto Line auton"), AUTO_SWITCH("Switch auton"), AUTO_SCALE_L("Left Scale auton"), AUTO_SCALE_R(
-				"Right Scale auton"), AUTO_MP_TEST("Motion profile test auton"), AUTO_TEST("Test Auton");
+		AUTO_LINE("Auto Line auton"), 
+		AUTO_SWITCH("Switch auton"), 
+		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
+		AUTO_SCALE_R("(Reverse) Right Scale auton"),
+		AUTO_MP_TEST("Motion profile test auton"),
+		AUTO_TEST("Test Auton");
 		/**
 		 * The name of the auton to display on the dashboard
 		 */
@@ -164,6 +168,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		standardInit();
 		//get the selected auton
 		autoSelected = chooser.getSelected();
+		Logging.h(autoSelected.name + "selected");
+		intake.setState(Intake.State.RESTING_WITH_CUBE);
 		//call the constructor of the auton.
 		switch (autoSelected) {
 		case AUTO_LINE:
@@ -258,6 +264,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		driveBase.update(deltaTime);
+		intake.perodic(deltaTime);
+		lift.periodic();
+
 	}
 
 	/**
@@ -274,8 +283,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * lastTime and set isFirstPeriodic to false.
 	 */
 	private void standardFirstPeriodic() {
-		intake.perodic(deltaTime);
-		lift.periodic();
 		lastTime = timer.get();
 		isFirstPeriodic = false;
 	}

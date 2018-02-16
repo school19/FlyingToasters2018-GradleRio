@@ -56,7 +56,7 @@ public class MotionProfileTest extends OpMode {
 
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
-		Logging.h("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
+		Logging.l("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
 				+ robot.driveBase.right.getPosition());
 	}
 
