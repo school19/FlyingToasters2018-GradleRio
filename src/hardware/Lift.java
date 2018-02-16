@@ -93,7 +93,7 @@ public class Lift {
 	 * to 0 all the time.
 	 */
 	private boolean active = true;
-	
+
 	/**
 	 * Stores the parameters for the lift talon
 	 */
@@ -102,24 +102,31 @@ public class Lift {
 	 * Stores the parameters for the flip talon
 	 */
 	FlipTalonParams flipParams = new FlipTalonParams();
+
 	/**
 	 * Constructor. creates a new lift object and initializes the motors
 	 */
 	public Lift() {
 		addTuningToDashboard();
-		
+
 		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
-		
-		liftMotor.feedbackTalon.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
-				liftParams.vel, liftParams.accel);
 
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
-		flipMotor.setupMotionMagic(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD,
-				flipParams.vel, flipParams.accel);
 
-		//trackToPos(startingPos);
+		// trackToPos(startingPos);
+		// setupMotionMagic();
+	}
+
+	/**
+	 * sets up motion magic on motor controllers
+	 */
+	private void setupMotionMagic() {
+		flipMotor.setupMotionMagic(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD, flipParams.vel,
+				flipParams.accel);
+		liftMotor.feedbackTalon.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
+				liftParams.vel, liftParams.accel);
 	}
 
 	/**
@@ -131,6 +138,19 @@ public class Lift {
 	 */
 	public void setActive(boolean isActive) {
 		active = isActive;
+	}
+
+	/**
+	 * Drive the lift with no feedback control.
+	 * 
+	 * @param liftPow
+	 *            the raw power to the lift
+	 * @param flipPow
+	 *            the raw power to the flipper
+	 */
+	public void driveNoFeedback(double liftPow, double flipPow) {
+		liftMotor.setPower(liftPow);
+		flipMotor.setPower(flipPow);
 	}
 
 	/**
@@ -162,8 +182,7 @@ public class Lift {
 				flipMotor.setSetpoint(Positions.GROUND.flipPos);
 			}
 		} else {
-			liftMotor.setPower(0);
-			flipMotor.setPower(0);
+			// nothing...
 		}
 	}
 
@@ -176,6 +195,7 @@ public class Lift {
 		SmartDashboard.putNumber("lift vel", liftMotor.feedbackTalon.getRawVelocity());
 		SmartDashboard.putNumber("lift closed loop error", liftMotor.feedbackTalon.getRawCLError());
 	}
+
 	/**
 	 * Read PIDF values from the dashboard
 	 */
@@ -186,15 +206,16 @@ public class Lift {
 		liftParams.kF = SmartDashboard.getNumber("lift_kf", liftParams.kF);
 		liftParams.vel = (int) SmartDashboard.getNumber("lift_accel", liftParams.vel);
 		liftParams.accel = (int) SmartDashboard.getNumber("lift_vel", liftParams.accel);
-		
+
 		flipParams.kP = SmartDashboard.getNumber("flip_kp", flipParams.kP);
 		flipParams.kI = SmartDashboard.getNumber("flip_ki", flipParams.kI);
 		flipParams.kD = SmartDashboard.getNumber("flip_kd", flipParams.kD);
 		flipParams.kF = SmartDashboard.getNumber("flip_kf", flipParams.kF);
 		flipParams.vel = (int) SmartDashboard.getNumber("flip_accel", flipParams.vel);
 		flipParams.accel = (int) SmartDashboard.getNumber("flip_vel", flipParams.accel);
-		
+
 	}
+
 	/**
 	 * write PIDF values to the dashboard
 	 */
@@ -205,7 +226,7 @@ public class Lift {
 		SmartDashboard.putNumber("lift_kf", liftParams.kF);
 		SmartDashboard.putNumber("lift_accel", liftParams.vel);
 		SmartDashboard.putNumber("lift_vel", liftParams.accel);
-		
+
 		SmartDashboard.putNumber("flip_kp", flipParams.kP);
 		SmartDashboard.putNumber("flip_ki", flipParams.kI);
 		SmartDashboard.putNumber("flip_kd", flipParams.kD);
