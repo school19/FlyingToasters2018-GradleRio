@@ -15,6 +15,7 @@ public class Lift {
 	 * Id of the talon driving the lift motor
 	 */
 	static final int LIFT_TALON_ID = 9;
+	static final int LIFT_FOLLOWER_ID = 6;
 	/**
 	 * Id of the talon driving the flip motor
 	 */
@@ -85,7 +86,7 @@ public class Lift {
 	/**
 	 * the motor which drives the lift
 	 */
-	private FeedbackTalon liftMotor;
+	private FeedbackLinkedCAN liftMotor;
 	private FeedbackTalon flipMotor;
 	/**
 	 * Whether the lift is active. If true, feedback loop is run, if false it's set
@@ -107,9 +108,11 @@ public class Lift {
 	public Lift() {
 		addTuningToDashboard();
 		
-		liftMotor = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
-
-		liftMotor.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
+		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
+		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
+		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
+		
+		liftMotor.feedbackTalon.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
 				liftParams.vel, liftParams.accel);
 
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
@@ -139,7 +142,7 @@ public class Lift {
 	public void trackToPos(Positions position) {
 		currentPos = position;
 		liftMotor.setSetpoint(position.liftPos);
-		if (liftMotor.getRawPosition() > FLIP_MIN_POS) {
+		if (liftMotor.feedbackTalon.getRawPosition() > FLIP_MIN_POS) {
 			flipMotor.setSetpoint(position.flipPos);
 		} else {
 			flipMotor.setSetpoint(Positions.GROUND.flipPos);
@@ -153,7 +156,7 @@ public class Lift {
 		if (active) {
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
-			if (liftMotor.getRawPosition() > FLIP_MIN_POS) {
+			if (liftMotor.feedbackTalon.getRawPosition() > FLIP_MIN_POS) {
 				flipMotor.setSetpoint(currentPos.flipPos);
 			} else {
 				flipMotor.setSetpoint(Positions.GROUND.flipPos);
@@ -169,9 +172,9 @@ public class Lift {
 	 * dashboard.
 	 */
 	public void logToDashboard() {
-		SmartDashboard.putNumber("lift pos", liftMotor.getRawPosition());
-		SmartDashboard.putNumber("lift vel", liftMotor.getRawVelocity());
-		SmartDashboard.putNumber("lift closed loop error", liftMotor.getRawCLError());
+		SmartDashboard.putNumber("lift pos", liftMotor.feedbackTalon.getRawPosition());
+		SmartDashboard.putNumber("lift vel", liftMotor.feedbackTalon.getRawVelocity());
+		SmartDashboard.putNumber("lift closed loop error", liftMotor.feedbackTalon.getRawCLError());
 	}
 	/**
 	 * Read PIDF values from the dashboard

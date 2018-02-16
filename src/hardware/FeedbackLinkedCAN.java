@@ -14,7 +14,7 @@ import utilities.Logging;
  *
  */
 public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements FeedbackMotorController {
-	private FeedbackTalon feedbackTalon;
+	public FeedbackTalon feedbackTalon;
 	private AbstractFeedbackController feedbackController;
 	private boolean feedbackActive = false;
 	/**
