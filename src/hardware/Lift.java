@@ -14,12 +14,12 @@ public class Lift {
 	/**
 	 * Id of the talon driving the lift motor
 	 */
-	static final int LIFT_TALON_ID = 9;
-	static final int LIFT_FOLLOWER_ID = 6;
+	static final int LIFT_TALON_ID = 8;
+	static final int LIFT_FOLLOWER_ID = 5;
 	/**
 	 * Id of the talon driving the flip motor
 	 */
-	static final int FLIP_TALON_ID = 10;
+	static final int FLIP_TALON_ID = 7;
 
 	/**
 	 * The parameters used in initialization of the lift talon, like PID values
@@ -111,8 +111,9 @@ public class Lift {
 
 		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
+		liftFollowerTalon.talon.setInverted(true);
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
-
+	
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
 
 		// trackToPos(startingPos);

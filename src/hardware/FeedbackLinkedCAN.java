@@ -102,7 +102,7 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 			double output = feedbackController.run(getPosition(), deltaTime);
 			setPower(output);
 		}else{
-			Logging.w("runFeedback run with feedback inactive");
+			Logging.l("runFeedback run with feedback inactive");
 		}
 	}
 	

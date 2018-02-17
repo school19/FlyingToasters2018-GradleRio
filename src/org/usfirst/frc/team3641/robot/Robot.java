@@ -182,7 +182,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			autonomous = new LeftScaleAuton(this);
 			break;
 		case AUTO_SCALE_R:
-			autonomous = new TestAuton(this, "Auto scale right not done yet");
+			autonomous = new RightScaleAuton(this);
 			break;
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");

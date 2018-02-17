@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import hardware.interfaces.CANMotorController;
 
 public class Talon implements CANMotorController {
-	protected TalonSRX talon;
+	public TalonSRX talon;
 	protected boolean isReversed = false;
 	protected double currentPower;
 	public Talon(int talonID) {

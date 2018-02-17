@@ -23,10 +23,11 @@ public class Intake {
 	
 	private State currentState = State.RESTING;
 	private double time;
-	private final double timeWithoutCube = .25;
+	private final double timeWithoutCube = .5;
 	private final double maxRecoveryTime = 1;
 	
-	private final double defaultSpeed = 0.75;
+	private final double defaultInSpeed = 0.75;
+	private final double defaultOutSpeed = 0.3456;
 	
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY,
@@ -35,6 +36,8 @@ public class Intake {
 	public Intake() {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
+		leftTalon.setInverted(true);
+		rightTalon.setInverted(true);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
 	}
 
@@ -45,7 +48,7 @@ public class Intake {
 	 *            assigned to the motor
 	 */
 	public void setPower(double power) {
-		leftTalon.setPower(-power);
+		leftTalon.setPower(power);
 		rightTalon.setPower(power);
 		
 	}
@@ -57,11 +60,11 @@ public class Intake {
 			time += deltaTime;
 			if(time >= maxRecoveryTime) setState(State.RESET);
 		case INTAKING:
-			setPower(-defaultSpeed);
+			setPower(-defaultInSpeed);
 			if (hasCube()) setState(State.HAS_CUBE);
 			break;
 		case OUTPUTTING:
-			setPower(defaultSpeed);
+			setPower(defaultOutSpeed);
 			if (hasCube()) time = 0;
 			else time += deltaTime;
 			if (time >= timeWithoutCube) setState(State.RESET);

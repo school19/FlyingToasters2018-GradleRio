@@ -20,15 +20,15 @@ import utilities.Logging;
  *
  */
 public class RightScaleAuton extends OpMode {
-	private Waypoint[] rightPath_ = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
+	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
 			new Waypoint(new Point(7.2, 0.7), Math.PI / 4.0) };
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, -0.2), 0),
 			new Waypoint(new Point(5.65, 1.5), Math.PI / 2.0), new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0) };
-	private Waypoint[] leftPath2 = { new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
+	private Waypoint[] leftPath2 = { new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0),
 			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(7, 6.0), -Math.PI / 4) };
 
 	private MotionProfileCommand mpCommand;
-	private MotionProfileCommand rightMpCommand2;
+	private MotionProfileCommand leftMpCommand2;
 	private boolean left;
 
 	/**
@@ -42,11 +42,11 @@ public class RightScaleAuton extends OpMode {
 		Logging.h(gameData);
 		if (gameData.charAt(1) == 'L') {
 			left = true;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, rightPath_);
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, leftPath);
+			leftMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, leftPath2);
 		} else {
 			left = false;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, leftPath);
-			rightMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, leftPath2);
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, rightPath);
 		}
 
 	}
@@ -78,12 +78,12 @@ public class RightScaleAuton extends OpMode {
 	public void commandFinished(Command cmd) {
 		// Add the intake command to output the cube.
 		if (cmd == mpCommand) {
-			if (!left) {
-				addCommand(rightMpCommand2);
+			if (left) {
+				addCommand(leftMpCommand2);
 			} else {
 				addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
 			}
-		} else if (cmd == rightMpCommand2) {
+		} else if (cmd == leftMpCommand2) {
 			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
 		}
 		super.commandFinished(cmd);

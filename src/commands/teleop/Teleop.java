@@ -3,8 +3,10 @@ package commands.teleop;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
 import utilities.Logging;
+import hardware.Lift;
 
 /**
  * Teleop class for human-operated control.
@@ -67,24 +69,26 @@ public class Teleop extends OpMode {
 			robot.intake.setState(Intake.State.RECOVERY);
 		else if (e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING)
 			robot.intake.setState(Intake.State.RESET);
-		else if (robot.intake.getState() == Intake.State.RESTING)
-			robot.intake.setPower(e3d.getAxis(E3D.Axis.Y));
+//		else if (robot.intake.getState() == Intake.State.RESTING)
+//			robot.intake.setPower(e3d.getAxis(E3D.AxisX));
 
 		// move the lift
-		/*
-		 * if (ps4.isPressed(PS4.Button.DPAD_DOWN))
-		 * robot.lift.trackToPos(Lift.Positions.GROUND); else if
-		 * (ps4.isPressed(PS4.Button.DPAD_LEFT))
-		 * robot.lift.trackToPos(Lift.Positions.SWITCH); else if
-		 * (ps4.isPressed(PS4.Button.DPAD_UP))
-		 * robot.lift.trackToPos(Lift.Positions.SCALE); // update the lift
-		 * robot.lift.update(); // log data about the lift's position, velocity, and
-		 * error to the smartdashboard // to help tune PIDs robot.lift.logToDashboard();
-		 */
-		//Temporary manual lift control code
-		//TODO remove temporary lift control code.
-		double liftPower = e3d.getAxis(E3D.Axis.Y);
-		double flipPower = e3d.getAxis(E3D.Axis.Z);
+
+//		if (ps4.isPressed(PS4.Button.DPAD_DOWN))
+//			robot.lift.trackToPos(Lift.Positions.GROUND);
+//		else if (ps4.isPressed(PS4.Button.DPAD_LEFT))
+//			robot.lift.trackToPos(Lift.Positions.SWITCH);
+//		else if (ps4.isPressed(PS4.Button.DPAD_UP))
+//			robot.lift.trackToPos(Lift.Positions.SCALE); // update the lift
+//		// log data about the lift's position, velocity, and error to the smartdashboard
+//		// to help tune PIDs 
+//		robot.lift.logToDashboard();
+
+		// Temporary manual lift control code
+		// TODO remove temporary lift control code.
+		double liftPower = -e3d.getAxis(E3D.Axis.Y);
+		double flipPower = 0.6 * e3d.getAxis(E3D.Axis.Z);
+		SmartDashboard.putNumber("Lift power", liftPower);
 		robot.lift.driveNoFeedback(liftPower, flipPower);
 	}
 
