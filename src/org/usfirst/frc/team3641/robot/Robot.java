@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		AUTO_SWITCH("Switch auton"), 
 		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
 		AUTO_SCALE_R("(Reverse) Right Scale auton"),
-		AUTO_MP_TEST("Motion profile test auton"),
+		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
 		AUTO_TEST("Test Auton");
 		/**
 		 * The name of the auton to display on the dashboard
@@ -183,6 +183,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			break;
 		case AUTO_SCALE_R:
 			autonomous = new RightScaleAuton(this);
+			break;
+		case AUTO_2C_SCALE_L:
+			autonomous = new LeftScaleAuton2Cube(this);
 			break;
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
