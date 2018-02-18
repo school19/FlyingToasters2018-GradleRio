@@ -18,17 +18,24 @@ import utilities.Logging;
  */
 public class MotionProfileCommand extends Command {
 	/**
-	 * Speed settings for motion profiles. Slow, med, and fast use a relatively high
-	 * acceleration, while the settings with _low_accel have a low acceleration.
-	 * Lightspeed is the fastest the robot can travel in a straight line. Do not
-	 * attempt to turn when using lighspeed. Do not attempt ludicrous speed.
+	 * If set to true, all commands will use the SAFE speed. BE SURE TO SET TO FALSE
+	 * BEFORE COMPETITION!
+	 */
+	final static boolean SAFE_SPEED_OVERRIDE = true;
+
+	/**
+	 * Speed settings for motion profiles. Safe is very slow and should be used for
+	 * testing. Slow, med, and fast use a relatively high acceleration, while the
+	 * settings with _low_accel have a low acceleration. Lightspeed is the fastest
+	 * the robot can travel in a straight line. Do not attempt to turn when using
+	 * lighspeed. Do not attempt ludicrous speed.
 	 * 
 	 * @author jack
 	 *
 	 */
 	public enum Speed {
-		SLOW(1, 3), MED(2, 3), FAST(3.5, 3.5), LIGHTSPEED(4, 4), LUDICROUS_SPEED(10, 10), SLOW_LOW_ACCEL(1,
-				1), MED_LOW_ACCEL(2, 1.5), FAST_LOW_ACCEL(3.5, 1.5);
+		SAFE(0.5, 1), SLOW(1, 3), MED(2, 3), FAST(3.5, 3.5), LIGHTSPEED(4, 4), LUDICROUS_SPEED(10,
+				10), SLOW_LOW_ACCEL(1, 1), MED_LOW_ACCEL(2, 1.5), FAST_LOW_ACCEL(3.5, 1.5);
 
 		double vel, accel;
 
@@ -93,7 +100,11 @@ public class MotionProfileCommand extends Command {
 		backwards = isBackwards;
 		bot = robot;
 		// generate path
-		path = new Path(wp);
+		if(!SAFE_SPEED_OVERRIDE) {
+			path = new Path(wp);
+		}else {
+			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
+		}
 		Logging.l(path);
 		endTime = path.endTime + END_TIME_EXTRA;
 	}
@@ -119,7 +130,11 @@ public class MotionProfileCommand extends Command {
 		backwards = isBackwards;
 		bot = robot;
 		// generate path
-		path = new Path(speed.vel, speed.accel, wp);
+		if(!SAFE_SPEED_OVERRIDE) {
+			path = new Path(speed.vel, speed.accel, wp);
+		}else {
+			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
+		}
 		Logging.l(path);
 		endTime = path.endTime + END_TIME_EXTRA;
 	}
