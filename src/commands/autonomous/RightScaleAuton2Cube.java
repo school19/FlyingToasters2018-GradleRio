@@ -19,16 +19,30 @@ import utilities.Logging;
  * @author jack
  *
  */
-public class RightScaleAuton extends OpMode {
+public class RightScaleAuton2Cube extends OpMode {
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
 			new Waypoint(new Point(7.2, 0.7), Math.PI / 4.0) };
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, -0.2), 0),
 			new Waypoint(new Point(5.65, 1.5), Math.PI / 2.0), new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0) };
+	private Waypoint[] rightGetCube = { new Waypoint(new Point(7.2, -6.0), -3 * Math.PI / 4),
+			new Waypoint(new Point(5.5, -5.5), 3 * Math.PI / 4) };
+	private Waypoint[] right2ndCube = { new Waypoint(new Point(5.5, -5.5), -Math.PI / 4),
+			new Waypoint(new Point(7.2, -6.0), Math.PI / 4) };
+
 	private Waypoint[] leftPath2 = { new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0),
-			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(7, 6.0), -Math.PI / 4) };
+			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(7.2, 6.0), -Math.PI / 4) };
+	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.7), 3 * Math.PI / 4.0),
+			new Waypoint(new Point(5.5, -1.2), -3 * Math.PI / 4.0) };
+	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.5, -1.2), Math.PI / 4.0),
+			new Waypoint(new Point(7.2, -0.7), -Math.PI / 4.0) };
 
 	private MotionProfileCommand mpCommand;
 	private MotionProfileCommand leftMpCommand2;
+	// drives to get cube
+	private MotionProfileCommand getCubeCommand;
+	// drives to drop the second command
+	private MotionProfileCommand driveToDump2ndCube;
+	private IntakeCommand intakeCommand;
 	private boolean left;
 
 	/**
@@ -36,7 +50,7 @@ public class RightScaleAuton extends OpMode {
 	 * 
 	 * @param bot
 	 */
-	public RightScaleAuton(Robot bot) {
+	public RightScaleAuton2Cube(Robot bot) {
 		super(bot, "Left Scale auton");
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
@@ -44,11 +58,17 @@ public class RightScaleAuton extends OpMode {
 			left = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED, leftPath);
 			leftMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, leftPath2);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, MotionProfileCommand.Speed.MED_LOW_ACCEL, leftGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
+
 		} else {
 			left = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get right cube", false, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, right2ndCube);
 		}
-
+		
+		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING);
 	}
 
 	/**
@@ -82,8 +102,16 @@ public class RightScaleAuton extends OpMode {
 				addCommand(leftMpCommand2);
 			} else {
 				addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+				addCommand(getCubeCommand);
 			}
 		} else if (cmd == leftMpCommand2) {
+			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+			addCommand(getCubeCommand);
+		} else if (cmd == getCubeCommand) {
+			addCommand(intakeCommand);
+		} else if (cmd == intakeCommand) {
+			addCommand(driveToDump2ndCube);
+		} else if (cmd == driveToDump2ndCube) {
 			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
 		}
 		super.commandFinished(cmd);

@@ -1,7 +1,6 @@
 package controllers.motion_profiles;
 
 import path_generation.*;
-import utilities.Logging;
 
 /**
  * wheel profile generator for robots with wheels on either side

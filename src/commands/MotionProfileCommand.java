@@ -18,6 +18,27 @@ import utilities.Logging;
  */
 public class MotionProfileCommand extends Command {
 	/**
+	 * Speed settings for motion profiles. Slow, med, and fast use a relatively high
+	 * acceleration, while the settings with _low_accel have a low acceleration.
+	 * Lightspeed is the fastest the robot can travel in a straight line. Do not
+	 * attempt to turn when using lighspeed. Do not attempt ludicrous speed.
+	 * 
+	 * @author jack
+	 *
+	 */
+	public enum Speed {
+		SLOW(1, 3), MED(2, 3), FAST(3.5, 3.5), LIGHTSPEED(4, 4), LUDICROUS_SPEED(10, 10), SLOW_LOW_ACCEL(1,
+				1), MED_LOW_ACCEL(2, 1.5), FAST_LOW_ACCEL(3.5, 1.5);
+
+		double vel, accel;
+
+		Speed(double v, double a) {
+			vel = v;
+			accel = a;
+		}
+	}
+
+	/**
 	 * The amount of extra time to add to the end of motion profiles to ensure that
 	 * they are really done.
 	 */
@@ -48,10 +69,10 @@ public class MotionProfileCommand extends Command {
 	 */
 	private double endTime;
 
-	// TODO make speed settings
 	/**
 	 * Create a motion profile command with the default settings for
-	 * speed/acceleration
+	 * speed/acceleration in Path.java. Use the constructor with the speed/accel
+	 * settings instead.
 	 * 
 	 * @param opMode
 	 *            the opmode calling the command. used for callback.
@@ -64,6 +85,7 @@ public class MotionProfileCommand extends Command {
 	 * @param waypoints
 	 *            the waypoints to generate the path from
 	 */
+	@Deprecated
 	public MotionProfileCommand(CommandCallback opMode, Robot robot, String name, boolean isBackwards,
 			Waypoint... waypoints) {
 		super(opMode, name);
@@ -72,6 +94,32 @@ public class MotionProfileCommand extends Command {
 		bot = robot;
 		// generate path
 		path = new Path(wp);
+		Logging.l(path);
+		endTime = path.endTime + END_TIME_EXTRA;
+	}
+
+	/**
+	 * Create a motion profile command with custom settings for speed/accel
+	 * 
+	 * @param opMode
+	 *            the opmode calling the command. used for callback.
+	 * @param robot
+	 *            the robot being driven
+	 * @param name
+	 *            the name of the command
+	 * @param isBackwards
+	 *            whether the robot should drive backwards
+	 * @param waypoints
+	 *            the waypoints to generate the path from
+	 */
+	public MotionProfileCommand(CommandCallback opMode, Robot robot, String name, boolean isBackwards, Speed speed,
+			Waypoint... waypoints) {
+		super(opMode, name);
+		wp = waypoints;
+		backwards = isBackwards;
+		bot = robot;
+		// generate path
+		path = new Path(speed.vel, speed.accel, wp);
 		Logging.l(path);
 		endTime = path.endTime + END_TIME_EXTRA;
 	}

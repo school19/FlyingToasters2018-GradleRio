@@ -6,7 +6,6 @@ import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
 import utilities.Logging;
-import hardware.Lift;
 
 /**
  * Teleop class for human-operated control.
@@ -86,9 +85,11 @@ public class Teleop extends OpMode {
 
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
-		double liftPower = -e3d.getAxis(E3D.Axis.Y);
-		double flipPower = 0.6 * e3d.getAxis(E3D.Axis.Z);
+		double liftPower = - e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.Y);
+		double flipPower = e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.X);
 		SmartDashboard.putNumber("Lift power", liftPower);
+		SmartDashboard.putNumber("Flip power", flipPower);
+		SmartDashboard.putNumber("E3D Throttle axis", e3d.getAxis(E3D.Axis.THROTTLE));
 		robot.lift.driveNoFeedback(liftPower, flipPower);
 	}
 

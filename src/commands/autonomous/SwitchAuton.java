@@ -41,7 +41,7 @@ public class SwitchAuton extends OpMode {
 		} else {
 			end = new Waypoint(new Point(switch_dist, switch_right), 0.0);
 		}
-		motionProfileCmd = new MotionProfileCommand(this, robot, "drive to switch", false, start, end);
+		motionProfileCmd = new MotionProfileCommand(this, robot, "drive to switch", false, MotionProfileCommand.Speed.SLOW, start, end);
 	}
 
 	public void init() {

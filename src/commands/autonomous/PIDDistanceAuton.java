@@ -3,7 +3,6 @@ package commands.autonomous;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
-import controllers.AbstractFeedbackController;
 import controllers.PIDcontroller;
 import utilities.Logging;
 

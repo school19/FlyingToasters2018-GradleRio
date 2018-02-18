@@ -58,15 +58,15 @@ public class LeftScaleAuton2Cube extends OpMode {
 		Logging.h(gameData);
 		if (gameData.charAt(1) == 'L') {
 			left = true;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, leftPath);
-			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, leftGetCube);
-			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, left2ndCube);
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, leftPath);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, MotionProfileCommand.Speed.MED_LOW_ACCEL,  leftGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
 		} else {
 			left = false;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, rightPath);
-			rightMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, rightPath2);
-			getCubeCommand = new MotionProfileCommand(this, robot, "Get right cube", false, rightGetCube);
-			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, right2ndCube);
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED, rightPath);
+			rightMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get right cube", false, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, right2ndCube);
 		}
 
 		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING);

@@ -4,7 +4,6 @@ import commands.autonomous.*;
 import commands.interfaces.*;
 import commands.teleop.Teleop;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +34,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
 		AUTO_SCALE_R("(Reverse) Right Scale auton"),
 		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
+		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
 		AUTO_TEST("Test Auton");
 		/**
 		 * The name of the auton to display on the dashboard
@@ -187,6 +187,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		case AUTO_2C_SCALE_L:
 			autonomous = new LeftScaleAuton2Cube(this);
 			break;
+		case AUTO_2C_SCALE_R:
+			autonomous = new RightScaleAuton2Cube(this);
+			break;
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
 			Logging.e("Could not get auton from chooser");
@@ -269,7 +272,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		driveBase.update(deltaTime);
 		intake.perodic(deltaTime);
 		lift.periodic();
-
 	}
 
 	/**

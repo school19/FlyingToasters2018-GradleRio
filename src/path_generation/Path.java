@@ -12,7 +12,7 @@ import utilities.Logging;
  */
 public class Path {
 	// default values for path generation
-	public static final double maxVel = 2; // TODO find good values or do preset modes (Slow, medium, fast, etc.)
+	public static final double maxVel = 2;
 	public static final double maxAccel = 3;
 	public static final int defaultPoints = 100;
 	public static final VelocityMode defaultMode = VelocityMode.TRAPAZOIDAL;
@@ -48,7 +48,11 @@ public class Path {
 	public Path(Waypoint... points) {
 		this(defaultPoints, maxVel, maxAccel, defaultMode, points);
 	}
-
+	
+	public Path(double velocity, double accel, Waypoint... points) {
+		this(defaultPoints, velocity, accel, defaultMode, points);
+	}
+	
 	/**
 	 * creates a longer path between multiple points
 	 * 

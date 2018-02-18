@@ -14,8 +14,8 @@ public class Lift {
 	/**
 	 * Id of the talon driving the lift motor
 	 */
-	static final int LIFT_TALON_ID = 8;
-	static final int LIFT_FOLLOWER_ID = 5;
+	static final int LIFT_TALON_ID = 5;
+	static final int LIFT_FOLLOWER_ID = 8;
 	/**
 	 * Id of the talon driving the flip motor
 	 */
@@ -63,7 +63,7 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(0, 1), SWITCH(0.5, 0), SCALE(1, 1);
+		GROUND(379, 539), SWITCH(500, 539), SCALE(835, 390);
 
 		double liftPos;
 		double flipPos;
@@ -111,7 +111,7 @@ public class Lift {
 
 		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
-		liftFollowerTalon.talon.setInverted(true);
+		//liftFollowerTalon.talon.setInverted(true);
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
 	
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
@@ -174,6 +174,8 @@ public class Lift {
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
 	public void periodic() {
+		SmartDashboard.putNumber("Lift motor raw val", liftMotor.feedbackTalon.getRawPosition());
+		SmartDashboard.putNumber("Flip motor raw val", flipMotor.getRawPosition());
 		if (active) {
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
