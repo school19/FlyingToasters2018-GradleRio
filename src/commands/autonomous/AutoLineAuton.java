@@ -34,7 +34,7 @@ public class AutoLineAuton extends OpMode {
 	public AutoLineAuton(Robot bot) {
 		super(bot, "Motion Profile Auton");
 		motionProfile = new MotionProfileCommand(this, bot, "cross line", false, MotionProfileCommand.Speed.SLOW_LOW_ACCEL, start, end);
-		delay = new DelayedCommand(this, 0.5);
+		delay = new DelayedCommand(this, 5);
 		flip = new LiftCommand(delay, bot, Lift.Positions.STARTING_FLIP);
 		delay.setCommand(flip);
 	}

@@ -2,12 +2,16 @@ package commands.autonomous;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import commands.DelayedCommand;
 import commands.IntakeCommand;
+import commands.LiftCommand;
 import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
+import hardware.Intake.State;
+import hardware.Lift.Positions;
 import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
@@ -26,11 +30,15 @@ public class RightScaleAuton extends OpMode {
 			new Waypoint(new Point(5.65, 1.5), Math.PI / 2.0), new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0) };
 	private Waypoint[] leftPath2 = { new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0),
 			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(7, 6.0), -Math.PI / 4) };
-
+	
 	private MotionProfileCommand mpCommand;
 	private MotionProfileCommand leftMpCommand2;
 	private boolean left;
-
+	
+	private LiftCommand flip;
+	private LiftCommand raise;
+	private LiftCommand lower;
+	private IntakeCommand output;
 	/**
 	 * constructor for the left scale plate auton.
 	 * 
@@ -40,6 +48,12 @@ public class RightScaleAuton extends OpMode {
 		super(bot, "Left Scale auton");
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
+		
+		flip = new LiftCommand(this, bot, Positions.STARTING_FLIP);
+		raise = new LiftCommand(this, bot, Positions.H_SCALE);
+		lower = new LiftCommand(this, bot, Positions.GROUND);
+		output = new IntakeCommand(this, bot, State.OUTPUTTING);
+		
 		if (gameData.charAt(1) == 'L') {
 			left = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED, leftPath);
@@ -48,7 +62,6 @@ public class RightScaleAuton extends OpMode {
 			left = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
 		}
-
 	}
 
 	/**
@@ -81,10 +94,16 @@ public class RightScaleAuton extends OpMode {
 			if (left) {
 				addCommand(leftMpCommand2);
 			} else {
-				addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+				addCommand(flip);
 			}
 		} else if (cmd == leftMpCommand2) {
-			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+			addCommand(flip);
+		} else if(cmd == flip) {
+			addCommand(raise);
+		} else if(cmd == raise) {
+			addCommand(output);
+		} else if(cmd == output) {
+			addCommand(lower);
 		}
 		super.commandFinished(cmd);
 	}

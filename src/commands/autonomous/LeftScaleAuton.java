@@ -3,11 +3,14 @@ package commands.autonomous;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.IntakeCommand;
+import commands.LiftCommand;
 import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
+import hardware.Intake.State;
+import hardware.Lift.Positions;
 import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
@@ -30,7 +33,12 @@ public class LeftScaleAuton extends OpMode {
 	private MotionProfileCommand mpCommand;
 	private MotionProfileCommand rightMpCommand2;
 	private boolean left;
-
+	
+	private LiftCommand flip;
+	private LiftCommand raise;
+	private LiftCommand lower;
+	private IntakeCommand output;
+	
 	/**
 	 * constructor for the left scale plate auton.
 	 * 
@@ -38,6 +46,12 @@ public class LeftScaleAuton extends OpMode {
 	 */
 	public LeftScaleAuton(Robot bot) {
 		super(bot, "Left Scale auton");
+		
+		flip = new LiftCommand(this, bot, Positions.STARTING_FLIP);
+		raise = new LiftCommand(this, bot, Positions.H_SCALE);
+		lower = new LiftCommand(this, bot, Positions.GROUND);
+		output = new IntakeCommand(this, bot, State.OUTPUTTING);
+		
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
 		if (gameData.charAt(1) == 'L') {
@@ -81,10 +95,16 @@ public class LeftScaleAuton extends OpMode {
 			if (!left) {
 				addCommand(rightMpCommand2);
 			} else {
-				addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+				addCommand(flip);
 			}
 		} else if (cmd == rightMpCommand2) {
-			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+			addCommand(flip);
+		} else if(cmd == flip) {
+			addCommand(raise);
+		} else if(cmd == raise) {
+			addCommand(output);
+		} else if(cmd == output) {
+			addCommand(lower);
 		}
 		super.commandFinished(cmd);
 	}
