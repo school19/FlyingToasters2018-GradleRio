@@ -3,6 +3,7 @@ package hardware;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import utilities.Logging;
 
 /**
  * Class for the lift mechanism.
@@ -29,11 +30,11 @@ public class Lift {
 	 */
 	private static class LiftTalonParams {
 		double kF = 0;
-		double kP = 0;
-		double kI = 0;
-		double kD = 0;
-		int vel = 1;
-		int accel = 1;
+		double kP = 50;
+		double kI = 0.02;
+		double kD = 3;
+		int vel = 50;
+		int accel = 50;
 	}
 
 	/**
@@ -44,17 +45,17 @@ public class Lift {
 	 */
 	private class FlipTalonParams {
 		double kF = 0;
-		double kP = 0;
+		double kP = 40;
 		double kI = 0;
-		double kD = 0;
-		int vel = 1;
-		int accel = 1;
+		double kD = 4;
+		int vel = 50;
+		int accel = 50;
 	}
 
 	/**
 	 * The minimum position at which the thing can flip at.
 	 */
-	static final double FLIP_MIN_POS = 0.7;
+	static final double FLIP_MIN_POS = -642;
 
 	/**
 	 * The different positions to go to, in raw potentiometer values.
@@ -63,7 +64,8 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(379, 539), SWITCH(500, 539), SCALE(835, 390);
+		GROUND(-280, 537), SWITCH(-387, 537), L_SCALE(-665, 400), H_SCALE(-695, 419), STARTING(-487,
+				389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
 		double flipPos;
@@ -75,14 +77,9 @@ public class Lift {
 	}
 
 	/**
-	 * The position that the lift will start at.
-	 */
-	static final Positions startingPos = Positions.GROUND;
-
-	/**
 	 * The current position of the stuff
 	 */
-	private Positions currentPos = startingPos;
+	private Positions currentPos = Positions.STARTING;
 	/**
 	 * the motor which drives the lift
 	 */
@@ -111,13 +108,14 @@ public class Lift {
 
 		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
-		//liftFollowerTalon.talon.setInverted(true);
+		liftFollowerTalon.talon.setInverted(true);
+		liftFeedbackTalon.talon.setInverted(true);
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
-	
+
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
 
-		// trackToPos(startingPos);
-		// setupMotionMagic();
+		setupMotionMagic();
+		trackToPos(Positions.STARTING);
 	}
 
 	/**
@@ -128,6 +126,14 @@ public class Lift {
 				flipParams.accel);
 		liftMotor.feedbackTalon.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
 				liftParams.vel, liftParams.accel);
+	}
+
+	/**
+	 * Disables motion magic
+	 */
+	public void disableMotionMagic() {
+		flipMotor.stopMotionMagic();
+		liftMotor.feedbackTalon.stopMotionMagic();
 	}
 
 	/**
@@ -161,10 +167,15 @@ public class Lift {
 	 *            The position to go to.
 	 */
 	public void trackToPos(Positions position) {
-		currentPos = position;
-		liftMotor.setSetpoint(position.liftPos);
-		if (liftMotor.feedbackTalon.getRawPosition() > FLIP_MIN_POS) {
-			flipMotor.setSetpoint(position.flipPos);
+		Logging.m("Set setpoint run!");
+		if (currentPos == Positions.STARTING && position != Positions.STARTING) {
+			currentPos = Positions.STARTING_FLIP;
+		} else {
+			currentPos = position;
+		}
+		liftMotor.feedbackTalon.setSetpoint(currentPos.liftPos);
+		if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS) {
+			flipMotor.setSetpoint(currentPos.flipPos);
 		} else {
 			flipMotor.setSetpoint(Positions.GROUND.flipPos);
 		}
@@ -174,49 +185,65 @@ public class Lift {
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
 	public void periodic() {
-		SmartDashboard.putNumber("Lift motor raw val", liftMotor.feedbackTalon.getRawPosition());
-		SmartDashboard.putNumber("Flip motor raw val", flipMotor.getRawPosition());
 		if (active) {
-			liftMotor.runFeedback(0);
-			flipMotor.runFeedback(0);
-			if (liftMotor.feedbackTalon.getRawPosition() > FLIP_MIN_POS) {
+			if (currentPos == Positions.STARTING) {
 				flipMotor.setSetpoint(currentPos.flipPos);
 			} else {
-				flipMotor.setSetpoint(Positions.GROUND.flipPos);
+				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS) {
+					flipMotor.setSetpoint(currentPos.flipPos);
+				} else {
+					flipMotor.setSetpoint(Positions.GROUND.flipPos);
+				}
 			}
+			liftMotor.runFeedback(0);
+			flipMotor.runFeedback(0);
 		} else {
 			// nothing...
 		}
 	}
+	
+	/**
+	 * 
+	 * @return the total error of the lift and flipper
+	 */
+	public double getTotalError() {
+		return Math.abs(liftMotor.feedbackTalon.getRawCLError()) + Math.abs(flipMotor.getRawCLError());
+	}
 
 	/**
 	 * Writes the current position, velocity, and closed loop error to the
-	 * dashboard.
+	 * dashboard.position
 	 */
 	public void logToDashboard() {
-		SmartDashboard.putNumber("lift pos", liftMotor.feedbackTalon.getRawPosition());
-		SmartDashboard.putNumber("lift vel", liftMotor.feedbackTalon.getRawVelocity());
+		SmartDashboard.putString("Lift setpoint name", currentPos.name());
+		SmartDashboard.putNumber("lift encoder pos", liftMotor.feedbackTalon.getRawPosition());
 		SmartDashboard.putNumber("lift closed loop error", liftMotor.feedbackTalon.getRawCLError());
+		SmartDashboard.putNumber("flip encoder pos", flipMotor.getRawPosition());
+		SmartDashboard.putNumber("flip closed loop error", flipMotor.getRawCLError());
+		SmartDashboard.putNumber("flip talon output voltage", flipMotor.talon.getMotorOutputVoltage());
+		SmartDashboard.putNumber("Lift motor output voltage", liftMotor.feedbackTalon.talon.getMotorOutputVoltage());
 	}
 
 	/**
 	 * Read PIDF values from the dashboard
 	 */
 	public void readTuningValuesFromDashboard() {
+		Logging.h("Reading pid tuning values");
 		liftParams.kP = SmartDashboard.getNumber("lift_kp", liftParams.kP);
 		liftParams.kI = SmartDashboard.getNumber("lift_ki", liftParams.kI);
 		liftParams.kD = SmartDashboard.getNumber("lift_kd", liftParams.kD);
 		liftParams.kF = SmartDashboard.getNumber("lift_kf", liftParams.kF);
-		liftParams.vel = (int) SmartDashboard.getNumber("lift_accel", liftParams.vel);
-		liftParams.accel = (int) SmartDashboard.getNumber("lift_vel", liftParams.accel);
+		liftParams.vel = (int) SmartDashboard.getNumber("lift_vel", liftParams.vel);
+		liftParams.accel = (int) SmartDashboard.getNumber("lift_accel", liftParams.accel);
 
 		flipParams.kP = SmartDashboard.getNumber("flip_kp", flipParams.kP);
 		flipParams.kI = SmartDashboard.getNumber("flip_ki", flipParams.kI);
 		flipParams.kD = SmartDashboard.getNumber("flip_kd", flipParams.kD);
 		flipParams.kF = SmartDashboard.getNumber("flip_kf", flipParams.kF);
-		flipParams.vel = (int) SmartDashboard.getNumber("flip_accel", flipParams.vel);
-		flipParams.accel = (int) SmartDashboard.getNumber("flip_vel", flipParams.accel);
+		flipParams.vel = (int) SmartDashboard.getNumber("flip_vel", flipParams.vel);
+		flipParams.accel = (int) SmartDashboard.getNumber("flip_accel", flipParams.accel);
 
+		setupMotionMagic();
 	}
 
 	/**
@@ -227,14 +254,14 @@ public class Lift {
 		SmartDashboard.putNumber("lift_ki", liftParams.kI);
 		SmartDashboard.putNumber("lift_kd", liftParams.kD);
 		SmartDashboard.putNumber("lift_kf", liftParams.kF);
-		SmartDashboard.putNumber("lift_accel", liftParams.vel);
-		SmartDashboard.putNumber("lift_vel", liftParams.accel);
+		SmartDashboard.putNumber("lift_vel", liftParams.vel);
+		SmartDashboard.putNumber("lift_accel", liftParams.accel);
 
 		SmartDashboard.putNumber("flip_kp", flipParams.kP);
 		SmartDashboard.putNumber("flip_ki", flipParams.kI);
 		SmartDashboard.putNumber("flip_kd", flipParams.kD);
 		SmartDashboard.putNumber("flip_kf", flipParams.kF);
-		SmartDashboard.putNumber("flip_accel", flipParams.vel);
-		SmartDashboard.putNumber("flip_vel", flipParams.accel);
+		SmartDashboard.putNumber("flip_vel", flipParams.vel);
+		SmartDashboard.putNumber("flip_accel", flipParams.accel);
 	}
 }

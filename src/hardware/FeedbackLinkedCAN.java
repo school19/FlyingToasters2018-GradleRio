@@ -73,11 +73,13 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	//set the feedback controller,
 	public void setFeedbackController(AbstractFeedbackController controller) {
 		feedbackController = controller;
+		feedbackTalon.setFeedbackController(controller);
 	}
 
 
 	@Override
 	public void setFeedbackActive(boolean active) {
+		feedbackTalon.feedbackActive = active;
 		feedbackActive = active;
 	}
 
@@ -88,22 +90,17 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		feedbackController.setSetpoint(setpoint);		
+		feedbackTalon.setSetpoint(setpoint);		
 	}
 
 	@Override
 	public double getSetpoint() {
-		return feedbackController.getSetpoint();
+		return feedbackTalon.getSetpoint();
 	}
 
 	@Override
 	public void runFeedback(double deltaTime) {
-		if(feedbackActive){
-			double output = feedbackController.run(getPosition(), deltaTime);
-			setPower(output);
-		}else{
-			Logging.l("runFeedback run with feedback inactive");
-		}
+		feedbackTalon.runFeedback(deltaTime);
 	}
 	
 	public void setCurrentLimit(int amps){
@@ -129,5 +126,9 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	@Override
 	public void resetEncoders() {
 		feedbackTalon.resetEncoders();
+	}
+	@Override
+	public void setInverted(boolean inverted) {
+		feedbackTalon.setInverted(inverted);
 	}
 }

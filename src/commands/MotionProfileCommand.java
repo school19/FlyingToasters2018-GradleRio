@@ -21,7 +21,7 @@ public class MotionProfileCommand extends Command {
 	 * If set to true, all commands will use the SAFE speed. BE SURE TO SET TO FALSE
 	 * BEFORE COMPETITION!
 	 */
-	final static boolean SAFE_SPEED_OVERRIDE = true;
+	final static boolean SAFE_SPEED_OVERRIDE = false;
 
 	/**
 	 * Speed settings for motion profiles. Safe is very slow and should be used for
@@ -34,7 +34,7 @@ public class MotionProfileCommand extends Command {
 	 *
 	 */
 	public enum Speed {
-		SAFE(0.5, 1), SLOW(1, 3), MED(2, 3), FAST(3.5, 3.5), LIGHTSPEED(4, 4), LUDICROUS_SPEED(10,
+		SAFE(0.5, 0.5), SLOW(1, 3), MED(2, 3), FAST(3.5, 3.5), LIGHTSPEED(4, 4), LUDICROUS_SPEED(10,
 				10), SLOW_LOW_ACCEL(1, 1), MED_LOW_ACCEL(2, 1.5), FAST_LOW_ACCEL(3.5, 1.5);
 
 		double vel, accel;
@@ -75,39 +75,6 @@ public class MotionProfileCommand extends Command {
 	 * the extra time
 	 */
 	private double endTime;
-
-	/**
-	 * Create a motion profile command with the default settings for
-	 * speed/acceleration in Path.java. Use the constructor with the speed/accel
-	 * settings instead.
-	 * 
-	 * @param opMode
-	 *            the opmode calling the command. used for callback.
-	 * @param robot
-	 *            the robot being driven
-	 * @param name
-	 *            the name of the command
-	 * @param isBackwards
-	 *            whether the robot should drive backwards
-	 * @param waypoints
-	 *            the waypoints to generate the path from
-	 */
-	@Deprecated
-	public MotionProfileCommand(CommandCallback opMode, Robot robot, String name, boolean isBackwards,
-			Waypoint... waypoints) {
-		super(opMode, name);
-		wp = waypoints;
-		backwards = isBackwards;
-		bot = robot;
-		// generate path
-		if(!SAFE_SPEED_OVERRIDE) {
-			path = new Path(wp);
-		}else {
-			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
-		}
-		Logging.l(path);
-		endTime = path.endTime + END_TIME_EXTRA;
-	}
 
 	/**
 	 * Create a motion profile command with custom settings for speed/accel

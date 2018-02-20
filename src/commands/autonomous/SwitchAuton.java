@@ -1,13 +1,18 @@
 package commands.autonomous;
 
+import java.awt.BufferCapabilities.FlipContents;
+
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.IntakeCommand;
+import commands.LiftCommand;
 import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
+import hardware.Intake.State;
+import hardware.Lift;
 import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
@@ -32,6 +37,8 @@ public class SwitchAuton extends OpMode {
 
 	MotionProfileCommand motionProfileCmd;
 
+	LiftCommand flip;
+	
 	public SwitchAuton(Robot bot) {
 		super(bot, "Motion Profile Auton");
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
@@ -41,7 +48,8 @@ public class SwitchAuton extends OpMode {
 		} else {
 			end = new Waypoint(new Point(switch_dist, switch_right), 0.0);
 		}
-		motionProfileCmd = new MotionProfileCommand(this, robot, "drive to switch", false, MotionProfileCommand.Speed.SLOW, start, end);
+		motionProfileCmd = new MotionProfileCommand(this, robot, "drive to switch", false, MotionProfileCommand.Speed.MED, start, end);
+		flip = new LiftCommand(this, bot, Lift.Positions.STARTING_FLIP);
 	}
 
 	public void init() {
@@ -64,7 +72,9 @@ public class SwitchAuton extends OpMode {
 	public void commandFinished(Command cmd) {
 		//Add the intake command to output the cube.
 		if (cmd == motionProfileCmd) {
-			addCommand(new IntakeCommand(this, robot, Intake.State.OUTPUTTING));
+			addCommand(flip);
+		}else if(cmd == flip){
+			addCommand(new IntakeCommand(this, robot, State.OUTPUTTING));
 		}
 		super.commandFinished(cmd);
 	}

@@ -11,7 +11,7 @@ import utilities.Utilities;
 public class FeedbackTalon extends Talon implements FeedbackMotorController, Utilities.Conversions {
 	boolean isEncoderReversed = false;
 	private AbstractFeedbackController feedbackController;
-	private boolean feedbackActive = false;
+	boolean feedbackActive = false;
 	private boolean isMotionMagicMode = false;
 	private double lastSetpoint = 0;
 
@@ -78,22 +78,26 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	@Override
 	public void runFeedback(double deltaTime) {
 		if (isMotionMagicMode) {
+			//Logging.h("Motion Magic Mode run!");
 			talon.set(ControlMode.MotionMagic, lastSetpoint);
 		} else {
 			if (feedbackActive) {
 				double output = feedbackController.run(getPosition(), deltaTime);
 				setPower(output);
 			} else {
-				Logging.l("runFeedback run with feedback inactive");
+				//Logging.l("runFeedback run with feedback inactive");
 			}
 		}
 	}
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		if (feedbackController != null) {
-			feedbackController.setSetpoint(setpoint);
+		if(isMotionMagicMode) {
+			if (feedbackController != null) {
+				feedbackController.setSetpoint(setpoint);
+			}
 		}
+		else talon.set(ControlMode.MotionMagic, setpoint);
 		lastSetpoint = setpoint;
 	}
 

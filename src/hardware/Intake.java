@@ -23,11 +23,11 @@ public class Intake {
 	
 	private State currentState = State.RESTING;
 	private double time;
-	private final double timeWithoutCube = .5;
+	private final double timeWithoutCube = .548;
 	private final double maxRecoveryTime = 1;
 	
-	private final double defaultInSpeed = 0.75;
-	private final double defaultOutSpeed = 0.3456;
+	private final double defaultInSpeed = 0.67;
+	private final double defaultOutSpeed = 0.303;
 	
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY,

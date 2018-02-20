@@ -120,7 +120,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}
 		chooser.addDefault(Auton.AUTO_LINE.name, Auton.AUTO_LINE);
 		SmartDashboard.putData("Auto choices", chooser);
-		
+		SmartDashboard.putBoolean("Manual enabled", false);
 		// initialize drivebase
 		driveBase = new DriveBase2018();
 		intake = new Intake();
@@ -156,7 +156,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		teleop = null;
 		driveBase.setFeedbackActive(false);
 	}
-
+	
+	public void disabledPeriodic() {
+		lift.logToDashboard();
+	}
 	/**
 	 * Called once when auton starts. This method reads the selected auton from the
 	 * chooser on the smart dashboard, then initializes it and sets the
@@ -251,6 +254,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * anything special now.
 	 */
 	private void teleopFirstPeriodic() {
+		teleop.init();
 		standardFirstPeriodic();
 	}
 

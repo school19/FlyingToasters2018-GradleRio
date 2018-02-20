@@ -5,6 +5,7 @@ import org.usfirst.frc.team3641.robot.Robot;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
+import hardware.Lift;
 import utilities.Logging;
 
 /**
@@ -38,7 +39,11 @@ public class Teleop extends OpMode {
 	public void init() {
 		super.init();
 		Logging.h("Starting teleop");
+		if (SmartDashboard.getBoolean("Manual enabled", true)) {
+			robot.lift.disableMotionMagic();
+		}
 		robot.lift.readTuningValuesFromDashboard();
+
 	}
 
 	/**
@@ -68,29 +73,32 @@ public class Teleop extends OpMode {
 			robot.intake.setState(Intake.State.RECOVERY);
 		else if (e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING)
 			robot.intake.setState(Intake.State.RESET);
-//		else if (robot.intake.getState() == Intake.State.RESTING)
-//			robot.intake.setPower(e3d.getAxis(E3D.AxisX));
+		// else if (robot.intake.getState() == Intake.State.RESTING)
+		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));
 
 		// move the lift
-
-//		if (ps4.isPressed(PS4.Button.DPAD_DOWN))
-//			robot.lift.trackToPos(Lift.Positions.GROUND);
-//		else if (ps4.isPressed(PS4.Button.DPAD_LEFT))
-//			robot.lift.trackToPos(Lift.Positions.SWITCH);
-//		else if (ps4.isPressed(PS4.Button.DPAD_UP))
-//			robot.lift.trackToPos(Lift.Positions.SCALE); // update the lift
-//		// log data about the lift's position, velocity, and error to the smartdashboard
-//		// to help tune PIDs 
-//		robot.lift.logToDashboard();
+		if (e3d.isPressed(E3D.Button.ELEVEN))
+			robot.lift.trackToPos(Lift.Positions.GROUND);
+		else if (e3d.isPressed(E3D.Button.NINE))
+			robot.lift.trackToPos(Lift.Positions.SWITCH);
+		else if (e3d.isPressed(E3D.Button.EIGHT))
+			robot.lift.trackToPos(Lift.Positions.H_SCALE);
+		else if (e3d.isPressed(E3D.Button.SEVEN))
+			robot.lift.trackToPos(Lift.Positions.L_SCALE);
+		// log data about the lift's position, velocity, and error to the smartdashboard
+		// to help tune PIDs
+		robot.lift.logToDashboard();
 
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
-		double liftPower = - e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.Y);
-		double flipPower = e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.X);
-		SmartDashboard.putNumber("Lift power", liftPower);
-		SmartDashboard.putNumber("Flip power", flipPower);
-		SmartDashboard.putNumber("E3D Throttle axis", e3d.getAxis(E3D.Axis.THROTTLE));
-		robot.lift.driveNoFeedback(liftPower, flipPower);
+		if (SmartDashboard.getBoolean("Manual enabled", false)) {
+			double liftPower = -e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.Y);
+			double flipPower = e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.X);
+			SmartDashboard.putNumber("Lift power", liftPower);
+			SmartDashboard.putNumber("Flip power", flipPower);
+			SmartDashboard.putNumber("E3D Throttle axis", e3d.getAxis(E3D.Axis.THROTTLE));
+			robot.lift.driveNoFeedback(liftPower, flipPower);
+		}
 	}
 
 	/**
