@@ -48,14 +48,14 @@ public class Lift {
 		double kP = 40;
 		double kI = 0;
 		double kD = 4;
-		int vel = 50;
+		int vel = 25;
 		int accel = 50;
 	}
 
 	/**
 	 * The minimum position at which the thing can flip at.
 	 */
-	static final double FLIP_MIN_POS = -642;
+	static final double FLIP_MIN_POS = -483;
 
 	/**
 	 * The different positions to go to, in raw potentiometer values.
@@ -64,7 +64,7 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), SWITCH(-387, 537), L_SCALE(-665, 400), H_SCALE(-695, 419), STARTING(-487,
+		GROUND(-280, 537), SWITCH(-455, 537), L_SCALE(-665, 400), H_SCALE(-695, 419), STARTING(-487,
 				389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
@@ -168,7 +168,7 @@ public class Lift {
 	 */
 	public void trackToPos(Positions position) {
 		Logging.m("Set setpoint run!");
-		if (currentPos == Positions.STARTING && position != Positions.STARTING) {
+		if (currentPos == Positions.STARTING && (position != Positions.STARTING && position != Positions.H_SCALE)) {
 			currentPos = Positions.STARTING_FLIP;
 		} else {
 			currentPos = position;
@@ -207,7 +207,7 @@ public class Lift {
 	 * @return the total error of the lift and flipper
 	 */
 	public double getTotalError() {
-		return Math.abs(liftMotor.feedbackTalon.getRawCLError()) + Math.abs(flipMotor.getRawCLError());
+		return Math.abs(liftMotor.feedbackTalon.getRawPosition() - currentPos.liftPos) + Math.abs(flipMotor.getRawPosition() - currentPos.flipPos);
 	}
 
 	/**

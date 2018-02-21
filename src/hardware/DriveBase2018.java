@@ -21,7 +21,7 @@ public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
 	
-	final static double wheelDistance = 0.73;
+	final static double wheelDistance = 0.665;
 	
 	final static double velGain = 0.25;
 	final static double accelGain = 0.005;
@@ -105,7 +105,7 @@ public class DriveBase2018 extends DriveBase {
 	public void driveGrilledCheese(double power, double rotation) {
 		double gain = 1;
 		double limit = 0.25;
-		double subLimitWeight = 1.2;
+		double subLimitWeight = .8;
 		double exp = 1.5;
 
 		rotation = expInput(rotation, exp);

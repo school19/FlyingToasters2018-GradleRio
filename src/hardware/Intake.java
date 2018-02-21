@@ -27,7 +27,7 @@ public class Intake {
 	private final double maxRecoveryTime = 1;
 	
 	private final double defaultInSpeed = 0.67;
-	private final double defaultOutSpeed = 0.303;
+	private final double defaultOutSpeed = 0.4503;
 	
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY,

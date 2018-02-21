@@ -5,6 +5,7 @@ import org.usfirst.frc.team3641.robot.Robot;
 import commands.interfaces.Command;
 import commands.interfaces.CommandCallback;
 import hardware.Lift;
+import utilities.Logging;
 
 public class LiftCommand extends Command{
 	static final double START_TIME = 0.5;
@@ -25,7 +26,10 @@ public class LiftCommand extends Command{
 	
 	public void periodic(double deltaTime) {
 		startTimeout += deltaTime;
+		Logging.h("Error: " + bot.lift.getTotalError());
+		Logging.h("Timeout: " + startTimeout);
 		if(startTimeout > START_TIME && bot.lift.getTotalError() < MAX_ERROR) {
+			Logging.h("EndCommand called!");
 			endCommand();
 		}
 	}

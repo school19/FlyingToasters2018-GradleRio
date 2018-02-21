@@ -25,17 +25,16 @@ import utilities.Logging;
  */
 public class RightScaleAuton extends OpMode {
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
-			new Waypoint(new Point(7.2, 0.7), Math.PI / 4.0) };
+			new Waypoint(new Point(7.0, 0.7), Math.PI / 4.0) };
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, -0.2), 0),
 			new Waypoint(new Point(5.65, 1.5), Math.PI / 2.0), new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0) };
 	private Waypoint[] leftPath2 = { new Waypoint(new Point(5.65, 2.9), Math.PI / 2.0),
-			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(7, 6.0), -Math.PI / 4) };
+			new Waypoint(new Point(5.65, 4.75), Math.PI / 2.0), new Waypoint(new Point(6.9, 5.5), -Math.PI / 4) };
 	
 	private MotionProfileCommand mpCommand;
 	private MotionProfileCommand leftMpCommand2;
 	private boolean left;
 	
-	private LiftCommand flip;
 	private LiftCommand raise;
 	private LiftCommand lower;
 	private IntakeCommand output;
@@ -48,16 +47,15 @@ public class RightScaleAuton extends OpMode {
 		super(bot, "Left Scale auton");
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
-		
-		flip = new LiftCommand(this, bot, Positions.STARTING_FLIP);
+
 		raise = new LiftCommand(this, bot, Positions.H_SCALE);
-		lower = new LiftCommand(this, bot, Positions.GROUND);
+		lower = new LiftCommand(this, bot, Positions.SWITCH);
 		output = new IntakeCommand(this, bot, State.OUTPUTTING);
 		
 		if (gameData.charAt(1) == 'L') {
 			left = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED, leftPath);
-			leftMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, leftPath2);
+			leftMpCommand2 = new MotionProfileCommand(this, robot, "Mp command 2", true, MotionProfileCommand.Speed.SLOW_LOW_ACCEL, leftPath2);
 		} else {
 			left = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
@@ -94,11 +92,9 @@ public class RightScaleAuton extends OpMode {
 			if (left) {
 				addCommand(leftMpCommand2);
 			} else {
-				addCommand(flip);
+				addCommand(raise);
 			}
 		} else if (cmd == leftMpCommand2) {
-			addCommand(flip);
-		} else if(cmd == flip) {
 			addCommand(raise);
 		} else if(cmd == raise) {
 			addCommand(output);

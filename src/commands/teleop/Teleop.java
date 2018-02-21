@@ -39,6 +39,11 @@ public class Teleop extends OpMode {
 	public void init() {
 		super.init();
 		Logging.h("Starting teleop");
+		//Disables feedback control!!!! (OOPS WE DIDNT thiNK OF ThiS UNtiL BAG Day!!!)
+		robot.driveBase.setFeedbackActive(false);
+		robot.driveBase.left.setFeedbackController(null);
+		robot.driveBase.right.setFeedbackController(null);
+		
 		if (SmartDashboard.getBoolean("Manual enabled", true)) {
 			robot.lift.disableMotionMagic();
 		}
