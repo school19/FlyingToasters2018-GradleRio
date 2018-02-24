@@ -9,6 +9,7 @@ import utilities.Logging;
 import utilities.Utilities;
 
 public class FeedbackTalon extends Talon implements FeedbackMotorController, Utilities.Conversions {
+	static final int CONFIG_TIMEOUT_MS = 20;
 	boolean isEncoderReversed = false;
 	private AbstractFeedbackController feedbackController;
 	boolean feedbackActive = false;
@@ -25,12 +26,12 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	}
 
 	public void setupMotionMagic(double kF, double kP, double kI, double kD, int rawVel, int rawAccel) {
-		talon.config_kF(0, kF, 1000);
-		talon.config_kP(0, kP, 1000);
-		talon.config_kI(0, kI, 1000);
-		talon.config_kD(0, kD, 1000);
-		talon.configMotionCruiseVelocity(rawVel, 1000);
-		talon.configMotionAcceleration(rawAccel, 1000);
+		talon.config_kF(0, kF, CONFIG_TIMEOUT_MS);
+		talon.config_kP(0, kP, CONFIG_TIMEOUT_MS);
+		talon.config_kI(0, kI, CONFIG_TIMEOUT_MS);
+		talon.config_kD(0, kD, CONFIG_TIMEOUT_MS);
+		talon.configMotionCruiseVelocity(rawVel, CONFIG_TIMEOUT_MS);
+		talon.configMotionAcceleration(rawAccel, CONFIG_TIMEOUT_MS);
 		isMotionMagicMode = true;
 	}
 
@@ -123,7 +124,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 
 	@Override
 	public void resetEncoders() {
-		talon.setSelectedSensorPosition(0, 0, 1000);
+		talon.setSelectedSensorPosition(0, 0, CONFIG_TIMEOUT_MS);
 	}
 
 }
