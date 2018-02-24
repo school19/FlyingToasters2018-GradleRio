@@ -2,6 +2,7 @@ package hardware;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import utilities.Logging;
 
@@ -17,10 +18,13 @@ public class Lift {
 	 */
 	static final int LIFT_TALON_ID = 5;
 	static final int LIFT_FOLLOWER_ID = 8;
+	
 	/**
 	 * Id of the talon driving the flip motor
 	 */
 	static final int FLIP_TALON_ID = 7;
+	
+	static final int LIMIT_SWITCH_PORT = 1;
 
 	/**
 	 * The parameters used in initialization of the lift talon, like PID values
@@ -85,6 +89,7 @@ public class Lift {
 	 */
 	private FeedbackLinkedCAN liftMotor;
 	private FeedbackTalon flipMotor;
+	private DigitalInput limitSwitch;
 	/**
 	 * Whether the lift is active. If true, feedback loop is run, if false it's set
 	 * to 0 all the time.
@@ -113,6 +118,7 @@ public class Lift {
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
 
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
+		limitSwitch = new DigitalInput(LIMIT_SWITCH_PORT);
 
 		setupMotionMagic();
 		trackToPos(Positions.STARTING);
@@ -197,9 +203,30 @@ public class Lift {
 			}
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
-		} else {
-			// nothing...
 		}
+		if(SmartDashboard.getBoolean("Reset Error", false) || (limitSwitch.get() && currentPos == Positions.GROUND)) {
+			resetError();
+			SmartDashboard.putBoolean("Reset Error", false);
+			Logging.h("Reset Lift and Flip Error");
+		}
+	}
+	
+	/**
+	 * Zero both POTs to the current position.
+	 */
+	private void resetError() {
+		double liftError = liftMotor.feedbackTalon.getRawCLError();
+		double flipError = flipMotor.getRawCLError();
+		SmartDashboard.putNumber("Lift Offset", liftError);
+		SmartDashboard.putNumber("Flip Offset", flipError);
+		
+		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int)currentPos.liftPos, 0, 20);
+		flipMotor.talon.setSelectedSensorPosition((int)currentPos.liftPos, 0, 20);
+		
+		SmartDashboard.putNumber("Current Position", currentPos.liftPos);
+
+		SmartDashboard.putBoolean("Reset Error", false);
+		Logging.h("Reset Lift and Flip Error");
 	}
 	
 	/**
@@ -263,5 +290,7 @@ public class Lift {
 		SmartDashboard.putNumber("flip_kf", flipParams.kF);
 		SmartDashboard.putNumber("flip_vel", flipParams.vel);
 		SmartDashboard.putNumber("flip_accel", flipParams.accel);
+		
+		SmartDashboard.putBoolean("Reset Error", false);
 	}
 }
