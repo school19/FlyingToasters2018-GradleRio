@@ -3,6 +3,8 @@ package org.usfirst.frc.team3641.robot;
 import commands.autonomous.*;
 import commands.interfaces.*;
 import commands.teleop.Teleop;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,6 +23,8 @@ import utilities.Logging;
  * it to have a function called upon autonomous or teleop finishing.
  */
 public class Robot extends IterativeRobot implements CommandCallback {
+	UsbCamera Cam1, Cam2; 
+	
 	/**
 	 * An enum of the possible autonomous commands to follow. This is passed to the
 	 * SendableChooser which is put on the dashboard.
@@ -127,7 +131,12 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		lift = new Lift();
 		// initialize timer
 		timer = new Timer();
-
+		
+		new Thread(() -> {
+			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+		}).start();
+		
 		resetTimer();
 	}
 
