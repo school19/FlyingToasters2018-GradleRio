@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.DriveBase2018;
 import hardware.Intake;
+import hardware.LED;
 import hardware.Lift;
 import utilities.Logging;
 
@@ -75,6 +76,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	public Lift lift;
 	
+	/**
+	 * The bot's LEDs
+	 */
+	public LED leds;
+	
 	// TODO add units to documentation
 	/**
 	 * The timestamp (in ??? units) of the last run of standardPeriodic or
@@ -138,6 +144,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		}).start();
 		
 		resetTimer();
+		
+		leds = new LED(0);
 	}
 
 	/**
@@ -285,6 +293,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		driveBase.update(deltaTime);
 		intake.perodic(deltaTime);
 		lift.periodic();
+		leds.updateLightsToRobotState(this);
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class Lift {
 	/**
 	 * The current position of the stuff
 	 */
-	private Positions currentPos = Positions.STARTING;
+	public Positions currentPos = Positions.STARTING;
 	/**
 	 * the motor which drives the lift
 	 */
