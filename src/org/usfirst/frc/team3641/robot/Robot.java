@@ -131,6 +131,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		chooser.addDefault(Auton.AUTO_LINE.name, Auton.AUTO_LINE);
 		SmartDashboard.putData("Auto choices", chooser);
 		SmartDashboard.putBoolean("Manual enabled", false);
+		SmartDashboard.putBoolean("Allow Auton Opposite Side", true);
 		// initialize drivebase
 		driveBase = new DriveBase2018();
 		intake = new Intake();

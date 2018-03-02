@@ -8,6 +8,7 @@ import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
 import hardware.Intake.State;
 import hardware.Lift.Positions;
@@ -91,7 +92,8 @@ public class LeftScaleAuton extends OpMode {
 		// Add the intake command to output the cube.
 		if (cmd == mpCommand) {
 			if (!left) {
-				addCommand(rightMpCommand2);
+				if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true))
+					addCommand(rightMpCommand2);
 			} else {
 				addCommand(raise);
 			}
