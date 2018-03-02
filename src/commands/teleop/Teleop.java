@@ -74,9 +74,13 @@ public class Teleop extends OpMode {
 			robot.intake.setState(Intake.State.INTAKING);
 		else if (e3d.isPressed(4))
 			robot.intake.setState(Intake.State.OUTPUTTING);
+		else if (e3d.isPressed(6))
+			robot.intake.setState(Intake.State.OUTPUTTING_SLOW);
 		else if (e3d.isReleased(3) && robot.intake.getState() == Intake.State.INTAKING)
 			robot.intake.setState(Intake.State.RECOVERY);
 		else if (e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING)
+			robot.intake.setState(Intake.State.RESET);
+		else if (e3d.isReleased(6) && robot.intake.getState() == Intake.State.OUTPUTTING_SLOW)
 			robot.intake.setState(Intake.State.RESET);
 		// else if (robot.intake.getState() == Intake.State.RESTING)
 		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));
@@ -93,6 +97,11 @@ public class Teleop extends OpMode {
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
 		robot.lift.logToDashboard();
+		
+		if(e3d.isPressed(E3D.Button.THUMB))
+		{
+			robot.lift.resetError();
+		}
 
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.

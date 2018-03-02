@@ -3,6 +3,7 @@ package hardware;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import utilities.Logging;
+
 /**
  * Intake class
  * 
@@ -20,17 +21,18 @@ public class Intake {
 	private Talon rightTalon;
 	private DigitalInput cubeSwitch;
 	private boolean currentSwitchStatus = false;
-	
+
 	private State currentState = State.RESTING;
 	private double time;
 	private final double timeWithoutCube = .548;
 	private final double maxRecoveryTime = 1;
-	
+
 	private final double defaultInSpeed = 0.67;
 	private final double defaultOutSpeed = 0.4503;
-	
+	private final double slowOutSpeed = 0.26;
+
 	public static enum State {
-		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY,
+		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_SLOW,
 	}
 
 	public Intake() {
@@ -50,24 +52,38 @@ public class Intake {
 	public void setPower(double power) {
 		leftTalon.setPower(power);
 		rightTalon.setPower(power);
-		
+
 	}
-	
+
 	public void perodic(double deltaTime) {
 		pollSwitch();
 		switch (currentState) {
 		case RECOVERY:
 			time += deltaTime;
-			if(time >= maxRecoveryTime) setState(State.RESET);
+			if (time >= maxRecoveryTime)
+				setState(State.RESET);
 		case INTAKING:
 			setPower(-defaultInSpeed);
-			if (hasCube()) setState(State.HAS_CUBE);
+			if (hasCube())
+				setState(State.HAS_CUBE);
 			break;
 		case OUTPUTTING:
 			setPower(defaultOutSpeed);
-			if (hasCube()) time = 0;
-			else time += deltaTime;
-			if (time >= timeWithoutCube) setState(State.RESET);
+			if (hasCube())
+				time = 0;
+			else
+				time += deltaTime;
+			if (time >= timeWithoutCube)
+				setState(State.RESET);
+			break;
+		case OUTPUTTING_SLOW:
+			setPower(slowOutSpeed);
+			if (hasCube())
+				time = 0;
+			else
+				time += deltaTime;
+			if (time >= timeWithoutCube)
+				setState(State.RESET);
 			break;
 		case RESET:
 			setPower(0);
@@ -79,7 +95,8 @@ public class Intake {
 			break;
 		case RESTING_WITH_CUBE:
 			time = 0;
-			if(!hasCube()) setState(State.RECOVERY);
+			if (!hasCube())
+				setState(State.RECOVERY);
 			break;
 		case RESTING:
 		default:
@@ -89,23 +106,21 @@ public class Intake {
 		SmartDashboard.putBoolean("Has Cube?", hasCube());
 		SmartDashboard.putNumber("Intake Time", time);
 	}
-	
+
 	public void setState(State newState) {
 		Logging.h("Switching Intake from " + currentState.toString() + " to " + newState.toString());
 		currentState = newState;
 		time = 0;
 	}
-	
-	public void pollSwitch()
-	{
+
+	public void pollSwitch() {
 		currentSwitchStatus = !cubeSwitch.get();
 	}
-	
-	public State getState()
-	{
+
+	public State getState() {
 		return currentState;
 	}
-	
+
 	public boolean hasCube() {
 		return currentSwitchStatus;
 	}

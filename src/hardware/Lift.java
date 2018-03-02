@@ -1,5 +1,6 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -68,7 +69,7 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), SWITCH(-455, 537), L_SCALE(-665, 400), H_SCALE(-695, 419), STARTING(-487,
+		GROUND(-280, 537), SWITCH(-455, 537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
 				389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
@@ -90,6 +91,8 @@ public class Lift {
 	private FeedbackLinkedCAN liftMotor;
 	private FeedbackTalon flipMotor;
 	private DigitalInput limitSwitch;
+	private boolean limSwitchVal = false;
+	private boolean lastSwitchVal = false;
 	/**
 	 * Whether the lift is active. If true, feedback loop is run, if false it's set
 	 * to 0 all the time.
@@ -191,7 +194,10 @@ public class Lift {
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
 	public void periodic() {
+		lastSwitchVal = limSwitchVal;
+		limSwitchVal = !limitSwitch.get();
 		if (active) {
+			if(currentPos == Positions.GROUND && (limSwitchVal && !lastSwitchVal)) resetError();
 			if (currentPos == Positions.STARTING) {
 				flipMotor.setSetpoint(currentPos.flipPos);
 			} else {
@@ -204,7 +210,7 @@ public class Lift {
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
 		}
-		if(SmartDashboard.getBoolean("Reset Error", false) || (limitSwitch.get() && currentPos == Positions.GROUND)) {
+		if(SmartDashboard.getBoolean("Reset Error", false) /* || (limitSwitch.get() && currentPos == Positions.GROUND) */) {
 			resetError();
 			SmartDashboard.putBoolean("Reset Error", false);
 			Logging.h("Reset Lift and Flip Error");
@@ -214,19 +220,21 @@ public class Lift {
 	/**
 	 * Zero both POTs to the current position.
 	 */
-	private void resetError() {
+	public void resetError() {
 		double liftError = liftMotor.feedbackTalon.getRawCLError();
 		double flipError = flipMotor.getRawCLError();
 		SmartDashboard.putNumber("Lift Offset", liftError);
 		SmartDashboard.putNumber("Flip Offset", flipError);
 		
 		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int)currentPos.liftPos, 0, 20);
-		flipMotor.talon.setSelectedSensorPosition((int)currentPos.liftPos, 0, 20);
+		flipMotor.talon.setSelectedSensorPosition((int)currentPos.flipPos, 0, 20);
 		
 		SmartDashboard.putNumber("Current Position", currentPos.liftPos);
 
 		SmartDashboard.putBoolean("Reset Error", false);
 		Logging.h("Reset Lift and Flip Error");
+		
+		flipMotor.talon.set(ControlMode.PercentOutput, 0);
 	}
 	
 	/**
@@ -249,6 +257,7 @@ public class Lift {
 		SmartDashboard.putNumber("flip closed loop error", flipMotor.getRawCLError());
 		SmartDashboard.putNumber("flip talon output voltage", flipMotor.talon.getMotorOutputVoltage());
 		SmartDashboard.putNumber("Lift motor output voltage", liftMotor.feedbackTalon.talon.getMotorOutputVoltage());
+		SmartDashboard.putBoolean("Lift lim switch", limSwitchVal);
 	}
 
 	/**
