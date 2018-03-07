@@ -94,13 +94,16 @@ public class Teleop extends OpMode {
 			robot.lift.trackToPos(Lift.Positions.H_SCALE);
 		else if (e3d.isPressed(E3D.Button.SEVEN))
 			robot.lift.trackToPos(Lift.Positions.L_SCALE);
+		else if (e3d.isPressed(E3D.Button.TEN))
+			robot.lift.trackToPos(Lift.Positions.H_SWITCH);
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
 		robot.lift.logToDashboard();
 		
-		if(e3d.isPressed(E3D.Button.THUMB))
-		{
-			robot.lift.resetError();
+		if(e3d.isPressed(E3D.Button.THUMB)) {
+			robot.lift.resetDown();
+		} else if(e3d.isReleased(E3D.Button.THUMB)) {
+			robot.lift.stopResettingDown();
 		}
 
 		// Temporary manual lift control code

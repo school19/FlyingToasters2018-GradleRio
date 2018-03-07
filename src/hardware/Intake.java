@@ -55,7 +55,7 @@ public class Intake {
 
 	}
 
-	public void perodic(double deltaTime) {
+	public void periodic(double deltaTime) {
 		pollSwitch();
 		switch (currentState) {
 		case RECOVERY:

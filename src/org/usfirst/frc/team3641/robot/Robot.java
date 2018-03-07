@@ -292,7 +292,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		driveBase.update(deltaTime);
-		intake.perodic(deltaTime);
+		intake.periodic(deltaTime);
 		lift.periodic();
 		leds.updateLightsToRobotState(this);
 	}

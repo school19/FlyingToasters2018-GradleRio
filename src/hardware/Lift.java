@@ -61,6 +61,8 @@ public class Lift {
 	 * The minimum position at which the thing can flip at.
 	 */
 	static final double FLIP_MIN_POS = -483;
+	
+	private static final double DOWN_SLOW_SPEED = -.15;
 
 	/**
 	 * The different positions to go to, in raw potentiometer values.
@@ -69,7 +71,7 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), SWITCH(-455, 537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
+		GROUND(-280, 537), SWITCH(-455, 537), H_SWITCH(-521,537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
 				389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
@@ -85,6 +87,9 @@ public class Lift {
 	 * The current position of the stuff
 	 */
 	public Positions currentPos = Positions.STARTING;
+	
+	private boolean resettingDown = false;
+	private boolean lastResettingDown = false;
 	/**
 	 * the motor which drives the lift
 	 */
@@ -176,7 +181,7 @@ public class Lift {
 	 *            The position to go to.
 	 */
 	public void trackToPos(Positions position) {
-		Logging.m("Set setpoint run!");
+		Logging.m("Tracking to: " + position.toString());
 		if (currentPos == Positions.STARTING && (position != Positions.STARTING && position != Positions.H_SCALE)) {
 			currentPos = Positions.STARTING_FLIP;
 		} else {
@@ -196,11 +201,25 @@ public class Lift {
 	public void periodic() {
 		lastSwitchVal = limSwitchVal;
 		limSwitchVal = !limitSwitch.get();
-		if (active) {
-			if(currentPos == Positions.GROUND && (limSwitchVal && !lastSwitchVal)) resetError();
+		if(limSwitchVal && !lastSwitchVal) limSwitchPressed();
+		
+		if(lastResettingDown != resettingDown) {
+			Logging.h("Switched resettingDown to " + resettingDown);
+		}
+		
+		if(resettingDown) {
+			if(lastResettingDown != resettingDown) {
+				Logging.h("Lift is no longer active.");
+			}
+			liftMotor.setPower(-DOWN_SLOW_SPEED);
+		} else if (active) {
 			if (currentPos == Positions.STARTING) {
+				
 				flipMotor.setSetpoint(currentPos.flipPos);
 			} else {
+				if(lastResettingDown != resettingDown) {
+					Logging.h("Lift is active again.");
+				}
 				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS) {
 					flipMotor.setSetpoint(currentPos.flipPos);
 				} else {
@@ -210,31 +229,47 @@ public class Lift {
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
 		}
-		if(SmartDashboard.getBoolean("Reset Error", false) /* || (limitSwitch.get() && currentPos == Positions.GROUND) */) {
-			resetError();
-			SmartDashboard.putBoolean("Reset Error", false);
-			Logging.h("Reset Lift and Flip Error");
-		}
+		
+		lastResettingDown = resettingDown;
 	}
 	
 	/**
 	 * Zero both POTs to the current position.
 	 */
-	public void resetError() {
-		double liftError = liftMotor.feedbackTalon.getRawCLError();
-		double flipError = flipMotor.getRawCLError();
-		SmartDashboard.putNumber("Lift Offset", liftError);
-		SmartDashboard.putNumber("Flip Offset", flipError);
-		
-		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int)currentPos.liftPos, 0, 20);
-		flipMotor.talon.setSelectedSensorPosition((int)currentPos.flipPos, 0, 20);
-		
-		SmartDashboard.putNumber("Current Position", currentPos.liftPos);
+	public void limSwitchPressed() {
+		if(resettingDown) {
+			stopResettingDown();
+			resetError();
+			Logging.h("Manual Down Hit Switch");
+			Logging.h("Current Target: " + currentPos.toString());
+		}
 
+		if(currentPos == Positions.GROUND) {		
+			resetError();
+		}
+		trackToPos(Positions.GROUND);
+		Logging.h("Current Target: still " + currentPos.toString());
+	}
+	
+	private void resetError() {
+		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int)Positions.GROUND.liftPos, 0, 20);
+		flipMotor.talon.setSelectedSensorPosition((int)Positions.GROUND.flipPos, 0, 20);
+	
 		SmartDashboard.putBoolean("Reset Error", false);
 		Logging.h("Reset Lift and Flip Error");
-		
+	
 		flipMotor.talon.set(ControlMode.PercentOutput, 0);
+	}
+	
+	public void resetDown() {
+		if(currentPos != Positions.H_SCALE && currentPos != Positions.L_SCALE && currentPos != Positions.STARTING ) {
+			resettingDown = true;
+		}
+	}
+	
+	public void stopResettingDown()
+	{
+		resettingDown = false;
 	}
 	
 	/**
@@ -258,6 +293,7 @@ public class Lift {
 		SmartDashboard.putNumber("flip talon output voltage", flipMotor.talon.getMotorOutputVoltage());
 		SmartDashboard.putNumber("Lift motor output voltage", liftMotor.feedbackTalon.talon.getMotorOutputVoltage());
 		SmartDashboard.putBoolean("Lift lim switch", limSwitchVal);
+		SmartDashboard.putBoolean("Resetting Down", resettingDown);
 	}
 
 	/**
