@@ -2,7 +2,7 @@ package org.usfirst.frc.team3641.robot;
 
 import commands.autonomous.*;
 import commands.interfaces.*;
-import commands.teleop.Teleop;
+import commands.teleop.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -325,5 +325,6 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			autonomous = null;
 			Logging.h("Auton finished!");
 		}
+
 	}
 }

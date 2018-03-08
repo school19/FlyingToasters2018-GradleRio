@@ -97,13 +97,11 @@ public class TeleopGuitar extends OpMode {
 		else if (guitar.isPressed(Button.BLUE))
 			robot.lift.trackToPos(Lift.Positions.SWITCH);
 		else if (guitar.isPressed(Button.YELLOW))
-			robot.lift.trackToPos(Positions.H_SCALE); // TODO SWITCH TO H SWITCH once code from DS is
-														// pulled!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-														// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			robot.lift.trackToPos(Positions.H_SWITCH);
 		else if (guitar.isPressed(Button.RED))
-			robot.lift.trackToPos(Lift.Positions.H_SCALE);
-		else if (guitar.isPressed(Button.GREEN))
 			robot.lift.trackToPos(Lift.Positions.L_SCALE);
+		else if (guitar.isPressed(Button.GREEN))
+			robot.lift.trackToPos(Lift.Positions.H_SCALE);
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
 		robot.lift.logToDashboard();

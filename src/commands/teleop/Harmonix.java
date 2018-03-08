@@ -1,6 +1,7 @@
 package commands.teleop;
 
 import java.util.EnumMap;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 public class Harmonix
@@ -38,7 +39,7 @@ public class Harmonix
 	 */
 	public enum Axis
 	{
-		STRUM, WHAMMY_BAR;
+		STRUM, WHAMMY_BAR, BUTTONS;
 	}
 
 	/**
@@ -118,5 +119,48 @@ public class Harmonix
 		current.put(Button.ORANGE, rawJoystick.getRawButton(5));
 
 		current.put(Button.LOWER, rawJoystick.getRawButton(7));
+		
+		axes.put(Axis.BUTTONS, buttonsToAxis());
+	}
+	
+	/**
+	 * Converts the current value of the frets to an axis.
+	 * 
+	 * @return A number based on which frets are down.
+	 */
+	public double buttonsToAxis()
+	{
+		double rotation = 0;
+		double numberOfButtons = 0;
+		if(!isDown(Button.LOWER))
+		{
+			if(isDown(Button.GREEN))
+			{
+				rotation += 1;
+				numberOfButtons++;
+			}
+			if(isDown(Button.RED))
+			{
+				rotation += .5;
+				numberOfButtons++;
+			}
+			if(isDown(Button.YELLOW))
+			{
+				rotation += 0;
+				numberOfButtons++;
+			}
+			if(isDown(Button.BLUE))
+			{
+				rotation -= .5;
+				numberOfButtons++;
+			}
+			if(isDown(Button.ORANGE))
+			{
+				rotation -= 1;
+				numberOfButtons++;
+			}
+			if(numberOfButtons != 0) rotation /= numberOfButtons;
+		}
+		return rotation;
 	}
 }
