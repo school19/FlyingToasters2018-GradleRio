@@ -81,7 +81,7 @@ public class Fast2CubeAuton extends OpMode {
 		
 		if (gameData.charAt(1) == 'L' && startOnLeft || gameData.charAt(1) == 'R' && !startOnLeft) {
 			cross = true;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.FAST, leftPath);
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.FAST_LOW_ACCEL, leftPath);
 			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL,  leftGetCube);
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
 		} else {
@@ -98,7 +98,7 @@ public class Fast2CubeAuton extends OpMode {
 		} else {
 			raise1 = new LiftCommand(this, bot, Positions.H_SCALE).delay(mpCommand.getDuration() - liftEndTime);
 		}
-		lower1 = new LiftCommand(this, bot, Positions.SWITCH);
+		lower1 = new LiftCommand(this, bot, Positions.GROUND);
 		output1 = new IntakeCommand(this, bot, State.OUTPUTTING);
 		raise2 = new LiftCommand(this, bot, Positions.L_SCALE).delay(driveToDump2ndCube.getDuration() - liftEndTime);
 		lower2 = new LiftCommand(this, bot, Positions.SWITCH);
@@ -142,26 +142,23 @@ public class Fast2CubeAuton extends OpMode {
 			if (cross) {
 				if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
 					addCommand(crossMpCommand);
+					addCommand(raise1);
 				}
 			} else {
-				addCommand(raise1);
+				addCommand(output1);
+				addCommand(lower1);
+				addCommand(getCubeCommand);
 			}
 		} else if (cmd == crossMpCommand) {
-			addCommand(raise1);
-		} else if(cmd == raise1) {
 			addCommand(output1);
-		} else if(cmd == output1) {
 			addCommand(lower1);
-		} else if(cmd == lower1) {
-			robot.lift.trackToPos(Positions.GROUND);
 			addCommand(getCubeCommand);
 		} else if (cmd == getCubeCommand) {
 			addCommand(intakeCommand);
 		} else if (cmd == intakeCommand) {
 			addCommand(driveToDump2ndCube);
-		} else if (cmd == driveToDump2ndCube) {
 			addCommand(raise2);
-		} else if (cmd == raise2) {
+		} else if (cmd == driveToDump2ndCube) {
 			addCommand(output2);
 		} else if (cmd == output2) {
 			addCommand(lower2);
