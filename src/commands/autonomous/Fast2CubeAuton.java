@@ -1,0 +1,171 @@
+package commands.autonomous;
+
+import org.usfirst.frc.team3641.robot.Robot;
+
+import commands.DelayedCommand;
+import commands.IntakeCommand;
+import commands.LiftCommand;
+import commands.MotionProfileCommand;
+import commands.interfaces.Command;
+import commands.interfaces.OpMode;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import hardware.Intake;
+import hardware.Intake.State;
+import hardware.Lift.Positions;
+import path_generation.Point;
+import path_generation.Waypoint;
+import utilities.Logging;
+
+//TODO add intake commands
+/**
+ * Drives to the left scale plate.
+ * 
+ * @author jack
+ *
+ */
+public class Fast2CubeAuton extends OpMode {
+	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
+			new Waypoint(new Point(7.0, -0.7), -Math.PI / 4.0) };
+	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.7), 3 * Math.PI / 4.0),
+			new Waypoint(new Point(5.5, -1), -3 * Math.PI / 4.0) };
+	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.5, -1), Math.PI / 4.0),
+			new Waypoint(new Point(7.1, -0.9), -Math.PI / 4.0) };
+	
+	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
+			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0) };
+	private Waypoint[] rightPath2 = { new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
+			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
+	private Waypoint[] rightGetCube = { new Waypoint(new Point(6.9, -5.5), -3 * Math.PI / 4),
+			new Waypoint(new Point(5.5, -5.5), 3 * Math.PI / 4) };
+	private Waypoint[] right2ndCube = { new Waypoint(new Point(5.5, -6), -Math.PI / 4),
+			new Waypoint(new Point(7.4, -5.9), Math.PI / 4) };
+	
+	// First profile run
+	private MotionProfileCommand mpCommand;
+	// second one to cross the bump when going right
+	private MotionProfileCommand crossMpCommand;
+	// drives to get cube
+	private MotionProfileCommand getCubeCommand;
+	// drives to drop the second command
+	private MotionProfileCommand driveToDump2ndCube;
+	private IntakeCommand intakeCommand;
+	
+	//Amount of time before the end of the motion profile to lift
+	final static double liftEndTime = 2;
+	private DelayedCommand raise1;
+	private LiftCommand lower1;
+	
+	private DelayedCommand raise2;
+	private LiftCommand lower2;
+	
+	private IntakeCommand output1;
+	private IntakeCommand output2;
+	
+	
+	private boolean cross;
+	private boolean startLeft;
+	/**
+	 * constructor for the left scale plate auton.
+	 * 
+	 * @param bot
+	 */
+	public Fast2CubeAuton(Robot bot, boolean startOnLeft) {
+		super(bot, "Left Scale auton");
+		startLeft = startOnLeft;
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		Logging.h(gameData);
+		
+		//Indicates whether the paths should be mirrored
+		final boolean mirrored = !startOnLeft;
+		
+		if (gameData.charAt(1) == 'L' && startOnLeft || gameData.charAt(1) == 'R' && !startOnLeft) {
+			cross = true;
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.FAST, leftPath);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL,  leftGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
+		} else {
+			cross = false;
+			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.MED, rightPath);
+			crossMpCommand = new MotionProfileCommand(this, robot, "Mp command 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
+			getCubeCommand = new MotionProfileCommand(this, robot, "Get right cube", false, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightGetCube);
+			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, right2ndCube);
+		}
+
+		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING);
+		if(cross) {
+			raise1 = new LiftCommand(this, bot, Positions.H_SCALE).delay(crossMpCommand.getDuration() - liftEndTime);
+		} else {
+			raise1 = new LiftCommand(this, bot, Positions.H_SCALE).delay(mpCommand.getDuration() - liftEndTime);
+		}
+		lower1 = new LiftCommand(this, bot, Positions.SWITCH);
+		output1 = new IntakeCommand(this, bot, State.OUTPUTTING);
+		raise2 = new LiftCommand(this, bot, Positions.L_SCALE).delay(driveToDump2ndCube.getDuration() - liftEndTime);
+		lower2 = new LiftCommand(this, bot, Positions.SWITCH);
+		output2 = new IntakeCommand(this, bot, State.OUTPUTTING);
+	}
+
+	/**
+	 * called once when initialized.
+	 */
+	public void init() {
+		super.init();
+		addCommand(mpCommand);
+		if(!cross) {
+			addCommand(raise1);
+		}
+	}
+
+	/**
+	 * called periodically when opmode is running.
+	 */
+	public void periodic(double deltaTime) {
+		super.periodic(deltaTime);
+		Logging.l("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
+				+ robot.driveBase.right.getPosition());
+	}
+
+	/**
+	 * called once when the opmode is stopped.
+	 */
+	public void stop() {
+		robot.driveBase.setFeedbackActive(false);
+		super.stop();
+	}
+
+	public void commandFinished(Command cmd) {
+		Logging.h("Command ended: " + cmd.getName());
+		Logging.h("Running commands: " + commands.toString());
+		// Add the intake command to output the cube.
+		if (cmd == mpCommand) {
+			//Check if the robot can cross over
+			if (cross) {
+				if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
+					addCommand(crossMpCommand);
+				}
+			} else {
+				addCommand(raise1);
+			}
+		} else if (cmd == crossMpCommand) {
+			addCommand(raise1);
+		} else if(cmd == raise1) {
+			addCommand(output1);
+		} else if(cmd == output1) {
+			addCommand(lower1);
+		} else if(cmd == lower1) {
+			robot.lift.trackToPos(Positions.GROUND);
+			addCommand(getCubeCommand);
+		} else if (cmd == getCubeCommand) {
+			addCommand(intakeCommand);
+		} else if (cmd == intakeCommand) {
+			addCommand(driveToDump2ndCube);
+		} else if (cmd == driveToDump2ndCube) {
+			addCommand(raise2);
+		} else if (cmd == raise2) {
+			addCommand(output2);
+		} else if (cmd == output2) {
+			addCommand(lower2);
+		}
+		super.commandFinished(cmd);
+	}
+}

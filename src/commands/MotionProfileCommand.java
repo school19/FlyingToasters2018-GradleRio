@@ -59,6 +59,10 @@ public class MotionProfileCommand extends Command {
 	 */
 	private boolean backwards;
 	/**
+	 * Whether the path will be mirrored left to right.
+	 */
+	private boolean mirrored;
+	/**
 	 * The robot object that will be driven
 	 */
 	private Robot bot;
@@ -95,15 +99,47 @@ public class MotionProfileCommand extends Command {
 		super(opMode, name);
 		wp = waypoints;
 		backwards = isBackwards;
+		mirrored = false;
 		bot = robot;
 		// generate path
-		if(!SAFE_SPEED_OVERRIDE) {
+		if (!SAFE_SPEED_OVERRIDE) {
 			path = new Path(speed.vel, speed.accel, wp);
-		}else {
+		} else {
 			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
 		}
 		Logging.l(path);
 		endTime = path.endTime + END_TIME_EXTRA;
+	}
+
+	public MotionProfileCommand(CommandCallback opMode, Robot robot, String name, boolean isBackwards,
+			boolean isMirrored, Speed speed, Waypoint... waypoints) {
+		super(opMode, name);
+		backwards = isBackwards;
+		mirrored = isMirrored;
+		wp = waypoints;
+		// Mirror waypoints if necessary
+		if (mirrored) {
+			for(Waypoint waypoint : wp) {
+				waypoint.position.y = -waypoint.position.y;
+				waypoint.rotation = -waypoint.rotation;
+			}
+		}
+		bot = robot;
+		// generate path
+		if (!SAFE_SPEED_OVERRIDE) {
+			path = new Path(speed.vel, speed.accel, wp);
+		} else {
+			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
+		}
+		Logging.l(path);
+		endTime = path.endTime + END_TIME_EXTRA;
+	}
+	/**
+	 * Returns the duration of the command
+	 * @return duration of the command in seconds
+	 */
+	public double getDuration() {
+		return endTime;
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package commands.interfaces;
 
+import commands.DelayedCommand;
+
 /**
  * abstract interface for a command.
  * 
@@ -59,6 +61,13 @@ public abstract class Command {
 	protected void endCommand() {
 		callback.commandFinished(this);
 	}
+	
+	public DelayedCommand delay(double delayTime) {
+		DelayedCommand delayed = new DelayedCommand(callback, delayTime);
+		delayed.setCommand(this);
+		return delayed;
+	}
+	
 	/**
 	 * get the readable name of the command. Identical to toString().
 	 * @return the readable name of the command

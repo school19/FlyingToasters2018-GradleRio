@@ -64,7 +64,7 @@ public class TeleopGuitar extends OpMode {
 		// get input from ps4 controller
 		ps4.poll();
 		guitar.poll();
-		// drive the derivebase
+		// drive the drivebase
 		robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
 		// log position
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
