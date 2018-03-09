@@ -19,7 +19,7 @@ import utilities.Logging;
 
 //TODO add intake commands
 /**
- * Drives to the left scale plate.
+ * Drives to the scale plate, drops in a cube, and repeats.
  * 
  * @author jack
  *
@@ -62,8 +62,9 @@ public class Fast2CubeAuton extends OpMode {
 	private IntakeCommand output1;
 	private IntakeCommand output2;
 	
-	
+	//Whether the robot will cross the center
 	private boolean cross;
+	//whether the robot starts on the left.
 	private boolean startLeft;
 	/**
 	 * constructor for the left scale plate auton.
@@ -138,31 +139,39 @@ public class Fast2CubeAuton extends OpMode {
 		Logging.h("Running commands: " + commands.toString());
 		// Add the intake command to output the cube.
 		if (cmd == mpCommand) {
-			//Check if the robot can cross over
+			//Check if the robot can cross over. If not, auton stops here.
 			if (cross) {
 				if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
+					//Cross over
 					addCommand(crossMpCommand);
 					addCommand(raise1);
 				}
 			} else {
+				//Dump the cube and keep going to the next one
 				addCommand(output1);
 				addCommand(lower1);
 				addCommand(getCubeCommand);
 			}
 		} else if (cmd == crossMpCommand) {
+			//Dump the cube and keep going to the next one
 			addCommand(output1);
 			addCommand(lower1);
 			addCommand(getCubeCommand);
 		} else if (cmd == getCubeCommand) {
+			//Pick up the next cube
 			addCommand(intakeCommand);
 		} else if (cmd == intakeCommand) {
+			//Go to dump the next cube
 			addCommand(driveToDump2ndCube);
 			addCommand(raise2);
 		} else if (cmd == driveToDump2ndCube) {
+			//dump the second cube. Don't keep moving quickly since we're done now!
 			addCommand(output2);
 		} else if (cmd == output2) {
+			//Lower to switch position.
 			addCommand(lower2);
 		}
+		//Clean up after the command
 		super.commandFinished(cmd);
 	}
 }
