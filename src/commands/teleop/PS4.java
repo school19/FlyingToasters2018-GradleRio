@@ -1,6 +1,10 @@
 package commands.teleop;
 import java.util.EnumMap;
+
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
+import hardware.Intake;
 import utilities.Coords;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
@@ -8,7 +12,7 @@ public class PS4
 {
 	private EnumMap<Button, Boolean> current, last;
 	private EnumMap<Axis, Double> axes;
-	private Joystick rawJoystick;
+	private Joystick rawJoystick, rumbleJoystick;
 	private double leftAngle, leftMagnitude, rightAngle, rightMagnitude;
 
 	/**
@@ -19,6 +23,7 @@ public class PS4
 	public PS4(int port)
 	{
 		rawJoystick= new Joystick(port);
+		rumbleJoystick = new Joystick(port+1);
 		current = new EnumMap<Button, Boolean>(Button.class);
 		last = new EnumMap<Button, Boolean>(Button.class);
 		axes = new EnumMap<Axis, Double>(Axis.class);
@@ -47,7 +52,7 @@ public class PS4
 		LEFT_X, LEFT_Y, LEFT_TRIGGER,
 		RIGHT_X, RIGHT_Y, RIGHT_TRIGGER;
 	}
-	
+		
 	/**
 	 * Set the rumble on the controller.
 	 * 
@@ -155,6 +160,26 @@ public class PS4
 	public boolean isReleased(Button button)
 	{
 		return (!current.get(button) && last.get(button));
+	}
+	
+	public void rumble(double value, boolean heavy)
+	{
+		RumbleType type = (heavy) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
+		rumbleJoystick.setRumble(type, value);
+	}
+	
+	public void rumbleForTime(double value, boolean heavy, double time)
+	{
+		long ms = (long)(1000*time);
+		new Thread(() -> {
+			rumble(value, heavy);
+			try {
+				Thread.sleep(ms);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			rumble(0, heavy);
+		}).start();
 	}
 	
 	/**

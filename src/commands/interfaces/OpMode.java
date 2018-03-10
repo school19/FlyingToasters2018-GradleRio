@@ -67,7 +67,8 @@ public abstract class OpMode extends Command implements CommandCallback {
 	 * called once or never, to stop the opmode.
 	 */
 	public void stop() {
-		for (Command cmd : commands) {
+		Command[] cmdArray = commands.toArray(new Command[commands.size()]);
+		for (Command cmd : cmdArray) {
 			cmd.stop();
 			commands.remove(cmd);
 		}
