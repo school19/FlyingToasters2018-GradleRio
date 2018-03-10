@@ -3,7 +3,9 @@ package commands.teleop;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
-import commands.teleop.Harmonix.Button;
+import commands.teleop.XPlorer.Button;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
 import hardware.Lift;
@@ -21,7 +23,7 @@ public class TeleopGuitar extends OpMode {
 	 * The PS4 controller the driver uses to control the robot
 	 */
 	private PS4 ps4;
-	private Harmonix guitar;
+	private XPlorer guitar;
 
 	/**
 	 * Constructor
@@ -32,7 +34,7 @@ public class TeleopGuitar extends OpMode {
 	public TeleopGuitar(Robot bot) {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
-		guitar = new Harmonix(1);
+		guitar = new XPlorer(2);
 	}
 
 	/**
@@ -105,7 +107,9 @@ public class TeleopGuitar extends OpMode {
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
 		robot.lift.logToDashboard();
-
+		
+		if(robot.intake.getState() == Intake.State.INTAKING) ps4.rumbleForTime(1, false, .5);
+		
 		// TODO Add guitar reset button or fix the lift
 		/*
 		 * if(guitar.isPressed(E3D.Button.THUMB)) { robot.lift.resetError(); }

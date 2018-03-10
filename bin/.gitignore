@@ -1,6 +1,6 @@
 /commands/
+/controllers/
 /hardware/
 /org/
-/utilities/
-/controllers/
 /path_generation/
+/utilities/

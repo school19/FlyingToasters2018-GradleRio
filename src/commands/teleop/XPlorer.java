@@ -2,9 +2,11 @@ package commands.teleop;
 
 import java.util.EnumMap;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import utilities.Logging;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class Harmonix
+public class XPlorer
 {
 	private EnumMap<Button, Boolean> current, last;
 	private EnumMap<Axis, Double> axes, lastAxes;
@@ -15,7 +17,7 @@ public class Harmonix
 	 * 
 	 * @param port The port it uses on the driver station.
 	 */
-	public Harmonix(int port)
+	public XPlorer(int port)
 	{
 		rawJoystick= new Joystick(port);
 		current = new EnumMap<Button, Boolean>(Button.class);
@@ -103,7 +105,7 @@ public class Harmonix
 		else axes.put(Axis.STRUM, 0.0);
 		
 
-		double wb = rawJoystick.getRawAxis(2);
+		double wb = rawJoystick.getRawAxis(4);
 		if(wb == -0.0078125) wb = 0;
 		else wb = (wb+1)/2;
 		
@@ -112,15 +114,23 @@ public class Harmonix
 		current.put(Button.STRUM, !(axes.get(Axis.STRUM) == 0));
 		current.put(Button.STRUM_UP, axes.get(Axis.STRUM) > 0.5);
 		current.put(Button.STRUM_DOWN, axes.get(Axis.STRUM) < -0.5);
-		current.put(Button.GREEN, rawJoystick.getRawButton(2));
-		current.put(Button.RED, rawJoystick.getRawButton(3));
+		current.put(Button.GREEN, rawJoystick.getRawButton(1));
+		current.put(Button.RED, rawJoystick.getRawButton(2));
+		current.put(Button.BLUE, rawJoystick.getRawButton(3));
 		current.put(Button.YELLOW, rawJoystick.getRawButton(4));
-		current.put(Button.BLUE, rawJoystick.getRawButton(1));
 		current.put(Button.ORANGE, rawJoystick.getRawButton(5));
 
 		current.put(Button.LOWER, rawJoystick.getRawButton(7));
 		
 		axes.put(Axis.BUTTONS, buttonsToAxis());
+	}
+	
+	public void setRumble(double rumble)
+	{
+		rumble = Math.abs(rumble);
+		Logging.h("Rumble: " + rumble);
+		rawJoystick.setRumble(RumbleType.kLeftRumble, rumble);
+		rawJoystick.setRumble(RumbleType.kRightRumble, rumble);
 	}
 	
 	/**

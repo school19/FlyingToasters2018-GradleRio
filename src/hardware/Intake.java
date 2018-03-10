@@ -15,7 +15,7 @@ public class Intake {
 	/* 2 motors for intake */
 	static final int leftMotorID = 6;
 	static final int rightMotorID = 9;
-	static final int cubeSwitchPort = 0;
+	static final int cubeSwitchPort = 9;
 
 	private Talon leftTalon;
 	private Talon rightTalon;

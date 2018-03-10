@@ -3,7 +3,7 @@ package commands.teleop;
 import org.usfirst.frc.team3641.robot.Robot;
 
 import commands.interfaces.OpMode;
-import commands.teleop.Harmonix.Button;
+import commands.teleop.XPlorer.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Intake;
 import hardware.Lift;
@@ -21,7 +21,7 @@ public class TeleopGuitarDriver extends OpMode {
 	 * The PS4 controller the driver uses to control the robot
 	 */
 	private PS4 ps4;
-	private Harmonix guitar;
+	private XPlorer guitar;
 
 	/**
 	 * Constructor
@@ -32,7 +32,7 @@ public class TeleopGuitarDriver extends OpMode {
 	public TeleopGuitarDriver(Robot bot) {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
-		guitar = new Harmonix(1);
+		guitar = new XPlorer(1);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class TeleopGuitarDriver extends OpMode {
 		// get input from ps4 controller
 		guitar.poll();
 		// drive the derivebase
-		robot.driveBase.driveGrilledCheese(guitar.getAxis(Harmonix.Axis.WHAMMY_BAR) * guitar.getAxis(Harmonix.Axis.STRUM), guitar.getAxis(Harmonix.Axis.BUTTONS));
+		robot.driveBase.driveGrilledCheese(guitar.getAxis(XPlorer.Axis.WHAMMY_BAR) * guitar.getAxis(XPlorer.Axis.STRUM), guitar.getAxis(XPlorer.Axis.BUTTONS));
 		// log position
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
