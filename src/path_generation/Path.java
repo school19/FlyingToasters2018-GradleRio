@@ -2,6 +2,7 @@ package path_generation;
 
 import java.util.ArrayList;
 
+import hardware.DriveBase2018;
 import utilities.Logging;
 
 /**
@@ -48,11 +49,11 @@ public class Path {
 	public Path(Waypoint... points) {
 		this(defaultPoints, maxVel, maxAccel, defaultMode, points);
 	}
-	
+
 	public Path(double velocity, double accel, Waypoint... points) {
 		this(defaultPoints, velocity, accel, defaultMode, points);
 	}
-	
+
 	/**
 	 * creates a longer path between multiple points
 	 * 
@@ -157,17 +158,31 @@ public class Path {
 			}
 			break;
 		case TRAPAZOIDAL:
-			for (Waypoint wp : waypoints) {
+			waypoints.get(0).velocity = 0;
+			for (int i = 1; i < waypoints.size(); i++) {
+				Waypoint wp = waypoints.get(i);
 				double distance = wp.distance;
 				double accelVelocity = Math.sqrt(2 * distance * accel);
 				double decelVelocity = Math.sqrt(2 * (endPos - distance) * accel);
 				double triangularVelocity = Math.min(accelVelocity, decelVelocity);
+				double circularVelocity = DriveBase2018.wheelDistance * Math.abs(angleBetween(waypoints.get(i-1).rotation, wp.rotation));
+				double maxWheelVel = vel + circularVelocity;
+				double correctedMaxVel = vel / maxWheelVel;
 				wp.velocity = Math.min(triangularVelocity, vel);
 			}
 			break;
 		default:
 			Logging.e("Couldn't find velocity profile mode.");
 		}
+	}
+
+	private double angleBetween(double angle1, double angle2) {
+		double angleDif = angle2 - angle1;
+		if (angleDif > Math.PI)
+			angleDif -= 2 * Math.PI;
+		else if (angleDif < -Math.PI)
+			angleDif += 2 * Math.PI;
+		return angleDif;
 	}
 
 	/**

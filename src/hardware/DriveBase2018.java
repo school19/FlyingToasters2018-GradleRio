@@ -22,7 +22,7 @@ public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN right;
 	
 	//final static double wheelDistance = 0.665;
-	final static double wheelDistance = 0.735;
+	public final static double wheelDistance = 0.735;
 	
 	final static double velGain = 0.25;
 	final static double accelGain = 0.005;
