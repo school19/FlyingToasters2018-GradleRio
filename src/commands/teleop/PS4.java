@@ -15,6 +15,32 @@ public class PS4
 	private Joystick rawJoystick, rumbleJoystick;
 	private double leftAngle, leftMagnitude, rightAngle, rightMagnitude;
 
+	private RumbleThread rumbleThread;
+	
+	private class RumbleThread extends Thread {
+		double value;
+		boolean heavy;
+		long ms;
+		
+		RumbleThread(double value, boolean heavy, double time) {
+			ms = (long)(1000*time);
+			this.value = value;
+			this.heavy = heavy;
+			this.start();
+		}
+		
+		public void run() {
+			rumble(value, heavy);
+			try {
+				Thread.sleep(ms);
+				rumble(0, heavy);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
 	/**
 	 * Initialize the PS4 controller with the port.
 	 * 
@@ -28,6 +54,7 @@ public class PS4
 		last = new EnumMap<Button, Boolean>(Button.class);
 		axes = new EnumMap<Axis, Double>(Axis.class);
 		poll(); //Populate the current EnumMap so the last EnumMap won't be null when the user polls for the first time.
+		rumbleThread = new RumbleThread(0,true,0);
 	}
 	
 	/**
@@ -170,16 +197,8 @@ public class PS4
 	
 	public void rumbleForTime(double value, boolean heavy, double time)
 	{
-		long ms = (long)(1000*time);
-		new Thread(() -> {
-			rumble(value, heavy);
-			try {
-				Thread.sleep(ms);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			rumble(0, heavy);
-		}).start();
+		rumbleThread.interrupt();
+		rumbleThread = new RumbleThread(value, heavy, time);
 	}
 	
 	/**
