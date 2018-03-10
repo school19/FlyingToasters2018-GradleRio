@@ -248,7 +248,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void teleopInit() {
-		teleop = new TeleopGuitar(this);
+		teleop = new Teleop(this);
 		standardInit();
 	}
 

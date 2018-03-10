@@ -32,7 +32,7 @@ public class XPlorer
 	public static enum Button
 	{
 		BLUE, GREEN, RED, YELLOW, ORANGE,
-		LOWER,
+		LOWER, BACK, START,
 		STRUM, STRUM_UP, STRUM_DOWN;
 	}
 	
@@ -119,6 +119,8 @@ public class XPlorer
 		current.put(Button.BLUE, rawJoystick.getRawButton(3));
 		current.put(Button.YELLOW, rawJoystick.getRawButton(4));
 		current.put(Button.ORANGE, rawJoystick.getRawButton(5));
+		current.put(Button.BACK, rawJoystick.getRawButton(7));
+		current.put(Button.START, rawJoystick.getRawButton(8));
 
 		current.put(Button.LOWER, rawJoystick.getRawButton(7));
 		

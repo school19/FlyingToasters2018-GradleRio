@@ -19,7 +19,7 @@ public class Teleop extends OpMode {
 	 * The PS4 controller the driver uses to control the robot
 	 */
 	private PS4 ps4;
-	private E3D e3d;
+	private Operator op;
 
 	/**
 	 * Constructor
@@ -30,7 +30,7 @@ public class Teleop extends OpMode {
 	public Teleop(Robot bot) {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
-		e3d = new E3D(1);
+		op = new Operator(2);
 	}
 
 	/**
@@ -49,6 +49,7 @@ public class Teleop extends OpMode {
 		}
 		robot.lift.readTuningValuesFromDashboard();
 
+		op.checkControllerType();
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class Teleop extends OpMode {
 		super.periodic(deltaTime);
 		// get input from ps4 controller
 		ps4.poll();
-		e3d.poll();
+		op.poll();
 		// drive the derivebase
 		robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
 		// log position
@@ -70,52 +71,52 @@ public class Teleop extends OpMode {
 
 		// set the power of the intake based on the user inputs.
 
-		if (e3d.isPressed(3))
+		if (op.isPressed(Operator.Button.INTAKE))
 			robot.intake.setState(Intake.State.INTAKING);
-		else if (e3d.isPressed(4))
-			robot.intake.setState(Intake.State.OUTPUTTING);
-		else if (e3d.isPressed(6))
+		else if (op.isPressed(Operator.Button.OUTTAKE))
 			robot.intake.setState(Intake.State.OUTPUTTING_SLOW);
-		else if (e3d.isReleased(3) && robot.intake.getState() == Intake.State.INTAKING)
+		else if (op.isReleased(Operator.Button.INTAKE) && robot.intake.getState() == Intake.State.INTAKING)
 			robot.intake.setState(Intake.State.RECOVERY);
-		else if (e3d.isReleased(4) && robot.intake.getState() == Intake.State.OUTPUTTING)
-			robot.intake.setState(Intake.State.RESET);
-		else if (e3d.isReleased(6) && robot.intake.getState() == Intake.State.OUTPUTTING_SLOW)
+		else if (op.isReleased(Operator.Button.OUTTAKE) && robot.intake.getState() == Intake.State.OUTPUTTING_SLOW)
 			robot.intake.setState(Intake.State.RESET);
 		// else if (robot.intake.getState() == Intake.State.RESTING)
 		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));
 
 		// move the lift
-		if (e3d.isPressed(E3D.Button.ELEVEN))
+		if (op.isPressed(Operator.Button.GROUND))
 			robot.lift.trackToPos(Lift.Positions.GROUND);
-		else if (e3d.isPressed(E3D.Button.NINE))
+		else if (op.isPressed(Operator.Button.LOW_SWITCH))
 			robot.lift.trackToPos(Lift.Positions.SWITCH);
-		else if (e3d.isPressed(E3D.Button.EIGHT))
+		else if (op.isPressed(Operator.Button.HIGH_SWITCH))
 			robot.lift.trackToPos(Lift.Positions.H_SCALE);
-		else if (e3d.isPressed(E3D.Button.SEVEN))
+		else if (op.isPressed(Operator.Button.LOW_SCALE))
 			robot.lift.trackToPos(Lift.Positions.L_SCALE);
-		else if (e3d.isPressed(E3D.Button.TEN))
+		else if (op.isPressed(Operator.Button.HIGH_SCALE))
 			robot.lift.trackToPos(Lift.Positions.H_SWITCH);
 		// log data about the lift's position, velocity, and error to the smartdashboard
 		// to help tune PIDs
 		robot.lift.logToDashboard();
 		
-		if(e3d.isPressed(E3D.Button.THUMB)) {
+		if(op.isPressed(Operator.Button.RESET)) {
 			robot.lift.resetDown();
-		} else if(e3d.isReleased(E3D.Button.THUMB)) {
+		} else if(op.isReleased(Operator.Button.RESET)) {
 			robot.lift.stopResettingDown();
 		}
+		
+		if(robot.intake.getState() == Intake.State.INTAKING) ps4.rumbleForTime(1, false, .5);
 
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
-		if (SmartDashboard.getBoolean("Manual enabled", false)) {
-			double liftPower = -e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.Y);
-			double flipPower = e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.X);
-			SmartDashboard.putNumber("Lift power", liftPower);
-			SmartDashboard.putNumber("Flip power", flipPower);
-			SmartDashboard.putNumber("E3D Throttle axis", e3d.getAxis(E3D.Axis.THROTTLE));
-			robot.lift.driveNoFeedback(liftPower, flipPower);
-		}
+		
+		//It is removed :P
+//		if (SmartDashboard.getBoolean("Manual enabled", false)) {
+//			double liftPower = -e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.Y);
+//			double flipPower = e3d.getAxis(E3D.Axis.THROTTLE) * e3d.getAxis(E3D.Axis.X);
+//			SmartDashboard.putNumber("Lift power", liftPower);
+//			SmartDashboard.putNumber("Flip power", flipPower);
+//			SmartDashboard.putNumber("E3D Throttle axis", e3d.getAxis(E3D.Axis.THROTTLE));
+//			robot.lift.driveNoFeedback(liftPower, flipPower);
+//		}
 	}
 
 	/**
