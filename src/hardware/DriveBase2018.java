@@ -96,14 +96,21 @@ public class DriveBase2018 extends DriveBase {
 		}
 	}
 
-	public void driveArcade(double power, double turn) {
-		double leftPow = power - turn;
-		double rightPow = power + turn;
-		left.setPower(leftPow);
-		right.setPower(rightPow);
+	public double driveArcade(double power, double turn) {
+		double leftPower = power - turn;
+		double rightPower = power + turn;
+		return driveTank(leftPower, rightPower);
+	}
+	
+	public double driveTank(double leftPower, double rightPower) {
+		leftPower = Math.max(Math.min(leftPower, 1),-1);
+		rightPower = Math.max(Math.min(rightPower, 1),-1);
+		left.setPower(leftPower);
+		right.setPower(rightPower);
+		return Math.sqrt(leftPower*leftPower + rightPower*rightPower)/2.0;
 	}
 
-	public void driveGrilledCheese(double power, double rotation) {
+	public double driveGrilledCheese(double power, double rotation) {
 		double gain = 1;
 		double limit = 0.25;
 		double subLimitWeight = .8;
@@ -121,7 +128,7 @@ public class DriveBase2018 extends DriveBase {
 		if (Math.abs(power) <= limit)
 			outputRotation = cheesyWeight * cheesyRotation + arcadeWeight * arcadeRotation;
 
-		driveArcade(outputPower, outputRotation);
+		return driveArcade(outputPower, outputRotation);
 	}
 
 	public double expInput(double input, double power) {
