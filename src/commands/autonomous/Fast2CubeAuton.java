@@ -81,12 +81,12 @@ public class Fast2CubeAuton extends OpMode {
 		final boolean mirrored = !startOnLeft;
 		
 		if (gameData.charAt(1) == 'L' && startOnLeft || gameData.charAt(1) == 'R' && !startOnLeft) {
-			cross = true;
+			cross = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.FAST_LOW_ACCEL, leftPath);
 			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL,  leftGetCube);
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
 		} else {
-			cross = false;
+			cross = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored, MotionProfileCommand.Speed.MED, rightPath);
 			crossMpCommand = new MotionProfileCommand(this, robot, "Mp command 2", true, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
 			getCubeCommand = new MotionProfileCommand(this, robot, "Get right cube", false, mirrored, MotionProfileCommand.Speed.MED_LOW_ACCEL, rightGetCube);

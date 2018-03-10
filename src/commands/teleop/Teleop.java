@@ -103,7 +103,7 @@ public class Teleop extends OpMode {
 			robot.lift.stopResettingDown();
 		}
 		
-		if(robot.intake.getState() == Intake.State.INTAKING) ps4.rumbleForTime(1, false, .5);
+		if(robot.intake.getState() == Intake.State.HAS_CUBE) ps4.rumbleForTime(1, false, .5);
 
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.

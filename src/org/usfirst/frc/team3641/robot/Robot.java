@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3641.robot;
 
+import java.util.ConcurrentModificationException;
+
 import commands.autonomous.*;
 import commands.interfaces.*;
 import commands.teleop.*;
@@ -40,6 +42,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		AUTO_SCALE_R("(Reverse) Right Scale auton"),
 		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
 		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
+		AUTO_FAST_2C_SCALE_L("(Reverse) FAST Two Cube Left Scale Auton"),
+		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
 		AUTO_TEST("Test Auton");
 		/**
 		 * The name of the auton to display on the dashboard
@@ -210,6 +214,12 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			break;
 		case AUTO_2C_SCALE_R:
 			autonomous = new RightScaleAuton2Cube(this);
+			break;
+		case AUTO_FAST_2C_SCALE_L:
+			autonomous = new Fast2CubeAuton(this, true);
+			break;
+		case AUTO_FAST_2C_SCALE_R:
+			autonomous = new Fast2CubeAuton(this, false);
 			break;
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
