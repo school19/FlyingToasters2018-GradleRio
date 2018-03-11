@@ -161,14 +161,35 @@ public class Path {
 			waypoints.get(0).velocity = 0;
 			for (int i = 1; i < waypoints.size(); i++) {
 				Waypoint wp = waypoints.get(i);
+				// Distance of this WP along the path
 				double distance = wp.distance;
+
+				/* Calculate the maximum velocity given the sharpness of the turn */
+				// Length of the arc the wheel travels, disregarding linear velocity (m)
+				double arcDistance = DriveBase2018.wheelDistance
+						* Math.abs(angleBetween(waypoints.get(i - 1).rotation, wp.rotation));
+				// Length of the straight line the wheel moves, disregarding turning (m)
+				double linearDistance = distance - waypoints.get(i - 1).distance;
+				// Total distance the wheel travels including arc and linear distance (m)
+				double totalWheelDist = arcDistance + linearDistance;
+				// Time for center of bot moving at max velocity (m/(m/s) = s)
+				double uncorrectedDeltaTime = linearDistance / vel;
+				// Velocity of fastest wheel given robot is at max velocity (m/s)
+				double uncorrectedWheelVel = totalWheelDist / uncorrectedDeltaTime;
+				// Calculate the max velocity of the center of the bot to not violate the max
+				// velocity with any wheel. ((m2/s2)/(m/s) = m/s)
+				double correctedMaxVel = vel * vel / uncorrectedWheelVel;
+
+				/* Calculate the maximum acceleration/deceleration velocity*/
+				//Max velocity for accelerating entire profile with no max vel
 				double accelVelocity = Math.sqrt(2 * distance * accel);
+				//Same for decelerating entire profile
 				double decelVelocity = Math.sqrt(2 * (endPos - distance) * accel);
+				//Maximum for a triangular profile
 				double triangularVelocity = Math.min(accelVelocity, decelVelocity);
-				double circularVelocity = DriveBase2018.wheelDistance * Math.abs(angleBetween(waypoints.get(i-1).rotation, wp.rotation));
-				double maxWheelVel = vel + circularVelocity;
-				double correctedMaxVel = vel / maxWheelVel;
-				wp.velocity = Math.min(triangularVelocity, vel);
+				
+				/*Calculate the final velocity at this point*/
+				wp.velocity = Math.min(triangularVelocity, correctedMaxVel);
 			}
 			break;
 		default:
