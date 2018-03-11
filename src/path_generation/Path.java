@@ -300,9 +300,31 @@ public class Path {
 			Point endPoint = end.getPoint();
 			double distance = startPoint.distance(endPoint);
 			double gpLength = distance / 2 * tightness;
+			double startGPLength;
+			double endGPLength;
+			// Correct for mismatched guide point lengths which cause extremely high angular
+			// acceleration at the point where two paths meet
+			// correct first guide point
+			if (wp > 0) {
+				Waypoint lastWP = points[wp - 1];
+				double lastDist = startPoint.distance(lastWP.getPoint());
+				double lastGPLength = lastDist / 2 * tightness;
+				startGPLength = Math.min(lastGPLength, gpLength);
+			} else {
+				startGPLength = gpLength;
+			}
+			// correct end guide point
+			if (wp < points.length - 2) {
+				Waypoint nextWP = points[wp + 2];
+				double nextDist = startPoint.distance(nextWP.getPoint());
+				double nextGPLength = nextDist / 2 * tightness;
+				endGPLength = Math.min(gpLength, nextGPLength);
+			} else {
+				endGPLength = gpLength;
+			}
 
-			Point startOffset = Point.PolarPoint(gpLength, start.rotation);
-			Point endOffset = Point.PolarPoint(-gpLength, end.rotation);
+			Point startOffset = Point.PolarPoint(startGPLength, start.rotation);
+			Point endOffset = Point.PolarPoint(-endGPLength, end.rotation);
 
 			Point gp1 = startPoint.sum(startOffset);
 			Point gp2 = endPoint.sum(endOffset);
