@@ -138,8 +138,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		SmartDashboard.putBoolean("Allow Auton Opposite Side", true);
 		// initialize drivebase
 		driveBase = new DriveBase2018();
-		intake = new Intake();
+		
 		lift = new Lift();
+		
+		intake = new Intake(lift);
 		// initialize timer
 		timer = new Timer();
 		

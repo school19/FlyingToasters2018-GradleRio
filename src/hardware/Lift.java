@@ -71,7 +71,7 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), SWITCH(-455, 537), H_SWITCH(-521,537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
+		GROUND(-280, 537), GROUND_TILT(-280, 500), SWITCH(-455, 537), H_SWITCH(-521,537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
 				389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
@@ -220,7 +220,7 @@ public class Lift {
 				if(lastResettingDown != resettingDown) {
 					Logging.h("Lift is active again.");
 				}
-				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS) {
+				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS && currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
 					flipMotor.setSetpoint(currentPos.flipPos);
 				} else {
 					flipMotor.setSetpoint(Positions.GROUND.flipPos);

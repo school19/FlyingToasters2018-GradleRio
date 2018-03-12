@@ -2,6 +2,7 @@ package hardware;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import hardware.Lift.Positions;
 import utilities.Logging;
 
 /**
@@ -21,6 +22,9 @@ public class Intake {
 	private Talon rightTalon;
 	private DigitalInput cubeSwitch;
 	private boolean currentSwitchStatus = false;
+	
+	//Used for lifting slightly when a cube is gotten
+	private Lift lift;
 
 	private State currentState = State.RESTING;
 	private double time;
@@ -35,12 +39,13 @@ public class Intake {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_SLOW,
 	}
 
-	public Intake() {
+	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
 		leftTalon.setInverted(true);
 		rightTalon.setInverted(true);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
+		this.lift = lift;
 	}
 
 	/**
@@ -64,8 +69,11 @@ public class Intake {
 				setState(State.RESET);
 		case INTAKING:
 			setPower(-defaultInSpeed);
-			if (hasCube())
+			if (hasCube()) {
 				setState(State.HAS_CUBE);
+				//Lift up a bit if it's at the ground to avoid damage or losing the cube
+				if(lift.currentPos == Positions.GROUND) lift.trackToPos(Positions.GROUND_TILT);
+			}
 			break;
 		case OUTPUTTING:
 			setPower(defaultOutSpeed);
