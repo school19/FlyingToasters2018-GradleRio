@@ -19,12 +19,12 @@ public class Lift {
 	 */
 	static final int LIFT_TALON_ID = 5;
 	static final int LIFT_FOLLOWER_ID = 8;
-	
+
 	/**
 	 * Id of the talon driving the flip motor
 	 */
 	static final int FLIP_TALON_ID = 7;
-	
+
 	static final int LIMIT_SWITCH_PORT = 1;
 
 	/**
@@ -61,7 +61,7 @@ public class Lift {
 	 * The minimum position at which the thing can flip at.
 	 */
 	static final double FLIP_MIN_POS = -483;
-	
+
 	private static final double DOWN_SLOW_SPEED = -.15;
 
 	/**
@@ -71,8 +71,8 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), GROUND_TILT(-280, 500), SWITCH(-455, 537), H_SWITCH(-521,537), L_SCALE(-625, 400), H_SCALE(-695, 419), STARTING(-487,
-				389), STARTING_FLIP(-487, 537);
+		GROUND(-280, 537), GROUND_TILT(-280, 500), SWITCH(-455, 537), H_SWITCH(-521, 537), L_SCALE(-625,
+				400), H_SCALE(-695, 419), STARTING(-487, 389), STARTING_FLIP(-487, 537);
 
 		double liftPos;
 		double flipPos;
@@ -87,7 +87,7 @@ public class Lift {
 	 * The current position of the stuff
 	 */
 	public Positions currentPos = Positions.STARTING;
-	
+
 	private boolean resettingDown = false;
 	private boolean lastResettingDown = false;
 	/**
@@ -117,18 +117,23 @@ public class Lift {
 	 * Constructor. creates a new lift object and initializes the motors
 	 */
 	public Lift() {
+		// Puts the things for tuning PIDs / vel / accel on dashboard
 		addTuningToDashboard();
 
+		// Create the talons for the lift and flipper and invert them if necessary (May
+		// change with string pot for lift talon)
 		FeedbackTalon liftFeedbackTalon = new FeedbackTalon(LIFT_TALON_ID, FeedbackDevice.Analog);
 		Talon liftFollowerTalon = new Talon(LIFT_FOLLOWER_ID);
 		liftFollowerTalon.talon.setInverted(true);
 		liftFeedbackTalon.talon.setInverted(true);
 		liftMotor = new FeedbackLinkedCAN(liftFeedbackTalon, liftFollowerTalon);
-
+		// Set up flip motor and limit switch
 		flipMotor = new FeedbackTalon(FLIP_TALON_ID, FeedbackDevice.Analog);
 		limitSwitch = new DigitalInput(LIMIT_SWITCH_PORT);
 
+		// Sets up motion magic constants with pid/va values.
 		setupMotionMagic();
+		// Set the motion magic to stay at the starting setpoint
 		trackToPos(Positions.STARTING);
 	}
 
@@ -143,7 +148,7 @@ public class Lift {
 	}
 
 	/**
-	 * Disables motion magic
+	 * Disables motion magic and puts motors in percent output mode.
 	 */
 	public void disableMotionMagic() {
 		flipMotor.stopMotionMagic();
@@ -182,13 +187,21 @@ public class Lift {
 	 */
 	public void trackToPos(Positions position) {
 		Logging.m("Tracking to: " + position.toString());
-		if (currentPos == Positions.STARTING && (position != Positions.STARTING && position != Positions.H_SCALE)) {
+		// The lift should only be able to go to l/h scale from starting, otherwise go
+		// to starting flip position.
+		if (currentPos == Positions.STARTING
+				&& (position != Positions.STARTING && position != Positions.H_SCALE && position != Positions.L_SCALE)) {
 			currentPos = Positions.STARTING_FLIP;
 		} else {
 			currentPos = position;
 		}
+		// Set the setpoint of the lift motor
 		liftMotor.feedbackTalon.setSetpoint(currentPos.liftPos);
-		if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS) {
+
+		// The flip motor can't be up higher than ground_tilt if the lift is too low.
+		// Mostly a sanity check for invalid setpoints to avoid damage.
+		if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS
+				|| currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
 			flipMotor.setSetpoint(currentPos.flipPos);
 		} else {
 			flipMotor.setSetpoint(Positions.GROUND.flipPos);
@@ -199,85 +212,113 @@ public class Lift {
 	 * Runs the closed loop motion magic controller thingy on the lift
 	 */
 	public void periodic() {
+		// Set lastSwitchVal to do edge detection and update switch value
 		lastSwitchVal = limSwitchVal;
+		// Invert value from limit switch
 		limSwitchVal = !limitSwitch.get();
-		if(limSwitchVal && !lastSwitchVal) limSwitchPressed();
-		
-		if(lastResettingDown != resettingDown) {
-			Logging.h("Switched resettingDown to " + resettingDown);
-		}
-		
-		if(resettingDown) {
-			if(lastResettingDown != resettingDown) {
+		// If a rising edge is detected, call limSwitchPressed
+		if (limSwitchVal && !lastSwitchVal)
+			limSwitchPressed();
+
+		// Debugging stuff
+		/*
+		 * if (lastResettingDown != resettingDown) {
+		 * Logging.h("Switched resettingDown to " + resettingDown); }
+		 */
+
+		// Run if the resetDown function is called. Shouldn't be needed with a string
+		// pot.
+		if (resettingDown) {
+			if (lastResettingDown != resettingDown) {
 				Logging.h("Lift is no longer active.");
 			}
 			liftMotor.setPower(-DOWN_SLOW_SPEED);
 		} else if (active) {
+			// Starting pos is a special case, since it's right at the minimum flip
+			// position.
 			if (currentPos == Positions.STARTING) {
-				
 				flipMotor.setSetpoint(currentPos.flipPos);
 			} else {
-				if(lastResettingDown != resettingDown) {
+				if (lastResettingDown != resettingDown) {
 					Logging.h("Lift is active again.");
 				}
-				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS && currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
+
+				// Ensure that the flipper won't flip until it's above the top of the first
+				// stage.
+				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS
+						|| currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
 					flipMotor.setSetpoint(currentPos.flipPos);
 				} else {
 					flipMotor.setSetpoint(Positions.GROUND.flipPos);
 				}
 			}
+			// Run feedback to make sure motion magic keeps happening.
 			liftMotor.runFeedback(0);
 			flipMotor.runFeedback(0);
 		}
-		
+
+		// Used to detect when resettingDown turns on/off.
 		lastResettingDown = resettingDown;
 	}
-	
+
 	/**
 	 * Zero both POTs to the current position.
 	 */
 	public void limSwitchPressed() {
-		if(resettingDown) {
+		// Special case if reset down thing is used.
+		if (resettingDown) {
 			stopResettingDown();
 			resetError();
 			Logging.h("Manual Down Hit Switch");
 			Logging.h("Current Target: " + currentPos.toString());
 		}
-
-		if(currentPos == Positions.GROUND) {		
+		// If resetDown isn't used, only zero for ground position.
+		if (currentPos == Positions.GROUND) {
 			resetError();
 		}
+		// Go to ground position.
 		trackToPos(Positions.GROUND);
 		Logging.h("Current Target: still " + currentPos.toString());
 	}
 	
+	/**
+	 * Sets the sensor position for the talons to make the closed loop error 0
+	 */
 	private void resetError() {
-		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int)Positions.GROUND.liftPos, 0, 20);
-		flipMotor.talon.setSelectedSensorPosition((int)Positions.GROUND.flipPos, 0, 20);
-	
+		//Set sensor postion
+		liftMotor.feedbackTalon.talon.setSelectedSensorPosition((int) Positions.GROUND.liftPos, 0, 20);
+		flipMotor.talon.setSelectedSensorPosition((int) Positions.GROUND.flipPos, 0, 20);
+		
+		//Reset momentary button on dashboard
 		SmartDashboard.putBoolean("Reset Error", false);
 		Logging.h("Reset Lift and Flip Error");
-	
+		//Make sure motion magic won't freak out
 		flipMotor.talon.set(ControlMode.PercentOutput, 0);
 	}
 	
+	/**
+	 * Start moving the lift down to zero the pot if it's not in scale position or tilted.
+	 */
 	public void resetDown() {
-		if(currentPos != Positions.H_SCALE && currentPos != Positions.L_SCALE && currentPos != Positions.STARTING ) {
+		if (currentPos != Positions.H_SCALE && currentPos != Positions.L_SCALE && currentPos != Positions.STARTING && currentPos != Positions.GROUND_TILT) {
 			resettingDown = true;
 		}
 	}
 	
-	public void stopResettingDown()
-	{
+	/**
+	 * Stops moving the lift downards to reset error.
+	 */
+	public void stopResettingDown() {
 		resettingDown = false;
 	}
-	
+
 	/**
-	 * 
+	 * Get the total absolute error of the lift and flip motor to see if it has reached its setpoint.
 	 * @return the total error of the lift and flipper
 	 */
 	public double getTotalError() {
-		return Math.abs(liftMotor.feedbackTalon.getRawPosition() - currentPos.liftPos) + Math.abs(flipMotor.getRawPosition() - currentPos.flipPos);
+		return Math.abs(liftMotor.feedbackTalon.getRawPosition() - currentPos.liftPos)
+				+ Math.abs(flipMotor.getRawPosition() - currentPos.flipPos);
 	}
 
 	/**
@@ -335,7 +376,7 @@ public class Lift {
 		SmartDashboard.putNumber("flip_kf", flipParams.kF);
 		SmartDashboard.putNumber("flip_vel", flipParams.vel);
 		SmartDashboard.putNumber("flip_accel", flipParams.accel);
-		
+
 		SmartDashboard.putBoolean("Reset Error", false);
 	}
 }
