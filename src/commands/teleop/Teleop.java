@@ -104,7 +104,9 @@ public class Teleop extends OpMode {
 		}
 		
 		if(robot.intake.getState() == Intake.State.HAS_CUBE) ps4.rumbleForTime(1, true, .5);
-		ps4.rumble(Math.pow(Math.max(Math.abs(ps4.getAxis(PS4.Axis.LEFT_Y)), Math.abs(ps4.getAxis(PS4.Axis.RIGHT_X))),2) * .75, false);
+		
+		ps4.rumble(robot.driveBase.getWheelVelocity(), false);
+		//ps4.rumble(Math.pow(Math.max(Math.abs(ps4.getAxis(PS4.Axis.LEFT_Y)), Math.abs(ps4.getAxis(PS4.Axis.RIGHT_X))),2) * .75, false);
 		
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.

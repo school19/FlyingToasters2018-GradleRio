@@ -21,6 +21,8 @@ public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
 	
+	private final static double MAX_VELOCITY = 3500;
+	
 	//final static double wheelDistance = 0.665;
 	public final static double wheelDistance = 0.735;
 	
@@ -79,6 +81,14 @@ public class DriveBase2018 extends DriveBase {
 		rightMotionProfile = new MotionProfile(rightMotionProfilePID, velGain, accelGain, rightProfileGen);
 	}
 
+	public double getWheelVelocity() {
+		double vl = Math.abs(left.feedbackTalon.getRawVelocity());
+		double vr = Math.abs(right.feedbackTalon.getRawVelocity());
+		double v = Math.min(Math.max(vl,vr),MAX_VELOCITY)/MAX_VELOCITY;
+		v = expInput(v,1.4);
+		return v;
+	}
+	
 	public void update(double dT) {
 		super.update(dT);
 		SmartDashboard.putNumber("left position", left.getPosition());
