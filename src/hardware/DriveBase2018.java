@@ -66,6 +66,7 @@ public class DriveBase2018 extends DriveBase {
 				Motors.RIGHT0.getVictor());
 		right.setInverted(true);
 		left.setEncoderReversed(true);
+		
 		// add the motor controllers to the list to be updated
 		registerMotorController(left);
 		registerMotorController(right);
