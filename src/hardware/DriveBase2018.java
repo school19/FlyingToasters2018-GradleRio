@@ -1,6 +1,7 @@
 package hardware;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import controllers.PIDcontroller;
 import controllers.motion_profiles.MotionProfile;
 import controllers.motion_profiles.SkidsteerProfileGenerator;
@@ -62,8 +63,10 @@ public class DriveBase2018 extends DriveBase {
 		super();
 		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id,
 				Motors.LEFT0.getVictor());
+		left.feedbackTalon.talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_20Ms, 0);
 		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id,
 				Motors.RIGHT0.getVictor());
+		right.feedbackTalon.talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_20Ms, 0);
 		right.setInverted(true);
 		left.setEncoderReversed(true);
 		
