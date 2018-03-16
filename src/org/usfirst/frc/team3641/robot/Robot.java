@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import hardware.Climber;
 import hardware.DriveBase2018;
 import hardware.Intake;
 import hardware.LED;
@@ -77,6 +78,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * The robot's lift mechanism
 	 */
 	public Lift lift;
+
+	/**
+	 * The robot's climber mechanism
+	 */
+	public Climber climber;
 	
 	/**
 	 * The bot's LEDs
@@ -138,14 +144,16 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		driveBase = new DriveBase2018();
 		
 		lift = new Lift();
-		
 		intake = new Intake(lift);
+		climber = new Climber();
+		
 		// initialize timer
 		timer = new Timer();
 		
 		new Thread(() -> {
 			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-			//Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+			Cam1.setResolution(256, 144);
+			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
 		}).start();
 		
 		resetTimer();

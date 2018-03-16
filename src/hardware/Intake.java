@@ -39,7 +39,7 @@ public class Intake {
 	private final double maxRecoveryTime = 1;
 
 	private final double defaultInSpeed = 0.8;
-	private final double defaultOutSpeed = 0.60;
+	private final double defaultOutSpeed = 0.65;
 	private final double slowOutSpeed = 0.6;
 
 	public static enum State {
@@ -49,7 +49,7 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
-		leftTalon.setInverted(false);
+		leftTalon.setInverted(true);
 		rightTalon.setInverted(false);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
 		this.lift = lift;

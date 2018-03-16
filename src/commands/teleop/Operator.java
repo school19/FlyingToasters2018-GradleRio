@@ -24,7 +24,9 @@ public class Operator {
 		HIGH_SCALE(E3D.Button.EIGHT, XPlorer.Button.GREEN),
 		INTAKE(E3D.Button.THREE, XPlorer.Button.STRUM_UP),
 		OUTTAKE(E3D.Button.FOUR, XPlorer.Button.STRUM_DOWN),
-		RESET(E3D.Button.THUMB, XPlorer.Button.BACK),
+//		RESET(E3D.Button.THUMB, XPlorer.Button.BACK),
+		START_CLIMB(E3D.Button.FOO, XPlorer.Button.START),
+		END_CLIMB(E3D.Button.FOO, XPlorer.Button.BACK),
 		AUTO_FLIP(E3D.Button.TRIGGER, XPlorer.Button.WHAMMY);
 		
 		E3D.Button e3dButton;

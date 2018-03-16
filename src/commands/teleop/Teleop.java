@@ -2,6 +2,8 @@ package commands.teleop;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import commands.LiftCommand;
+import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -35,6 +37,9 @@ public class Teleop extends OpMode {
 	private DriverStation ds;
 	
 	private boolean endgame;
+	private boolean climbing;
+	
+	private LiftCommand foo;
 
 	/**
 	 * Constructor
@@ -48,6 +53,7 @@ public class Teleop extends OpMode {
 		op = new Operator(2);
 		ds = DriverStation.getInstance();
 		endgame = false;
+		climbing = false;
 	}
 
 	/**
@@ -162,8 +168,17 @@ public class Teleop extends OpMode {
 		SmartDashboard.putBoolean("Endgame: ", endgame);
 		if(!endgame) endgame = (ds.getMatchTime() > 105) || (ps4.isPressed(PS4.Button.SHARE));
 		else {
-			//Do endgame stuff
+			if(op.isPressed(Operator.Button.START_CLIMB)) {
+				foo = new LiftCommand(this, robot, Lift.Positions.CLIMB);
+				addCommand(foo);
+			}
+			if(climbing) {
+				
+			}
+			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
 		}
+		
+		
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
 //		if (SmartDashboard.getBoolean("Manual enabled", false)) {
@@ -176,6 +191,14 @@ public class Teleop extends OpMode {
 //		}
 		
 	}
+	
+	public void commandFinished(Command cmd) {
+		if(cmd == foo) {
+			climbing = true;
+		}
+		super.commandFinished(cmd);
+	}
+
 
 	/**
 	 * Called when the opmode is stopped.
