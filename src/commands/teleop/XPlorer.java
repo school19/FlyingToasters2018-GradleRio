@@ -33,7 +33,8 @@ public class XPlorer
 	{
 		BLUE, GREEN, RED, YELLOW, ORANGE,
 		LOWER, BACK, START,
-		STRUM, STRUM_UP, STRUM_DOWN;
+		STRUM, STRUM_UP, STRUM_DOWN,
+		WHAMMY;
 	}
 	
 	/**
@@ -110,6 +111,7 @@ public class XPlorer
 		else wb = (wb+1)/2;
 		
 		axes.put(Axis.WHAMMY_BAR, wb);
+		current.put(Button.WHAMMY, wb < 0);
 		
 		current.put(Button.STRUM, !(axes.get(Axis.STRUM) == 0));
 		current.put(Button.STRUM_UP, axes.get(Axis.STRUM) > 0.5);
@@ -121,7 +123,7 @@ public class XPlorer
 		current.put(Button.ORANGE, rawJoystick.getRawButton(5));
 		current.put(Button.BACK, rawJoystick.getRawButton(7));
 		current.put(Button.START, rawJoystick.getRawButton(8));
-
+		
 		current.put(Button.LOWER, rawJoystick.getRawButton(7));
 		
 		axes.put(Axis.BUTTONS, buttonsToAxis());

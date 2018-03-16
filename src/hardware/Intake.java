@@ -1,5 +1,7 @@
 package hardware;
 
+import commands.DelayedCommand;
+import commands.LiftCommand;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Lift.Positions;
@@ -23,6 +25,11 @@ public class Intake {
 	private DigitalInput cubeSwitch;
 	private boolean currentSwitchStatus = false;
 	
+	boolean autoliftEnabled = true;
+	
+	//Used to delay lifting
+	//private DelayedCommand delayLift;
+	
 	//Used for lifting slightly when a cube is gotten
 	private Lift lift;
 
@@ -31,9 +38,9 @@ public class Intake {
 	private final double timeWithoutCube = .548;
 	private final double maxRecoveryTime = 1;
 
-	private final double defaultInSpeed = 0.67;
-	private final double defaultOutSpeed = 0.4503;
-	private final double slowOutSpeed = 0.26;
+	private final double defaultInSpeed = 0.8;
+	private final double defaultOutSpeed = 0.60;
+	private final double slowOutSpeed = 0.6;
 
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_SLOW,
@@ -42,8 +49,8 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
-		leftTalon.setInverted(true);
-		rightTalon.setInverted(true);
+		leftTalon.setInverted(false);
+		rightTalon.setInverted(false);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
 		this.lift = lift;
 	}
@@ -65,14 +72,17 @@ public class Intake {
 		switch (currentState) {
 		case RECOVERY:
 			time += deltaTime;
-			if (time >= maxRecoveryTime)
+			if (time >= maxRecoveryTime) {
+				//Lift up a bit if it's at the ground to avoid damage or losing the cube
+				if(lift.currentPos == Positions.GROUND_TILT && autoliftEnabled) lift.trackToPos(Positions.GROUND);
 				setState(State.RESET);
+			}
 		case INTAKING:
 			setPower(-defaultInSpeed);
 			if (hasCube()) {
 				setState(State.HAS_CUBE);
 				//Lift up a bit if it's at the ground to avoid damage or losing the cube
-				if(lift.currentPos == Positions.GROUND) lift.trackToPos(Positions.GROUND_TILT);
+				if(lift.currentPos == Positions.GROUND && autoliftEnabled) lift.trackToPos(Positions.GROUND_TILT);
 			}
 			break;
 		case OUTPUTTING:
@@ -107,12 +117,18 @@ public class Intake {
 				setState(State.RECOVERY);
 			break;
 		case RESTING:
+			
 		default:
 			break;
 		}
 		SmartDashboard.putString("Intake State", currentState.toString());
 		SmartDashboard.putBoolean("Has Cube?", hasCube());
 		SmartDashboard.putNumber("Intake Time", time);
+	}
+
+	
+	public void enableAutolift(boolean e) {
+		autoliftEnabled = e;
 	}
 
 	public void setState(State newState) {

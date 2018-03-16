@@ -11,8 +11,8 @@ public class Operator {
 	
 	private boolean isGuitar;
 	
-	private XPlorer guitar;
-	private E3D e3d;
+	public XPlorer guitar;
+	public E3D e3d; //TODO: Make this private after we're done setting setpoints with manual mode.
 	
 	private int port;
 	
@@ -24,7 +24,8 @@ public class Operator {
 		HIGH_SCALE(E3D.Button.EIGHT, XPlorer.Button.GREEN),
 		INTAKE(E3D.Button.THREE, XPlorer.Button.STRUM_UP),
 		OUTTAKE(E3D.Button.FOUR, XPlorer.Button.STRUM_DOWN),
-		RESET(E3D.Button.THUMB, XPlorer.Button.BACK);
+		RESET(E3D.Button.THUMB, XPlorer.Button.BACK),
+		AUTO_FLIP(E3D.Button.TRIGGER, XPlorer.Button.WHAMMY);
 		
 		E3D.Button e3dButton;
 		XPlorer.Button guitarButton;

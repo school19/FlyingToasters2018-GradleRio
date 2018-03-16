@@ -5,6 +5,7 @@ import commands.interfaces.CommandCallback;
 
 public class DelayedCommand extends Command implements CommandCallback{
 	private double delay;
+	private double timer;
 	private Command command;
 	private boolean commandRunning = false;
 	CommandCallback callback;
@@ -18,14 +19,15 @@ public class DelayedCommand extends Command implements CommandCallback{
 	}
 	
 	public void init() {
+		timer = delay;
 	}
 	
 	public void periodic (double deltaTime) {
 		if(commandRunning) {
 			command.periodic(deltaTime);
 		} else {
-			delay -= deltaTime;
-			if(delay <= 0) {
+			timer -= deltaTime;
+			if(timer <= 0) {
 				commandRunning = true;
 				command.init();
 			}

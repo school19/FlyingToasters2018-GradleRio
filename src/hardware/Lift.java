@@ -26,7 +26,7 @@ public class Lift {
 	static final int FLIP_TALON_ID = 7;
 
 	static final int LIMIT_SWITCH_PORT = 1;
-
+	
 	/**
 	 * The parameters used in initialization of the lift talon, like PID values
 	 * 
@@ -38,8 +38,8 @@ public class Lift {
 		double kP = 50;
 		double kI = 0.02;
 		double kD = 3;
-		int vel = 50;
-		int accel = 50;
+		int vel = 100;
+		int accel = 80;
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class Lift {
 	/**
 	 * The minimum position at which the thing can flip at.
 	 */
-	static final double FLIP_MIN_POS = -483;
+	static final double FLIP_MIN_POS = -418;
 
 	private static final double DOWN_SLOW_SPEED = -.15;
 
@@ -71,8 +71,15 @@ public class Lift {
 	 *
 	 */
 	public enum Positions {
-		GROUND(-280, 537), GROUND_TILT(-280, 500), SWITCH(-455, 537), H_SWITCH(-521, 537), L_SCALE(-625,
-				400), H_SCALE(-695, 419), STARTING(-487, 389), STARTING_FLIP(-487, 537);
+		GROUND(-98, 537),
+		GROUND_TILT(-98, 515),
+		SWITCH(-365, 537),
+		H_SWITCH(-475, 537),
+		L_SCALE(-695, 400),
+		H_SCALE(-737, 419),
+		CLIMB(-737, 389),
+		STARTING(-418, 389),
+		STARTING_FLIP(-418, 537);
 
 		double liftPos;
 		double flipPos;
@@ -201,7 +208,7 @@ public class Lift {
 		// The flip motor can't be up higher than ground_tilt if the lift is too low.
 		// Mostly a sanity check for invalid setpoints to avoid damage.
 		if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS
-				|| currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
+				|| currentPos.flipPos >= Positions.GROUND_TILT.flipPos) {
 			flipMotor.setSetpoint(currentPos.flipPos);
 		} else {
 			flipMotor.setSetpoint(Positions.GROUND.flipPos);
@@ -217,8 +224,8 @@ public class Lift {
 		// Invert value from limit switch
 		limSwitchVal = !limitSwitch.get();
 		// If a rising edge is detected, call limSwitchPressed
-		if (limSwitchVal && !lastSwitchVal)
-			limSwitchPressed();
+		//if (limSwitchVal && !lastSwitchVal)
+		//	limSwitchPressed();
 
 		// Debugging stuff
 		/*
@@ -246,7 +253,7 @@ public class Lift {
 				// Ensure that the flipper won't flip until it's above the top of the first
 				// stage.
 				if (liftMotor.feedbackTalon.getRawPosition() < FLIP_MIN_POS
-						|| currentPos.flipPos < Positions.GROUND_TILT.flipPos) {
+						|| currentPos.flipPos >= Positions.GROUND_TILT.flipPos) {
 					flipMotor.setSetpoint(currentPos.flipPos);
 				} else {
 					flipMotor.setSetpoint(Positions.GROUND.flipPos);
@@ -320,7 +327,7 @@ public class Lift {
 		return Math.abs(liftMotor.feedbackTalon.getRawPosition() - currentPos.liftPos)
 				+ Math.abs(flipMotor.getRawPosition() - currentPos.flipPos);
 	}
-
+	
 	/**
 	 * Writes the current position, velocity, and closed loop error to the
 	 * dashboard.position

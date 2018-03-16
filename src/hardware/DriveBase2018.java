@@ -24,8 +24,8 @@ public class DriveBase2018 extends DriveBase {
 	
 	private final static double MAX_VELOCITY = 3500;
 	
-	//final static double wheelDistance = 0.665;
-	public final static double wheelDistance = 0.735;
+	public final static double wheelDistance = 0.665;
+	//public final static double wheelDistance = 0.735;
 	
 	final static double velGain = 0.25;
 	final static double accelGain = 0.005;
@@ -124,6 +124,18 @@ public class DriveBase2018 extends DriveBase {
 		return Math.sqrt(leftPower*leftPower + rightPower*rightPower)/2.0;
 	}
 
+	public double drivePureCheese(double power, double rotation) {
+		double gain = 1.1;
+		double exp = 1.375;
+
+		rotation = expInput(rotation, exp);
+		double outputPower = expInput(power, exp);
+
+		double cheesyRotation = rotation * gain * Math.abs(outputPower);
+		
+		return driveArcade(outputPower, cheesyRotation);
+	}
+	
 	public double driveGrilledCheese(double power, double rotation) {
 		double gain = 1;
 		double limit = 0.25;

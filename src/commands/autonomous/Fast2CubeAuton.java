@@ -26,11 +26,11 @@ import utilities.Logging;
  */
 public class Fast2CubeAuton extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
-			new Waypoint(new Point(6.8, -0.4), -Math.PI / 4.0) };
-	private Waypoint[] leftGetCube = { new Waypoint(new Point(6.8, -0.4), 3 * Math.PI / 4.0),
-			new Waypoint(new Point(5.2, -0.4), -3 * Math.PI / 4.0) };
+			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
+	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.4), 3 * Math.PI / 4.0),
+			new Waypoint(new Point(5.4, -0.4), -3 * Math.PI / 4.0) };
 	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.2, -0.2), Math.PI / 4.0),
-			new Waypoint(new Point(6.8, -0.4), -Math.PI / 4.0) };
+			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
 			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
@@ -53,7 +53,7 @@ public class Fast2CubeAuton extends OpMode {
 	private IntakeCommand intakeCommand;
 
 	// Amount of time before the end of the motion profile to lift
-	final static double liftEndTime = 2;
+	final static double liftEndTime = 1;
 	private DelayedCommand raise1;
 	private LiftCommand lower1;
 
@@ -85,15 +85,15 @@ public class Fast2CubeAuton extends OpMode {
 		if (gameData.charAt(1) == 'L' && startOnLeft || gameData.charAt(1) == 'R' && !startOnLeft) {
 			cross = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
-					MotionProfileCommand.Speed.FAST, leftPath);
+					MotionProfileCommand.Speed.FAST_LOW_ACCEL, leftPath);
 			getCubeCommand = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored,
-					MotionProfileCommand.Speed.MED, leftGetCube);
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, leftGetCube);
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored,
-					MotionProfileCommand.Speed.MED, left2ndCube);
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
 		} else {
 			cross = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
-					MotionProfileCommand.Speed.FAST, rightPath);
+					MotionProfileCommand.Speed.FAST_LOW_ACCEL, rightPath);
 			// crossMpCommand = new MotionProfileCommand(this, robot, "Mp
 			// command 2", true, mirrored,
 			// MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
