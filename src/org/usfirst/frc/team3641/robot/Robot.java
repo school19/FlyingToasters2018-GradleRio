@@ -1,8 +1,13 @@
 package org.usfirst.frc.team3641.robot;
 
+import org.opencv.core.Mat;
+
 import commands.autonomous.*;
 import commands.interfaces.*;
 import commands.teleop.*;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -151,9 +156,31 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		timer = new Timer();
 		
 		new Thread(() -> {
+			//Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+//			Cam1.setResolution(120,160);
+//			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
 			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-			Cam1.setResolution(256, 144);
-			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+//			
+//			UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+//			usbCamera.setResolution(256, 144);
+//		
+//			CvSink cvSink = CameraServer.getInstance().getVideo(usbCamera);
+//			CvSource outputStream = CameraServer.getInstance().putVideo("Intake", 256, 144);
+//			
+//			Mat output = new Mat();
+//			
+//			while(!Thread.interrupted()) {
+//				cvSink.grabFrame(output);
+//				outputStream.putFrame(output);
+//			}
+			
+
+//			MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+//			mjpegServer1.setSource(usbCamera);
+			
+			
+			
+			Cam2.setResolution(120,160);
 		}).start();
 		
 		resetTimer();

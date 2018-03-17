@@ -1,23 +1,33 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 public class Climber {
 
-	private static final int MASTER = 10;
-	private static final int FOLLOWER = 11;
+	private static final int LEFT = 10;
+	private static final int RIGHT = 11;
 	
-	private Talon master;
-	private Talon follower;
+	private Talon left;
+	private Talon right;
 
-	public Climber(){
-		master = new Talon(MASTER);
-		follower = new Talon(FOLLOWER);
-		follower.setFollower(master);
+	public Climber() {
+		left = new Talon(LEFT);
+		right = new Talon(RIGHT);
+//		right.setFollower(left);
 		
-		master.setInverted(false);
-		follower.setInverted(true);
+		left.setInverted(false);
+		right.setInverted(true);
+		
+		left.talon.setNeutralMode(NeutralMode.Brake);
+		right.talon.setNeutralMode(NeutralMode.Brake);
 	}
 	
 	public void setSpeed(double speed) {
-		master.setPower(speed);
+		setSpeed(speed, speed);
+	}
+	
+	public void setSpeed(double left, double right) {
+		this.left.setPower(left);
+		this.right.setPower(right);
 	}
 }

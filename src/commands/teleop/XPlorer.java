@@ -107,8 +107,8 @@ public class XPlorer
 		
 
 		double wb = rawJoystick.getRawAxis(4);
-		if(wb == -0.0078125) wb = 0;
-		else wb = (wb+1)/2;
+		/*if(wb == -0.0078125) wb = 0;
+		else wb = (wb+1)/2;*/
 		
 		axes.put(Axis.WHAMMY_BAR, wb);
 		current.put(Button.WHAMMY, wb < 0);

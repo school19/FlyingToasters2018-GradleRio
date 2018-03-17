@@ -77,7 +77,8 @@ public class Lift {
 		H_SWITCH(-475, 537),
 		L_SCALE(-695, 400),
 		H_SCALE(-737, 419),
-		CLIMB(-737, 389),
+		CLIMB(-777, 389),
+		CLIMB_ENGAGED(-555, 389),
 		STARTING(-418, 389),
 		STARTING_FLIP(-418, 537);
 

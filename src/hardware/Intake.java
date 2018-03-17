@@ -38,7 +38,7 @@ public class Intake {
 	private final double timeWithoutCube = .548;
 	private final double maxRecoveryTime = 1;
 
-	private final double defaultInSpeed = 0.8;
+	private final double defaultInSpeed = 1.0;
 	private final double defaultOutSpeed = 0.65;
 	private final double slowOutSpeed = 0.6;
 

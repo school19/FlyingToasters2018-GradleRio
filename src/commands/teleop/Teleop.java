@@ -168,14 +168,16 @@ public class Teleop extends OpMode {
 		SmartDashboard.putBoolean("Endgame: ", endgame);
 		if(!endgame) endgame = (ds.getMatchTime() > 105) || (ps4.isPressed(PS4.Button.SHARE));
 		else {
-			if(op.isPressed(Operator.Button.START_CLIMB)) {
-				foo = new LiftCommand(this, robot, Lift.Positions.CLIMB);
-				addCommand(foo);
-			}
-			if(climbing) {
-				
-			}
-			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
+//			if(op.isPressed(Operator.Button.START_CLIMB)) {
+//				foo = new LiftCommand(this, robot, Lift.Positions.CLIMB);
+//				addCommand(foo);
+//			}
+//			if(climbing) {
+//				
+//			}
+			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.LEFT_TRIGGER), ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
+			if(op.isPressed(Operator.Button.START_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB);
+			else if(op.isPressed(Operator.Button.END_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB_ENGAGED);
 		}
 		
 		
