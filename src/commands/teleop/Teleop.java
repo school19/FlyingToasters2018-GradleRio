@@ -175,7 +175,7 @@ public class Teleop extends OpMode {
 //			if(climbing) {
 //				
 //			}
-			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.LEFT_TRIGGER), ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
+			robot.climber.setSpeed( -ps4.getAxis(PS4.Axis.LEFT_TRIGGER) + ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
 			if(op.isPressed(Operator.Button.START_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB);
 			else if(op.isPressed(Operator.Button.END_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB_ENGAGED);
 		}

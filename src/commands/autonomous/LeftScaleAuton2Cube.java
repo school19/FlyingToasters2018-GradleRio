@@ -25,8 +25,8 @@ import utilities.Logging;
  */
 public class LeftScaleAuton2Cube extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
-			new Waypoint(new Point(7.0, -0.7), -Math.PI / 4.0) };
-	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.7), 3 * Math.PI / 4.0),
+			new Waypoint(new Point(6.8, -0.7), -Math.PI / 4.0) };
+	private Waypoint[] leftGetCube = { new Waypoint(new Point(7, -0.7), 3 * Math.PI / 4.0),
 			new Waypoint(new Point(5.5, -1), -3 * Math.PI / 4.0) };
 	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.5, -1), Math.PI / 4.0),
 			new Waypoint(new Point(7.1, -0.9), -Math.PI / 4.0) };
