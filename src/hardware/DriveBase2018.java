@@ -11,6 +11,7 @@ import hardware.interfaces.DriveBase;
 import path_generation.Path;
 import path_generation.Waypoint;
 import utilities.Logging;
+import utilities.Utilities;
 
 /**
  * The 2018 robot drivertrain.
@@ -89,7 +90,7 @@ public class DriveBase2018 extends DriveBase {
 		double vl = Math.abs(left.feedbackTalon.getRawVelocity());
 		double vr = Math.abs(right.feedbackTalon.getRawVelocity());
 		double v = Math.min(Math.max(vl,vr),MAX_VELOCITY)/MAX_VELOCITY;
-		v = expInput(v,1.4);
+		v = Utilities.expInput(v,1.4);
 		return v;
 	}
 	
@@ -128,8 +129,8 @@ public class DriveBase2018 extends DriveBase {
 		double gain = 1.1;
 		double exp = 1.375;
 
-		rotation = expInput(rotation, exp);
-		double outputPower = expInput(power, exp);
+		rotation = Utilities.expInput(rotation, exp);
+		double outputPower = Utilities.expInput(power, exp);
 
 		double cheesyRotation = rotation * gain * Math.abs(outputPower);
 		
@@ -142,8 +143,8 @@ public class DriveBase2018 extends DriveBase {
 		double subLimitWeight = .8;
 		double exp = 1.5;
 
-		rotation = expInput(rotation, exp);
-		double outputPower = expInput(power, exp);
+		rotation = Utilities.expInput(rotation, exp);
+		double outputPower = Utilities.expInput(power, exp);
 
 		double arcadeRotation = rotation;
 		double cheesyRotation = rotation * gain * Math.abs(outputPower);
@@ -155,14 +156,6 @@ public class DriveBase2018 extends DriveBase {
 			outputRotation = cheesyWeight * cheesyRotation + arcadeWeight * arcadeRotation;
 
 		return driveArcade(outputPower, outputRotation);
-	}
-
-	public double expInput(double input, double power) {
-		if (input > 0) {
-			return Math.pow(input, power);
-		} else {
-			return -Math.pow(-input, power);
-		}
 	}
 
 	public void drivePath(Path p, boolean isBackwards) {

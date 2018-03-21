@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
 import hardware.Lift;
 import utilities.Logging;
+import utilities.Utilities;
 
 /**
  * Teleop class for human-operated control.
@@ -24,6 +25,7 @@ public class Teleop extends OpMode {
 		ARCADE,
 		PURE_CHEESE,
 		GRILLED_CHEESE,
+		MARIO_KART,
 	}
 	
 	private DriveMode driveMode = DriveMode.GRILLED_CHEESE;
@@ -76,6 +78,11 @@ public class Teleop extends OpMode {
 		driveMode = DriveMode.GRILLED_CHEESE;
 		op.checkControllerType();
 	}
+	
+	private void setDriveMode(DriveMode newMode) {
+		Logging.h("Switching from " + driveMode.toString() + " to " + newMode.toString());
+		driveMode = newMode;
+	}
 
 	/**
 	 * Called periodically during teleop period. Reads user inputs from controllers
@@ -93,10 +100,10 @@ public class Teleop extends OpMode {
 		
 		//Set the current drive mode based on the d-pad if the left bumper is pressed for safety.
 		if(ps4.isDown(PS4.Button.LEFT_BUMPER)) {
-			if(ps4.isPressed(PS4.Button.DPAD_UP)) driveMode = DriveMode.GRILLED_CHEESE;
-			else if(ps4.isPressed(PS4.Button.DPAD_RIGHT)) driveMode = DriveMode.PURE_CHEESE;
-			else if(ps4.isPressed(PS4.Button.DPAD_DOWN)) driveMode = DriveMode.ARCADE;
-			else if(ps4.isPressed(PS4.Button.DPAD_LEFT)) driveMode = DriveMode.TANK;
+			if(ps4.isPressed(PS4.Button.DPAD_UP)) setDriveMode(DriveMode.GRILLED_CHEESE);
+			else if(ps4.isPressed(PS4.Button.DPAD_RIGHT)) setDriveMode(DriveMode.MARIO_KART);
+			else if(ps4.isPressed(PS4.Button.DPAD_DOWN)) setDriveMode(DriveMode.ARCADE);
+			else if(ps4.isPressed(PS4.Button.DPAD_LEFT)) setDriveMode(DriveMode.TANK);
 		}
 		
 		//Actually drive based on the drive mode
@@ -113,6 +120,10 @@ public class Teleop extends OpMode {
 			break;
 		case TANK:
 			robot.driveBase.driveTank(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));
+			break;
+		case MARIO_KART:
+			if(ps4.isDown(PS4.Button.LEFT_TRIGGER_BUTTON)) robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.TILT_PITCH), Utilities.expInput(ps4.getAxis(PS4.Axis.TILT_ROLL), 2));
+			else robot.driveBase.driveTank(0, 0);
 			break;
 		}
 		

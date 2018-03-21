@@ -256,4 +256,12 @@ public abstract class Utilities {
 	public static double lerp(double p1, double p2, double alpha){
 		return alpha * (p2 - p1) + p1;
 	}
+	
+	public static double expInput(double input, double power) {
+		if (input > 0) {
+			return Math.pow(input, power);
+		} else {
+			return -Math.pow(-input, power);
+		}
+	}
 }

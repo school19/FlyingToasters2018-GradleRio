@@ -2,12 +2,11 @@ package commands.teleop;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import utilities.Logging;
 
 public class Operator {
 	DriverStation ds;
 			
-	private static final int E3D_TYPE = 20, GUITAR_TYPE = 1;
+	private static final int E3D_TYPE = 20;
 	
 	private boolean isGuitar;
 	
