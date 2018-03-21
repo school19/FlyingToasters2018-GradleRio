@@ -1,9 +1,6 @@
 package commands.teleop;
 import java.util.EnumMap;
-
 import edu.wpi.first.wpilibj.Joystick;
-import utilities.Coords;
-import utilities.Logging;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class PS4
@@ -11,7 +8,6 @@ public class PS4
 	private EnumMap<Button, Boolean> current, last;
 	private EnumMap<Axis, Double> axes;
 	private Joystick[] rawJoysticks = new Joystick[2];
-	private double leftAngle, leftMagnitude, rightAngle, rightMagnitude;
 
 	private RumbleThread rumbleThread;
 	
@@ -44,22 +40,20 @@ public class PS4
 	 * 
 	 * @param port The port it uses on the driver station.
 	 */
-	public PS4(int port)
-	{
+	public PS4(int port) {
 		rawJoysticks[0] = new Joystick(port);
 		rawJoysticks[1] = new Joystick(port+1);
 		current = new EnumMap<Button, Boolean>(Button.class);
 		last = new EnumMap<Button, Boolean>(Button.class);
 		axes = new EnumMap<Axis, Double>(Axis.class);
 		poll(); //Populate the current EnumMap so the last EnumMap won't be null when the user polls for the first time.
-		rumbleThread = new RumbleThread(0,true,0);
+		rumbleThread = new RumbleThread(0,true,0); //Create the thread so it exists.
 	}
 	
 	/**
 	 * The buttons it supports
 	 */
-	public static enum Button
-	{
+	public static enum Button {
 		SQUARE(1,0),
 		X(2,0),
 		CIRCLE(3,0),
@@ -74,35 +68,71 @@ public class PS4
 		RIGHT_STICK_BUTTON(12,0),
 		PLAYSTATION_BUTTON(13,0),
 		TOUCHPAD_BUTTON(14,0),
-		DPAD_LEFT,
-		DPAD_RIGHT,
-		DPAD_UP,
-		DPAD_DOWN;
+		DPAD_LEFT(0,0,270),
+		DPAD_RIGHT(0,0,90),
+		DPAD_UP(0,0,0),
+		DPAD_DOWN(0,0,180);
 		
 		int number;
 		int joystickNumber;
-		boolean easy;
+		boolean dpad;
+		int position;
 		
 		Button(int number, int joystickNumber) {
 			this.number = number;
 			this.joystickNumber = joystickNumber;
-			this.easy = true;
+			this.dpad = true;
 		}
 		
 		Button() {
-			this.easy = false;
+			this.dpad = false;
+		}
+		
+		Button(int number, int joystickNumber, int position) {
+			this.dpad = true;
+			this.position = position;
 		}
 	}
 	
 	/**
 	 * The axes it supports
 	 */
-	public enum Axis
-	{
-		TILT_ROLL, TILT_PITCH,
-		LEFT_X, LEFT_Y, LEFT_TRIGGER,
-		RIGHT_X, RIGHT_Y, RIGHT_TRIGGER;
-	}
+	public enum Axis {
+		LEFT_X(0,0),
+		LEFT_Y(1,0,true),
+		RIGHT_X(2,0),
+		LEFT_TRIGGER(3,0,.5,.5),
+		RIGHT_TRIGGER(4,0,.5,.5),
+		RIGHT_Y(5,0,true),
+		TILT_ROLL(0,1),
+		TILT_PITCH(1,1,true);
+		
+		int number;
+		int joystickNumber;
+		double multiplier;
+		double offset;
+		
+		Axis(int number, int joystickNumber) {
+			this.number = number;
+			this.joystickNumber = joystickNumber;
+			this.multiplier = 1;
+			this.offset = 0;
+		}
+		
+		Axis(int number, int joystickNumber, boolean inverted) {
+			this.number = number;
+			this.joystickNumber = joystickNumber;
+			this.multiplier = inverted ? -1 : 1;
+			this.offset = 0;
+		}
+		
+		Axis(int number, int joystickNumber, double multiplier, double constant) {
+			this.number = number;
+			this.joystickNumber = joystickNumber;
+			this.multiplier = multiplier;
+			this.offset = constant;
+		}
+}
 		
 	/**
 	 * Returns the value of the specified axis.
@@ -110,49 +140,8 @@ public class PS4
 	 * @param axis The axis to read.
 	 * @return The value of said axis.
 	 */
-	public double getAxis(Axis axis)
-	{
+	public double getAxis(Axis axis) {
 		return axes.get(axis);
-	}
-	
-	/**
-	 * Get the polar angle of the left stick.
-	 * 
-	 * @return The polar angle of the left stick.
-	 */
-	public double getLeftAngle()
-	{
-		return leftAngle;
-	}
-	
-	/**
-	 * Get the polar magnitude of the left stick.
-	 * 
-	 * @return the polar magnitude of the left stick.
-	 */
-	public double getLeftMagnitude()
-	{
-		return leftMagnitude;
-	}
-	
-	/**
-	 * Get the polar angle of the right stick.
-	 * 
-	 * @return The polar angle of the right stick.
-	 */
-	public double getRightAngle()
-	{
-		return rightAngle;
-	}
-	
-	/**
-	 * Get the polar magnitude of the right stick.
-	 * 
-	 * @return the polar magnitude of the right stick.
-	 */
-	public double getRightMagnitude()
-	{
-		return rightMagnitude;
 	}
 	
 	/**
@@ -161,8 +150,7 @@ public class PS4
 	 * @param button The button to read.
 	 * @return True if the button is down.
 	 */
-	public boolean isDown(Button button)
-	{
+	public boolean isDown(Button button) {
 		return current.get(button);
 	}
 	
@@ -172,8 +160,7 @@ public class PS4
 	 * @param button The button to read.
 	 * @return True on the rising edge of the button.
 	 */
-	public boolean isPressed(Button button)
-	{
+	public boolean isPressed(Button button) {
 		return (current.get(button) && !last.get(button));
 	}
 	
@@ -183,19 +170,16 @@ public class PS4
 	 * @param button The button to read.
 	 * @return True on the falling edge of the button.
 	 */
-	public boolean isReleased(Button button)
-	{
+	public boolean isReleased(Button button) {
 		return (!current.get(button) && last.get(button));
 	}
 	
-	public void rumble(double value, boolean heavy)
-	{
+	public void rumble(double value, boolean heavy) {
 		RumbleType type = (heavy) ? RumbleType.kLeftRumble : RumbleType.kRightRumble;
 		rawJoysticks[1].setRumble(type, value);
 	}
 	
-	public void rumbleForTime(double value, boolean heavy, double time)
-	{
+	public void rumbleForTime(double value, boolean heavy, double time) {
 		rumbleThread.interrupt();
 		rumbleThread = new RumbleThread(value, heavy, time);
 	}
@@ -203,34 +187,19 @@ public class PS4
 	/**
 	 * Read the current state of each button and axis.
 	 */
-	public void poll()
-	{
+	public void poll() {
 		last = current.clone();
-
-		axes.put(Axis.TILT_ROLL, rawJoysticks[1].getRawAxis(0));
-		axes.put(Axis.TILT_PITCH, rawJoysticks[1].getRawAxis(1));
 		
-		axes.put(Axis.LEFT_X, rawJoysticks[0].getRawAxis(0));
-		axes.put(Axis.LEFT_Y, -rawJoysticks[0].getRawAxis(1));
-		axes.put(Axis.RIGHT_X, rawJoysticks[0].getRawAxis(2));
-		axes.put(Axis.LEFT_TRIGGER, rawJoysticks[0].getRawAxis(3)/2 + .5);
-		axes.put(Axis.RIGHT_TRIGGER, rawJoysticks[0].getRawAxis(4)/2 +.5);
-		axes.put(Axis.RIGHT_Y, -rawJoysticks[0].getRawAxis(5));
-
 		for(Button button : Button.values()) {
-			if(button.easy)	{
+			if(button.dpad)	{
+				current.put(button, rawJoysticks[button.joystickNumber].getPOV(button.number) == button.position);
+			} else {
 				current.put(button, rawJoysticks[button.joystickNumber].getRawButton(button.number));
 			}
 		}
-
-		current.put(Button.DPAD_LEFT, (rawJoysticks[0].getPOV(0) == 270));
-		current.put(Button.DPAD_RIGHT, (rawJoysticks[0].getPOV(0) == 90));
-		current.put(Button.DPAD_UP, (rawJoysticks[0].getPOV(0) == 0));
-		current.put(Button.DPAD_DOWN, (rawJoysticks[0].getPOV(0) == 180));
 		
-		leftMagnitude = Coords.rectToPolarRadius(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
-		leftAngle = Coords.rectToPolarAngle(getAxis(Axis.LEFT_X), getAxis(Axis.LEFT_Y));
-		rightMagnitude = Coords.rectToPolarRadius(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
-		rightAngle = Coords.rectToPolarAngle(getAxis(Axis.RIGHT_X), getAxis(Axis.RIGHT_Y));
+		for(Axis axis : Axis.values()) {
+			axes.put(axis, rawJoysticks[axis.joystickNumber].getRawAxis(axis.number) * axis.multiplier + axis.offset );
+		}
 	}
 }

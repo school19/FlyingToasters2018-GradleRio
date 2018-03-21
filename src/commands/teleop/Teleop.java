@@ -109,14 +109,14 @@ public class Teleop extends OpMode {
 		//Actually drive based on the drive mode
 		switch(driveMode) {
 		case GRILLED_CHEESE:
-			robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+			robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			break;
 		case PURE_CHEESE:
 			if(ps4.isDown(PS4.Button.RIGHT_BUMPER)) robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
-			else robot.driveBase.drivePureCheese(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+			else robot.driveBase.drivePureCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			break;
 		case ARCADE:
-			robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+			robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			break;
 		case TANK:
 			robot.driveBase.driveTank(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_Y));

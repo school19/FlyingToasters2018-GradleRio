@@ -71,6 +71,11 @@ public class DriveBase2018 extends DriveBase {
 		right.setInverted(true);
 		left.setEncoderReversed(true);
 		
+		left.setCurrentLimit(40);
+		left.enableCurrentLimit(true);
+		right.setCurrentLimit(40);
+		right.enableCurrentLimit(true);
+		
 		// add the motor controllers to the list to be updated
 		registerMotorController(left);
 		registerMotorController(right);
@@ -96,6 +101,8 @@ public class DriveBase2018 extends DriveBase {
 	
 	public void update(double dT) {
 		super.update(dT);
+		SmartDashboard.putNumber("left current", left.feedbackTalon.talon.getOutputCurrent());
+		SmartDashboard.putNumber("right current", right.feedbackTalon.talon.getOutputCurrent());
 		SmartDashboard.putNumber("left position", left.getPosition());
 		SmartDashboard.putNumber("right position", right.getPosition());
 		leftMotionProfile.writeErrorToDashboard("left MP error");
