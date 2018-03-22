@@ -119,8 +119,8 @@ public class DriveBase2018 extends DriveBase {
 	}
 
 	public double driveArcade(double power, double turn) {
-		double leftPower = power - turn;
-		double rightPower = power + turn;
+		double leftPower = power + turn;
+		double rightPower = power - turn;
 		return driveTank(leftPower, rightPower);
 	}
 	

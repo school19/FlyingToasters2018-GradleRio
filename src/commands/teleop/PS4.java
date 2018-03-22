@@ -81,10 +81,6 @@ public class PS4
 		Button(int number, int joystickNumber) {
 			this.number = number;
 			this.joystickNumber = joystickNumber;
-			this.dpad = true;
-		}
-		
-		Button() {
 			this.dpad = false;
 		}
 		
