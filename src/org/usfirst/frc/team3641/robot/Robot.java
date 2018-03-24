@@ -85,7 +85,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	public Climber climber;
 	
-	//public PDP pdp;
+	public PDP pdp;
 	
 	/**
 	 * The bot's LEDs
@@ -150,7 +150,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		intake = new Intake(lift);
 		climber = new Climber();
 		
-		//pdp = new PDP();
+		pdp = new PDP();
 		
 		// initialize timer
 		timer = new Timer();
@@ -310,14 +310,18 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * This method is always called periodically in auton or teleop.
 	 */
 	private void standardPeriodic() {
-		double currentTime = timer.get();
-		deltaTime = currentTime - lastTime;
-		lastTime = currentTime;
 		driveBase.update(deltaTime);
 		intake.periodic(deltaTime);
 		lift.periodic();
 		leds.updateLightsToRobotState(this);
-		//pdp.periodic(deltaTime);
+		pdp.logCurrent();
+	}
+	
+	public void robotPeriodic() {
+		double currentTime = timer.get();
+		deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		pdp.periodic(deltaTime);
 	}
 
 	/**
