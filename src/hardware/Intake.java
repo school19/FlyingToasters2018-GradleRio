@@ -40,10 +40,10 @@ public class Intake {
 
 	private final double defaultInSpeed = 1.0;
 	private final double defaultOutSpeed = 0.65;
-	private final double slowOutSpeed = 0.6;
+	private double manualOutSpeed = defaultOutSpeed;
 
 	public static enum State {
-		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_SLOW,
+		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_MANUAL,
 	}
 
 	public Intake(Lift lift) {
@@ -94,8 +94,8 @@ public class Intake {
 			if (time >= timeWithoutCube)
 				setState(State.RESET);
 			break;
-		case OUTPUTTING_SLOW:
-			setPower(slowOutSpeed);
+		case OUTPUTTING_MANUAL:
+			setPower(manualOutSpeed);
 			if (hasCube())
 				time = 0;
 			else
@@ -135,6 +135,10 @@ public class Intake {
 		Logging.h("Switching Intake from " + currentState.toString() + " to " + newState.toString());
 		currentState = newState;
 		time = 0;
+	}
+	
+	public void setOutputSpeed(double speed) {
+		manualOutSpeed = speed;
 	}
 
 	public void pollSwitch() {

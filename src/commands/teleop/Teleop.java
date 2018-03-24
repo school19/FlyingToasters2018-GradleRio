@@ -112,7 +112,7 @@ public class Teleop extends OpMode {
 			robot.driveBase.driveGrilledCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			break;
 		case PURE_CHEESE:
-			if(ps4.isDown(PS4.Button.RIGHT_BUMPER)) robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.LEFT_Y), -ps4.getAxis(PS4.Axis.RIGHT_X));
+			if(ps4.isDown(PS4.Button.RIGHT_BUMPER)) robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			else robot.driveBase.drivePureCheese(ps4.getAxis(PS4.Axis.LEFT_Y), ps4.getAxis(PS4.Axis.RIGHT_X));
 			break;
 		case ARCADE:
@@ -132,13 +132,15 @@ public class Teleop extends OpMode {
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 
 		// Set the power of the intake based on the user inputs.
+		robot.intake.setOutputSpeed(op.getAxis(Operator.Axis.OUTPUT_SPEED));
+		
 		if (op.isPressed(Operator.Button.INTAKE))
 			robot.intake.setState(Intake.State.INTAKING);
 		else if (op.isPressed(Operator.Button.OUTTAKE))
-			robot.intake.setState(Intake.State.OUTPUTTING_SLOW);
+			robot.intake.setState(Intake.State.OUTPUTTING_MANUAL);
 		else if (op.isReleased(Operator.Button.INTAKE) && robot.intake.getState() == Intake.State.INTAKING)
 			robot.intake.setState(Intake.State.RECOVERY);
-		else if (op.isReleased(Operator.Button.OUTTAKE) && robot.intake.getState() == Intake.State.OUTPUTTING_SLOW)
+		else if (op.isReleased(Operator.Button.OUTTAKE) && robot.intake.getState() == Intake.State.OUTPUTTING_MANUAL)
 			robot.intake.setState(Intake.State.RESET);
 		// else if (robot.intake.getState() == Intake.State.RESTING)
 		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));

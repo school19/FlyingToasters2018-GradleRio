@@ -1,5 +1,6 @@
 package commands.teleop;
 
+import commands.teleop.E3D.Axis;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -37,7 +38,19 @@ public class Operator {
 			this.guitarButton = guitarButton;
 		}
 	}
-
+	
+	public static enum Axis {
+		OUTPUT_SPEED(E3D.Axis.FOO, XPlorer.Axis.WHAMMY_BAR);
+		
+		E3D.Axis e3dAxis;
+		XPlorer.Axis guitarAxis;
+		
+		Axis(E3D.Axis e3dAxis, XPlorer.Axis guitarAxis)
+		{
+			this.e3dAxis = e3dAxis;
+			this.guitarAxis = guitarAxis;
+		}
+	}
 	
 	public Operator(int port) {
 		this.port = port;
@@ -66,6 +79,12 @@ public class Operator {
 	public boolean isReleased(Button button) {
 		if(isGuitar) return guitar.isReleased(button.guitarButton);
 		else return e3d.isReleased(button.e3dButton);
+	}
+	
+	public double getAxis(Axis axis)
+	{
+		if(isGuitar) return guitar.getAxis(axis.guitarAxis);
+		else return e3d.getAxis(axis.e3dAxis);
 	}
 	
 	public void poll() {

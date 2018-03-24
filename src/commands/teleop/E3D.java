@@ -51,7 +51,7 @@ public class E3D
 	 */
 	public enum Axis
 	{
-		X, Y, Z, THROTTLE;
+		X, Y, Z, THROTTLE, FOO;
 	}
 	
 	/**
