@@ -72,7 +72,7 @@ public class Lift {
 	 */
 	public enum Positions {
 		GROUND(-98, 537),
-		GROUND_TILT(-98, 515),
+		GROUND_TILT(-98, 500),
 		SWITCH(-365, 537),
 		H_SWITCH(-475, 537),
 		L_SCALE(-695, 400),

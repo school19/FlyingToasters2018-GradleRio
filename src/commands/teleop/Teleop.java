@@ -168,8 +168,8 @@ public class Teleop extends OpMode {
 //		}
 		
 		//When the whammy bar is pressed, don't tilt the intake up when we get a cube.
-		if(op.isDown(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(true);
-		else if(op.isReleased(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(false);
+		if(op.isPressed(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(false);
+		else if(op.isReleased(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(true);
 		
 		//If we get the cube, let the driver know by activating the heavy rumble
 		if(robot.intake.getState() == Intake.State.HAS_CUBE) ps4.rumbleForTime(1, true, .5);

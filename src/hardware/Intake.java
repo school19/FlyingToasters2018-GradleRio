@@ -34,7 +34,7 @@ public class Intake {
 	private Lift lift;
 
 	private State currentState = State.RESTING;
-	private double time;
+	private double time, timeWithCube;
 	private final double timeWithoutCube = .548;
 	private final double maxRecoveryTime = 1;
 
@@ -49,6 +49,8 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
+		leftTalon.setCurrentLimit(20);
+		rightTalon.setCurrentLimit(20);
 		leftTalon.setInverted(true);
 		rightTalon.setInverted(false);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
@@ -79,7 +81,12 @@ public class Intake {
 			}
 		case INTAKING:
 			setPower(-defaultInSpeed);
-			if (hasCube()) {
+			if(!hasCube()) {
+				timeWithCube = 0;
+			} else {
+				timeWithCube += deltaTime;
+			}
+			if (hasCube() && timeWithCube >= 0.2) {
 				setState(State.HAS_CUBE);
 				//Lift up a bit if it's at the ground to avoid damage or losing the cube
 				if(lift.currentPos == Positions.GROUND && autoliftEnabled) lift.trackToPos(Positions.GROUND_TILT);
@@ -87,24 +94,29 @@ public class Intake {
 			break;
 		case OUTPUTTING:
 			setPower(defaultOutSpeed);
-			if (hasCube())
+			if (hasCube()) {
 				time = 0;
-			else
+			} else {
 				time += deltaTime;
-			if (time >= timeWithoutCube)
+			}
+			if (time >= timeWithoutCube) {
 				setState(State.RESET);
+			}
 			break;
 		case OUTPUTTING_MANUAL:
 			setPower(manualOutSpeed);
-			if (hasCube())
+			if (hasCube()) {
 				time = 0;
-			else
+			} else {
 				time += deltaTime;
-			if (time >= timeWithoutCube)
+			}
+			if (time >= timeWithoutCube) {
 				setState(State.RESET);
+			}
 			break;
 		case RESET:
 			setPower(0);
+			time = 0;
 			setState(State.RESTING);
 			break;
 		case HAS_CUBE:
@@ -113,11 +125,12 @@ public class Intake {
 			break;
 		case RESTING_WITH_CUBE:
 			time = 0;
-			if (!hasCube())
+			if (!hasCube()) {
 				setState(State.RECOVERY);
+			}
 			break;
 		case RESTING:
-			
+			time = 0;
 		default:
 			break;
 		}

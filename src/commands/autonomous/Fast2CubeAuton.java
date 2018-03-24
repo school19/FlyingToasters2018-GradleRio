@@ -26,17 +26,20 @@ import utilities.Logging;
  */
 public class Fast2CubeAuton extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
-			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
-	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.4), 3 * Math.PI / 4.0),
-			new Waypoint(new Point(5.4, -0.4), -3 * Math.PI / 4.0) };
+			new Waypoint(new Point(7.2, -0.6), -Math.PI / 4.0) };
+	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.5), 3 * Math.PI / 4.0),
+			new Waypoint(new Point(5.4, -0.5), -3 * Math.PI / 4.0) };
 	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.2, -0.2), Math.PI / 4.0),
 			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
 			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
-			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
-	// private Waypoint[] rightPath2 = { new Waypoint(new Point(5.65, -2.9)  -Math.PI / 2.0),
-	// new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
+			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0),  new Waypoint(new Point(6.3, -5.8), 0),
+			new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
+	// private Waypoint[] rightPath2 = { new Waypoint(new Point(5.65, -2.9)
+	// -Math.PI / 2.0),
+	// new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new
+	// Point(6.9, -5.5), Math.PI / 4) };
 	private Waypoint[] rightGetCube = { new Waypoint(new Point(6.9, -5.5), -3 * Math.PI / 4),
 			new Waypoint(new Point(5.5, -5.5), 3 * Math.PI / 4) };
 	private Waypoint[] right2ndCube = { new Waypoint(new Point(5.5, -6), -Math.PI / 4),
@@ -45,7 +48,7 @@ public class Fast2CubeAuton extends OpMode {
 	// First profile run
 	private MotionProfileCommand mpCommand;
 	// second one to cross the bump when going right
-	//private MotionProfileCommand crossMpCommand;
+	// private MotionProfileCommand crossMpCommand;
 	// drives to get cube
 	private MotionProfileCommand getCubeCommand;
 	// drives to drop the second command
@@ -54,7 +57,9 @@ public class Fast2CubeAuton extends OpMode {
 
 	// Amount of time before the end of the motion profile to lift
 	final static double liftEndTime = 1;
-	private DelayedCommand raise1;
+	final static double longLiftEndTime = 2.9;
+
+	private Command raise1;
 	private LiftCommand lower1;
 
 	private DelayedCommand raise2;
@@ -93,7 +98,7 @@ public class Fast2CubeAuton extends OpMode {
 		} else {
 			cross = true;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
-					MotionProfileCommand.Speed.FAST_LOW_ACCEL, rightPath);
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
 			// crossMpCommand = new MotionProfileCommand(this, robot, "Mp
 			// command 2", true, mirrored,
 			// MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
@@ -104,14 +109,19 @@ public class Fast2CubeAuton extends OpMode {
 		}
 
 		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING);
-		/*if (cross) {
-			raise1 = new LiftCommand(this, bot, Positions.H_SCALE).delay(crossMpCommand.getDuration() - liftEndTime);
-		} else {*/
+		/*
+		 * if (cross) { raise1 = new LiftCommand(this, bot,
+		 * Positions.H_SCALE).delay(crossMpCommand.getDuration() - liftEndTime);
+		 * } else {
+		 */
+		if(!cross)
 			raise1 = new LiftCommand(this, bot, Positions.H_SCALE).delay(mpCommand.getDuration() - liftEndTime);
-		//}
+		else raise1 = new LiftCommand(this, bot, Positions.H_SCALE);
+		// }
 		lower1 = new LiftCommand(this, bot, Positions.GROUND);
 		output1 = new IntakeCommand(this, bot, State.OUTPUTTING);
-		raise2 = new LiftCommand(this, bot, Positions.L_SCALE).delay(driveToDump2ndCube.getDuration() - liftEndTime);
+		raise2 = new LiftCommand(this, bot, Positions.L_SCALE)
+				.delay(driveToDump2ndCube.getDuration() - longLiftEndTime);
 		lower2 = new LiftCommand(this, bot, Positions.SWITCH);
 		output2 = new IntakeCommand(this, bot, State.OUTPUTTING);
 	}
@@ -150,23 +160,30 @@ public class Fast2CubeAuton extends OpMode {
 		// Add the intake command to output the cube.
 		if (cmd == mpCommand) {
 			// Check if the robot can cross over. If not, auton stops here.
-			/*if (cross) {
-				if (SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
-					// Cross over
-					addCommand(crossMpCommand);
-					addCommand(raise1);
-				}
-			} else {*/
+			/*
+			 * if (cross) { if
+			 * (SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
+			 * // Cross over addCommand(crossMpCommand); addCommand(raise1); } }
+			 * else {
+			 */
+			if (!cross) {
 				// Dump the cube and keep going to the next one
 				addCommand(output1);
 				addCommand(lower1);
 				addCommand(getCubeCommand);
-			//}
-		/*} else if (cmd == crossMpCommand) {
-			// Dump the cube and keep going to the next one
+			} else {
+				addCommand(raise1);
+			}
+			// }
+			/*
+			 * } else if (cmd == crossMpCommand) { // Dump the cube and keep
+			 * going to the next one addCommand(output1); addCommand(lower1);
+			 * addCommand(getCubeCommand);
+			 */
+		} else if(cross && cmd == raise1) {
 			addCommand(output1);
 			addCommand(lower1);
-			addCommand(getCubeCommand);*/
+			addCommand(getCubeCommand);
 		} else if (cmd == getCubeCommand) {
 			// Pick up the next cube
 			addCommand(intakeCommand);

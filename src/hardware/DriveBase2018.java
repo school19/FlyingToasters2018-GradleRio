@@ -71,9 +71,9 @@ public class DriveBase2018 extends DriveBase {
 		right.setInverted(true);
 		left.setEncoderReversed(true);
 		
-		left.setCurrentLimit(40);
+		left.setCurrentLimit(50);
 		left.enableCurrentLimit(true);
-		right.setCurrentLimit(40);
+		right.setCurrentLimit(50);
 		right.enableCurrentLimit(true);
 		
 		// add the motor controllers to the list to be updated
