@@ -157,7 +157,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		
 		new Thread(() -> {
 			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+//			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
 		}).start();
 		
 		resetTimer();

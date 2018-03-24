@@ -11,10 +11,11 @@ public class PDP extends PowerDistributionPanel
 	private PrintStream logStream;
 	
 	private static final int PORTS = 16;
-	private static final String DIR = "/currentLog/";
-	private static final double logFrequency = 0.1;
+	private static final String DIR = "~/current_log/";
+	private static final double LOG_FREQUENCY = 0.1;
+	private static final int PERCISION = 2;
 	private double time = 0;
-	private double lastTime = -logFrequency;
+	private double lastTime = -LOG_FREQUENCY;
 	
 	/**
 	 * Create the pdp object
@@ -23,23 +24,23 @@ public class PDP extends PowerDistributionPanel
 		super();
 		File dir = new File(DIR);
 		int count = 0;
-		dir.mkdir();
+		dir.mkdirs();
 		String[] files = dir.list();
 		if(files != null) {
 			for(String filename : files) {
-				if(filename.contains(".log")) {
+				if(filename.contains(".csv")) {
 					count ++;
 				}
 			}
-			String logName = DIR + "currentLog" + count + ".csv";
+			String logName = DIR + "log" + count + ".csv";
 			SmartDashboard.putString("logName", logName);
 			try {
 				File logFile = new File(logName);
 				logFile.createNewFile();
 				logStream = new PrintStream(logName);
-				String outputString = "time,\t";
+				String outputString = "Time,\tVoltage,\tTemperature,\t";
 				for(int i = 0; i<PORTS; i++) {
-					outputString += i;
+					outputString += "Port " + i + " Current";
 					if(i != PORTS-1) outputString += ",\t";
 				}
 				logStream.println(outputString);
@@ -59,17 +60,18 @@ public class PDP extends PowerDistributionPanel
 	}
 	
 	public void logCurrent() {
-		if(time >= lastTime + logFrequency) {
+		if(time >= lastTime + LOG_FREQUENCY) {
 			SmartDashboard.putBoolean("LogStream", (logStream != null));
 			if(logStream != null) {
-				String outputString = time + ",\t";
+				String outputString = String.format("%." + PERCISION + "f", time) + ",\t" + String.format("%.2f", this.getVoltage()) + ",\t" + String.format("%.2f", this.getTemperature()) + ",\t";
 				for(int i = 0; i<PORTS; i++) {
-					outputString += this.getCurrent(i);
+					outputString += String.format("%." + PERCISION + "f", this.getCurrent(i));
 					if(i != PORTS-1) outputString += ",\t";
 				}
+				SmartDashboard.putString("PDP Data", outputString);
 				logStream.println(outputString);
 				logStream.flush();
-			} else Logging.h("logStream is null");
+			}
 			lastTime = time;
 		}
 	}

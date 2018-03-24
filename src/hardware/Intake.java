@@ -49,8 +49,8 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
-		leftTalon.setCurrentLimit(20);
-		rightTalon.setCurrentLimit(20);
+		leftTalon.setCurrentLimit(30);
+		rightTalon.setCurrentLimit(30);
 		leftTalon.setInverted(true);
 		rightTalon.setInverted(false);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);

@@ -39,7 +39,7 @@ public class Lift {
 		double kI = 0.02;
 		double kD = 3;
 		int vel = 100;
-		int accel = 80;
+		int accel = 130;
 	}
 
 	/**
