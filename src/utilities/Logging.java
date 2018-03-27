@@ -1,6 +1,7 @@
 package utilities;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Logging {
 	// priority of a message to be logged
@@ -13,11 +14,19 @@ public class Logging {
 			this.intValue = val;
 		}
 	}
+	
+	private static DriverStation DS = DriverStation.getInstance();
+	private static Timer uptime = new Timer();
 
-	static Priority minPriority = Priority.HIGH;
-	static boolean enableWarn = true;
-	static boolean enableError = true;
-
+	private static Priority minPriority = Priority.HIGH;
+	private static boolean enableWarn = true;
+	private static boolean enableError = true;
+	
+	public static void init() {
+		uptime.start();
+		uptime.reset();
+	}
+	
 	/**
 	 * Sets minimum priority
 	 * 
@@ -70,7 +79,7 @@ public class Logging {
 	 * logs a warning
 	 */
 	public static void logWarning(Object message) {
-		DriverStation.reportWarning("WARNING:" + message.toString(), false);
+		DriverStation.reportWarning(message.toString(), false);
 	}
 	
 	public static void logError(Object message) {
@@ -87,18 +96,19 @@ public class Logging {
 	 *            the priority of the message
 	 */
 	public static void logMessage(Object message, Priority p) {
+		message = message.toString();
 		switch (p) {
 		case WARN:
 			if (enableWarn)
-				logWarning(message);
+				logWarning(getPrefix() + "[WARNING] " + message);
 			break;
 		case ERROR:
 			if (enableError)
-				logError(message);
+				logError(getPrefix() + "[ERROR] " + message);
 			break;
 		default:
 			if (p.intValue >= minPriority.intValue) {
-				logMessage(message);
+				logMessage(getPrefix() + message);
 			}
 			break;
 		}
@@ -155,5 +165,18 @@ public class Logging {
 	}
 	public static void e(Object message){
 		logMessage(message, Priority.ERROR);
+	}
+	
+	public static String getPrefix() {
+		String mode =                   "  [Teleop]";
+		if(DS.isAutonomous()) mode =    "   [Auton]";
+		else if(DS.isTest()) mode =     "    [Test]";
+		else if(DS.isDisabled()) mode = "[Disabled]";
+		
+		return mode + " [" + String.format("%.2f", uptime.get()) + "] ";
+	}
+	
+	public static void resetUptime() {
+		uptime.reset();
 	}
 }

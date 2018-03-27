@@ -163,6 +163,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		resetTimer();
 		
 		leds = new LED(0);
+		
+		Logging.init();
+		Logging.h("Robot Started.");
 	}
 
 	/**
@@ -182,6 +185,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * are initialized.
 	 */
 	public void disabledInit() {
+		Logging.h("Robot Disabled.");
 		if (autonomous != null)
 			autonomous.stop();
 		if (teleop != null)
@@ -201,6 +205,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void autonomousInit() {
+		Logging.h("Auton enabled.");
 		//call the standard initialization method
 		standardInit();
 		//get the selected auton
@@ -294,6 +299,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * anything special now.
 	 */
 	private void teleopFirstPeriodic() {
+		Logging.h("Teleop Enabled");
 		teleop.init();
 		standardFirstPeriodic();
 	}
