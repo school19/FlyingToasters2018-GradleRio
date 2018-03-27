@@ -189,6 +189,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		autonomous = null;
 		teleop = null;
 		driveBase.setFeedbackActive(false);
+		pdp.forceLogCurrent();
 	}
 	
 	public void disabledPeriodic() {
