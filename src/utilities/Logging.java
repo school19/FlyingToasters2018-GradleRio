@@ -144,7 +144,8 @@ public class Logging {
 			break;
 		default:
 			enumValue = Priority.LOW;
-			logMessage("Error: Priority value out of range: " + p, Priority.ERROR);
+			logMessage("Priority value out of range: " + p, Priority.ERROR);
+			logMessage("(The message was \"" + message.toString() + "\")", Priority.ERROR);
 			break;
 		}
 

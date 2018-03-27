@@ -20,7 +20,14 @@ import utilities.Utilities;
  */
 public class Teleop extends OpMode {
 	
-	private enum DriveMode {
+	/* 
+	 * The rio disables motor controllers at 6.8 and doesn't release until it rises past 7.5, so it
+	 * would be pointless to enable current limiting any lower because the Talons would just cut out.
+	 */
+	private static final double BROWNOUT_TRIGGER = 7.5;
+	private static final double BROWNOUT_RELEASE = 8.2;
+	
+	private static enum DriveMode {
 		TANK,
 		ARCADE,
 		PURE_CHEESE,
@@ -40,6 +47,7 @@ public class Teleop extends OpMode {
 	
 	private boolean endgame;
 	private boolean climbing;
+	private boolean brownout;
 	
 	private LiftCommand foo;
 
@@ -77,6 +85,8 @@ public class Teleop extends OpMode {
 
 		driveMode = DriveMode.GRILLED_CHEESE;
 		op.checkControllerType();
+		
+		brownout = false;
 	}
 	
 	private void setDriveMode(DriveMode newMode) {
@@ -126,6 +136,10 @@ public class Teleop extends OpMode {
 			else robot.driveBase.driveTank(0, 0);
 			break;
 		}
+		
+		//Conditional Current Limiting. It's really weird to drive cheesey with current limiting on all the time.
+		if(robot.pdp.getVoltage() < BROWNOUT_TRIGGER) robot.driveBase.enableCurrentLimiting();
+		else if(robot.pdp.getVoltage() > BROWNOUT_RELEASE) robot.driveBase.disableCurrentLimiting();
 		
 		// Log the encoder positions with low priority
 		Logging.l("left enc.: " + robot.driveBase.left.getPosition());

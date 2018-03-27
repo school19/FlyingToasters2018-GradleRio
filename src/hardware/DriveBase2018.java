@@ -72,9 +72,9 @@ public class DriveBase2018 extends DriveBase {
 		left.setEncoderReversed(true);
 		
 		left.setCurrentLimit(50);
-		left.enableCurrentLimit(true);
 		right.setCurrentLimit(50);
-		right.enableCurrentLimit(true);
+		left.enableCurrentLimit(false);
+		right.enableCurrentLimit(false);
 		
 		// add the motor controllers to the list to be updated
 		registerMotorController(left);
@@ -108,7 +108,17 @@ public class DriveBase2018 extends DriveBase {
 		leftMotionProfile.writeErrorToDashboard("left MP error");
 		rightMotionProfile.writeErrorToDashboard("right MP error");
 	}
-
+	
+	public void enableCurrentLimiting() {
+		left.enableCurrentLimit(true);
+		right.enableCurrentLimit(true);
+	}
+	
+	public void disableCurrentLimiting() {
+		left.enableCurrentLimit(false);
+		right.enableCurrentLimit(false);
+	}
+	
 	@Override
 	public void drive(double... inputs) {
 		if (inputs.length == 2) {

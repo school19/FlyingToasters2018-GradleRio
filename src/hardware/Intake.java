@@ -75,8 +75,6 @@ public class Intake {
 		case RECOVERY:
 			time += deltaTime;
 			if (time >= maxRecoveryTime) {
-				//Lift up a bit if it's at the ground to avoid damage or losing the cube
-				if(lift.currentPos == Positions.GROUND_TILT && autoliftEnabled) lift.trackToPos(Positions.GROUND);
 				setState(State.RESET);
 			}
 		case INTAKING:
@@ -86,10 +84,8 @@ public class Intake {
 			} else {
 				timeWithCube += deltaTime;
 			}
-			if (hasCube() && timeWithCube >= 0.2) {
+			if (hasCube() && timeWithCube >= 0.25) {
 				setState(State.HAS_CUBE);
-				//Lift up a bit if it's at the ground to avoid damage or losing the cube
-				if(lift.currentPos == Positions.GROUND && autoliftEnabled) lift.trackToPos(Positions.GROUND_TILT);
 			}
 			break;
 		case OUTPUTTING:
@@ -117,10 +113,14 @@ public class Intake {
 		case RESET:
 			setPower(0);
 			time = 0;
+			//If we lose the cube in GROUND_TILT for any reason, return to GROUND
+			if(lift.currentPos == Positions.GROUND_TILT) lift.trackToPos(Positions.GROUND);
 			setState(State.RESTING);
 			break;
 		case HAS_CUBE:
 			setPower(0);
+			//Lift up a bit if it's at the ground to avoid damage or losing the cube
+			if(lift.currentPos == Positions.GROUND && autoliftEnabled) lift.trackToPos(Positions.GROUND_TILT);
 			setState(State.RESTING_WITH_CUBE);
 			break;
 		case RESTING_WITH_CUBE:
@@ -131,7 +131,6 @@ public class Intake {
 			break;
 		case RESTING:
 			time = 0;
-		default:
 			break;
 		}
 		SmartDashboard.putString("Intake State", currentState.toString());
