@@ -197,7 +197,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 	
 	public void disabledPeriodic() {
-		lift.logToDashboard();
+		
 	}
 	/**
 	 * Called once when auton starts. This method reads the selected auton from the
@@ -329,6 +329,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 		pdp.periodic(deltaTime);
+		lift.logToDashboard();
 	}
 
 	/**

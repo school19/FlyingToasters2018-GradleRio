@@ -110,11 +110,15 @@ public class DriveBase2018 extends DriveBase {
 	}
 	
 	public void enableCurrentLimiting() {
+		SmartDashboard.putBoolean("CurrentLimiting", true);
+		Logging.h("Enabling Current Limiting");
 		left.enableCurrentLimit(true);
 		right.enableCurrentLimit(true);
 	}
 	
 	public void disableCurrentLimiting() {
+		SmartDashboard.putBoolean("CurrentLimiting", false);
+		Logging.h("Disabling Current Limiting");
 		left.enableCurrentLimit(false);
 		right.enableCurrentLimit(false);
 	}

@@ -25,7 +25,7 @@ public class Teleop extends OpMode {
 	 * would be pointless to enable current limiting any lower because the Talons would just cut out.
 	 */
 	private static final double BROWNOUT_TRIGGER = 7.5;
-	private static final double BROWNOUT_RELEASE = 8.2;
+	private static final double BROWNOUT_RELEASE = 9;
 	
 	private static enum DriveMode {
 		TANK,
@@ -90,8 +90,10 @@ public class Teleop extends OpMode {
 	}
 	
 	private void setDriveMode(DriveMode newMode) {
-		Logging.h("Switching from " + driveMode.toString() + " to " + newMode.toString());
-		driveMode = newMode;
+		if(newMode != driveMode) {
+			Logging.h("Switching from " + driveMode.toString() + " to " + newMode.toString());
+			driveMode = newMode;
+		}
 	}
 
 	/**
@@ -138,11 +140,16 @@ public class Teleop extends OpMode {
 		}
 		
 		//Conditional Current Limiting. It's really weird to drive cheesey with current limiting on all the time.
-		if(robot.pdp.getVoltage() < BROWNOUT_TRIGGER) robot.driveBase.enableCurrentLimiting();
-		else if(robot.pdp.getVoltage() > BROWNOUT_RELEASE) robot.driveBase.disableCurrentLimiting();
+		if(robot.pdp.getVoltage() < BROWNOUT_TRIGGER && !brownout) {
+			robot.driveBase.enableCurrentLimiting();
+			brownout = true;
+		} else if(robot.pdp.getVoltage() > BROWNOUT_RELEASE && brownout) {
+			robot.driveBase.disableCurrentLimiting();
+			brownout = false;
+		}
 		
 		// Log the encoder positions with low priority
-		Logging.l("left enc.: " + robot.driveBase.left.getPosition());
+		Logging.l("Left enc.: " + robot.driveBase.left.getPosition());
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 
 		// Set the power of the intake based on the user inputs.
@@ -160,20 +167,21 @@ public class Teleop extends OpMode {
 		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));
 
 		// Move the lift on the rising edge of each button
-		if (op.isPressed(Operator.Button.GROUND))
+		if (op.isPressed(Operator.Button.GROUND)) {
 			robot.lift.trackToPos(Lift.Positions.GROUND);
-		else if (op.isPressed(Operator.Button.LOW_SWITCH))
+		} else if (op.isPressed(Operator.Button.LOW_SWITCH)) {
 			robot.lift.trackToPos(Lift.Positions.SWITCH);
-		else if (op.isPressed(Operator.Button.HIGH_SWITCH))
+		} else if (op.isPressed(Operator.Button.HIGH_SWITCH)) {
 			robot.lift.trackToPos(Lift.Positions.H_SWITCH);
-		else if (op.isPressed(Operator.Button.LOW_SCALE))
+		} else if (op.isPressed(Operator.Button.LOW_SCALE)) {
 			robot.lift.trackToPos(Lift.Positions.L_SCALE);
-		else if (op.isPressed(Operator.Button.HIGH_SCALE))
+		} else if (op.isPressed(Operator.Button.HIGH_SCALE)) {
 			robot.lift.trackToPos(Lift.Positions.H_SCALE);
-		// log data about the lift's position, velocity, and error to the smartdashboard
-		// to help tune PIDs
-		robot.lift.logToDashboard();
-		
+		} else if(op.isPressed(Operator.Button.START_CLIMB)) {
+			robot.lift.trackToPos(Lift.Positions.CLIMB);
+		} else if(op.isPressed(Operator.Button.END_CLIMB)) {
+			robot.lift.trackToPos(Lift.Positions.CLIMB_ENGAGED);
+		}
 		//Reset the lift down slowly until it hits the limit switch and re:zero s
 //		if(op.isPressed(Operator.Button.RESET)) {
 //			robot.lift.resetDown();
@@ -191,22 +199,12 @@ public class Teleop extends OpMode {
 		//Set the light rumble based on the drivebase velocity.
 		ps4.rumble(robot.driveBase.getWheelVelocity(), false);
 		
-		//End game:
-		SmartDashboard.putBoolean("Endgame: ", endgame);
-		if(!endgame) endgame = (ds.getMatchTime() > 105) || (ps4.isPressed(PS4.Button.SHARE));
-		else {
-//			if(op.isPressed(Operator.Button.START_CLIMB)) {
-//				foo = new LiftCommand(this, robot, Lift.Positions.CLIMB);
-//				addCommand(foo);
-//			}
-//			if(climbing) {
-//				
-//			}
-			robot.climber.setSpeed( -ps4.getAxis(PS4.Axis.LEFT_TRIGGER) + ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
-			if(op.isPressed(Operator.Button.START_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB);
-			else if(op.isPressed(Operator.Button.END_CLIMB)) robot.lift.trackToPos(Lift.Positions.CLIMB_ENGAGED);
-		}
+//		endgame = (ds.getMatchTime() > 105) || (ps4.isPressed(PS4.Button.SHARE));
 		
+		//Run the lift Motors
+		if(driveMode != DriveMode.MARIO_KART) {
+			robot.climber.setSpeed( -ps4.getAxis(PS4.Axis.LEFT_TRIGGER) + ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
+		}		
 		
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
