@@ -77,8 +77,8 @@ public class Lift {
 		H_SWITCH(-475, 537),
 		L_SCALE(-695, 400),
 		H_SCALE(-737, 419),
-		CLIMB(-777, 389),
-		CLIMB_ENGAGED(-555, 389),
+		CLIMB(-719, 389),
+		CLIMB_ENGAGED(-455, 389),
 		STARTING(-418, 389),
 		STARTING_FLIP(-418, 537);
 
@@ -194,11 +194,10 @@ public class Lift {
 	 *            The position to go to.
 	 */
 	public void trackToPos(Positions position) {
-		Logging.m("Tracking to: " + position.toString());
+		Logging.h("Tracking to: " + position.toString());
 		// The lift should only be able to go to l/h scale from starting, otherwise go
 		// to starting flip position.
-		if (currentPos == Positions.STARTING
-				&& (position != Positions.STARTING && position != Positions.H_SCALE && position != Positions.L_SCALE)) {
+		if (currentPos == Positions.STARTING && position.liftPos > Positions.STARTING.liftPos) {
 			currentPos = Positions.STARTING_FLIP;
 		} else {
 			currentPos = position;
