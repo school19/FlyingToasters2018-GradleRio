@@ -2,11 +2,8 @@ package commands.teleop;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
-import commands.LiftCommand;
-import commands.interfaces.Command;
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
 import hardware.Lift;
 import utilities.Logging;
@@ -33,6 +30,7 @@ public class Teleop extends OpMode {
 		PURE_CHEESE,
 		GRILLED_CHEESE,
 		MARIO_KART,
+		STOP,
 	}
 	
 	private DriveMode driveMode = DriveMode.GRILLED_CHEESE;
@@ -43,14 +41,8 @@ public class Teleop extends OpMode {
 	private PS4 ps4;
 	private Operator op;
 	
-	private DriverStation ds;
-	
-	private boolean endgame;
-	private boolean climbing;
 	private boolean brownout;
 	
-	private LiftCommand foo;
-
 	/**
 	 * Constructor
 	 * 
@@ -61,9 +53,6 @@ public class Teleop extends OpMode {
 		super(bot, "Teleop");
 		ps4 = new PS4(0);
 		op = new Operator(2);
-		ds = DriverStation.getInstance();
-		endgame = false;
-		climbing = false;
 	}
 
 	/**
@@ -83,7 +72,6 @@ public class Teleop extends OpMode {
 			robot.lift.disableMotionMagic();
 		}
 
-		driveMode = DriveMode.GRILLED_CHEESE;
 		op.checkControllerType();
 		
 		brownout = false;
@@ -137,6 +125,9 @@ public class Teleop extends OpMode {
 			if(ps4.isDown(PS4.Button.LEFT_TRIGGER_BUTTON)) robot.driveBase.driveArcade(ps4.getAxis(PS4.Axis.TILT_PITCH), Utilities.expInput(ps4.getAxis(PS4.Axis.TILT_ROLL), 2));
 			else robot.driveBase.driveTank(0, 0);
 			break;
+		case STOP:
+			robot.driveBase.driveArcade(0, 0);
+			break;
 		}
 		
 		//Conditional Current Limiting. It's really weird to drive cheesey with current limiting on all the time.
@@ -155,14 +146,15 @@ public class Teleop extends OpMode {
 		// Set the power of the intake based on the user inputs.
 		robot.intake.setOutputSpeed(op.getAxis(Operator.Axis.OUTPUT_SPEED));
 		
-		if (op.isPressed(Operator.Button.INTAKE))
+		if (op.isPressed(Operator.Button.INTAKE)) {
 			robot.intake.setState(Intake.State.INTAKING);
-		else if (op.isPressed(Operator.Button.OUTTAKE))
+		} else if (op.isPressed(Operator.Button.OUTTAKE)) {
 			robot.intake.setState(Intake.State.OUTPUTTING_MANUAL);
-		else if (op.isReleased(Operator.Button.INTAKE) && robot.intake.getState() == Intake.State.INTAKING)
+		} else if (op.isReleased(Operator.Button.INTAKE) && robot.intake.getState() == Intake.State.INTAKING) {
 			robot.intake.setState(Intake.State.RECOVERY);
-		else if (op.isReleased(Operator.Button.OUTTAKE) && robot.intake.getState() == Intake.State.OUTPUTTING_MANUAL)
+		} else if (op.isReleased(Operator.Button.OUTTAKE) && robot.intake.getState() == Intake.State.OUTPUTTING_MANUAL) {
 			robot.intake.setState(Intake.State.RESET);
+		}
 		// else if (robot.intake.getState() == Intake.State.RESTING)
 		// robot.intake.setPower(e3d.getAxis(E3D.AxisX));
 
@@ -183,11 +175,11 @@ public class Teleop extends OpMode {
 			robot.lift.trackToPos(Lift.Positions.CLIMB_ENGAGED);
 		}
 		//Reset the lift down slowly until it hits the limit switch and re:zero s
-//		if(op.isPressed(Operator.Button.RESET)) {
-//			robot.lift.resetDown();
-//		} else if(op.isReleased(Operator.Button.RESET)) {
-//			robot.lift.stopResettingDown();
-//		}
+		//		if(op.isPressed(Operator.Button.RESET)) {
+		//			robot.lift.resetDown();
+		//		} else if(op.isReleased(Operator.Button.RESET)) {
+		//			robot.lift.stopResettingDown();
+		//		}
 		
 		//When the whammy bar is pressed, don't tilt the intake up when we get a cube.
 		if(op.isPressed(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(false);
@@ -203,7 +195,7 @@ public class Teleop extends OpMode {
 		
 		//Run the lift Motors
 		if(driveMode != DriveMode.MARIO_KART) {
-			robot.climber.setSpeed( -ps4.getAxis(PS4.Axis.LEFT_TRIGGER) + ps4.getAxis(PS4.Axis.RIGHT_TRIGGER));
+			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
 		}		
 		
 		// Temporary manual lift control code
@@ -216,17 +208,9 @@ public class Teleop extends OpMode {
 //			SmartDashboard.putNumber("E3D Throttle axis", op.e3d.getAxis(E3D.Axis.THROTTLE));
 //			robot.lift.driveNoFeedback(liftPower, flipPower);
 //		}
-		
+		SmartDashboard.putString("Match", robot.ds.getEventName() + robot.ds.getMatchNumber());
 	}
 	
-	public void commandFinished(Command cmd) {
-		if(cmd == foo) {
-			climbing = true;
-		}
-		super.commandFinished(cmd);
-	}
-
-
 	/**
 	 * Called when the opmode is stopped.
 	 */

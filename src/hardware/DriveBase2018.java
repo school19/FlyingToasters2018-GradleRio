@@ -23,7 +23,7 @@ public class DriveBase2018 extends DriveBase {
 	public FeedbackLinkedCAN left;
 	public FeedbackLinkedCAN right;
 	
-	private final static double MAX_VELOCITY = 3500;
+	private final static double MAX_VELOCITY = 3400;
 	
 	public final static double wheelDistance = 0.665;
 	//public final static double wheelDistance = 0.735;
