@@ -17,7 +17,6 @@ import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-//TODO add intake commands
 /**
  * Drives to the left scale plate.
  * 

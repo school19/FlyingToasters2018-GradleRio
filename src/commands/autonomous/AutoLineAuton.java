@@ -11,7 +11,6 @@ import path_generation.Point;
 import path_generation.Waypoint;
 import utilities.Logging;
 
-//TODO rewrite using MotionProfileCommand or change my mind about rewriting using MotionProfileCommand
 /**
  * Auto line autonomous mode. Drives forward 2.5 meters.
  * 
