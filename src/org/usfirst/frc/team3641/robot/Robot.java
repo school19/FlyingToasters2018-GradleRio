@@ -38,6 +38,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	enum Auton {
 		AUTO_LINE("Auto Line auton"), 
 		AUTO_SWITCH("Switch auton"), 
+		AUTO_SWITCH_2C("Two Cube Switch auton"),
 		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
 		AUTO_SCALE_R("(Reverse) Right Scale auton"),
 		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
@@ -220,6 +221,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			break;
 		case AUTO_SWITCH:
 			autonomous = new SwitchAuton(this);
+			break;
+		case AUTO_SWITCH_2C:
+			autonomous = new SwitchAuton2Cube(this);
 			break;
 		case AUTO_SCALE_L:
 			autonomous = new LeftScaleAuton(this);
