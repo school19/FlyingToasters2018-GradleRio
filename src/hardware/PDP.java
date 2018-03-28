@@ -12,7 +12,7 @@ public class PDP extends PowerDistributionPanel
 	private PrintStream logStream;
 	
 	private static final int PORTS = 16;
-	private static final String DIR = "/current_log/";
+	private static String DIR = "/current_log/";
 	private static final double LOG_FREQUENCY = 0.1;
 	private static final int PERCISION = 2;
 	private double time = 0;
@@ -24,17 +24,27 @@ public class PDP extends PowerDistributionPanel
 	 */
 	public PDP() {
 		super();
+		String logName = null;
+		DS = DriverStation.getInstance();
+		if(DS.isFMSAttached()) {
+			DIR += DS.getEventName().replace(' ', '_').replace('/','-') + "/" + DS.getMatchType().toString() + "/";
+			logName = DS.getMatchType().toString().charAt(0) + DS.getMatchNumber() + ".csv";
+		} else { 
+		}
+		
 		File dir = new File(DIR);
 		int count = 0;
 		dir.mkdirs();
 		String[] files = dir.list();
 		if(files != null) {
-			for(String filename : files) {
-				if(filename.contains(".csv")) {
-					count ++;
+			if(logName == null) {
+				for(String filename : files) {
+					if(filename.contains(".csv")) {
+						count ++;
+					}
 				}
+				logName = DIR + "log" + count + ".csv";
 			}
-			String logName = DIR + "log" + count + ".csv";
 			SmartDashboard.putString("logName", logName);
 			try {
 				File logFile = new File(logName);
@@ -54,7 +64,6 @@ public class PDP extends PowerDistributionPanel
 			SmartDashboard.putString("logName", "NONE!");
 			Logging.h("\"" + DIR + "\" is not a directory...");
 		}
-		DS = DriverStation.getInstance();
 	}
 	
 	public void periodic(double deltaTime) {

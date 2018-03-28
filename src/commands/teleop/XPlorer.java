@@ -42,7 +42,7 @@ public class XPlorer
 	 */
 	public enum Axis
 	{
-		STRUM, WHAMMY_BAR, BUTTONS;
+		STRUM, WHAMMY_BAR, BUTTONS, TILT;
 	}
 
 	/**
@@ -111,6 +111,7 @@ public class XPlorer
 		else wb = (wb+1)/2;*/
 		
 		axes.put(Axis.WHAMMY_BAR, (wb + 1)/2);
+		axes.put(Axis.TILT, rawJoystick.getRawAxis(5));
 		current.put(Button.WHAMMY, axes.get(Axis.WHAMMY_BAR) > 0.5);
 		
 		current.put(Button.STRUM, !(axes.get(Axis.STRUM) == 0));

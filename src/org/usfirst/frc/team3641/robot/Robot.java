@@ -5,6 +5,7 @@ import commands.interfaces.*;
 import commands.teleop.*;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -87,19 +88,20 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	
 	public PDP pdp;
 	
+	public DriverStation ds;
+	
 	/**
 	 * The bot's LEDs
 	 */
 	public LED leds;
 	
-	// TODO add units to documentation
 	/**
-	 * The timestamp (in ??? units) of the last run of standardPeriodic or
+	 * The timestamp in seconds of the last run of standardPeriodic or
 	 * standardFirstPeriodic if it is the first run of standardPeriodic.
 	 */
 	private double lastTime;
 	/**
-	 * Stores the time since the last run of standardPeriodic or
+	 * Stores the time in seconds since the last run of standardPeriodic or
 	 * standardFirstPeriodic.
 	 */
 	private double deltaTime = 0;
@@ -150,7 +152,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		intake = new Intake(lift);
 		climber = new Climber();
 		
-		pdp = new PDP();
+		ds = DriverStation.getInstance();
 		
 		// initialize timer
 		timer = new Timer();
@@ -193,7 +195,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		autonomous = null;
 		teleop = null;
 		driveBase.setFeedbackActive(false);
-		pdp.forceLogCurrent();
+		if(pdp != null) pdp.forceLogCurrent();
 	}
 	
 	public void disabledPeriodic() {
@@ -321,14 +323,18 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		intake.periodic(deltaTime);
 		lift.periodic();
 		leds.updateLightsToRobotState(this);
-		pdp.logCurrent();
+		if(pdp != null) pdp.logCurrent();
 	}
 	
 	public void robotPeriodic() {
 		double currentTime = timer.get();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		pdp.periodic(deltaTime);
+		if(pdp == null && ds.isDSAttached()) { 
+			SmartDashboard.putString("Event Info", ds.getEventName() + " " + ds.getMatchType().toString() + " " + ds.getMatchNumber());
+			pdp = new PDP();
+		}
+		if(pdp != null) pdp.periodic(deltaTime);
 		lift.logToDashboard();
 	}
 
