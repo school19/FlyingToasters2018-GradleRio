@@ -23,7 +23,7 @@ import utilities.Logging;
  */
 public class SwitchAuton extends OpMode {
 	// meters from wall to switch
-	final static double switch_dist = 2.6;
+	final static double switch_dist = 2.4;
 
 	final static double switch_left = 2.0;
 	final static double switch_right = -1.0;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.usfirst.frc.team3641.robot.Robot;
 
+import utilities.Logging;
+
 /**
  * abstract interface for a command
  * 
@@ -81,6 +83,7 @@ public abstract class OpMode extends Command implements CommandCallback {
 	 *            the command to add
 	 */
 	protected void addCommand(Command cmd) {
+		Logging.h("Added command: " + cmd);
 		commands.add(cmd);
 		cmd.init();
 	}
@@ -90,6 +93,7 @@ public abstract class OpMode extends Command implements CommandCallback {
 	 * commands.
 	 */
 	public void commandFinished(Command cmd) {
+		Logging.h("Removed command: " + cmd);
 		commands.remove(cmd);
 	}
 }

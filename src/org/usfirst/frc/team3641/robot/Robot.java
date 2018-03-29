@@ -196,6 +196,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		autonomous = null;
 		teleop = null;
 		driveBase.setFeedbackActive(false);
+		driveBase.driveArcade(0,0);
 		if(pdp != null) pdp.forceLogCurrent();
 	}
 	

@@ -96,6 +96,7 @@ public class Logging {
 	 *            the priority of the message
 	 */
 	public static void logMessage(Object message, Priority p) {
+		
 		message = message.toString();
 		switch (p) {
 		case WARN:

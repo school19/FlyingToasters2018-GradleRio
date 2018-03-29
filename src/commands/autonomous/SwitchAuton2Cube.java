@@ -26,14 +26,14 @@ public class SwitchAuton2Cube extends OpMode {
 	// meters from wall to switch
 	final static double switch_dist = 2.4;
 
-	final static double switch_left = 2.0;
+	final static double switch_left = 1.6;
 	final static double switch_right = -1.0;
 
-	Waypoint start = new Waypoint(new Point(0, 0), 0);
-	Waypoint centered = new Waypoint(new Point(0.5, 0.432), 0);
-	Waypoint upToCube = new Waypoint(new Point(1.3, 0.432), 0);
-	Waypoint afterPickup = new Waypoint(new Point(1.7, 0.432), 0);
-	Waypoint end;
+	final Waypoint start = new Waypoint(new Point(0, 0), 0);
+	final Waypoint centered = new Waypoint(new Point(0.5, 0.432), 0);
+	final Waypoint upToCube = new Waypoint(new Point(1.3, 0.432), 0);
+	final Waypoint afterPickup = new Waypoint(new Point(1.7, 0.432), 0);
+	final Waypoint end;
 
 	MotionProfileCommand firstCube;
 	MotionProfileCommand returnFromSwitch;

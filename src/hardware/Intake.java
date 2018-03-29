@@ -1,7 +1,5 @@
 package hardware;
 
-import commands.DelayedCommand;
-import commands.LiftCommand;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Lift.Positions;
