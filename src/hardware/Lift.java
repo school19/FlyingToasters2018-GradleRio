@@ -72,13 +72,13 @@ public class Lift {
 	 */
 	public enum Positions {
 		GROUND(-98, 537),
-		GROUND_TILT(-98, 500),
+		GROUND_TILT(-98, 515),
 		SWITCH(-365, 537),
 		H_SWITCH(-475, 537),
 		L_SCALE(-695, 400),
 		H_SCALE(-737, 419),
-		CLIMB(-719, 389),
-		CLIMB_ENGAGED(-455, 389),
+		CLIMB(-777, 389),
+		CLIMB_ENGAGED(-550, 389),
 		STARTING(-418, 389),
 		STARTING_FLIP(-418, 537);
 

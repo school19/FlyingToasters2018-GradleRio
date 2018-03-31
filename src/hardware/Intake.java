@@ -1,5 +1,7 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import hardware.Lift.Positions;
@@ -38,8 +40,9 @@ public class Intake {
 
 	private final double defaultInSpeed = 1.0;
 	private final double defaultOutSpeed = 0.65;
+	private final double CURRENT_LIMIT_TIME = 1.0;
 	private double manualOutSpeed = defaultOutSpeed;
-
+	
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_MANUAL,
 	}
@@ -47,8 +50,16 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
-		leftTalon.setCurrentLimit(30);
-		rightTalon.setCurrentLimit(30);
+		leftTalon.talon.configContinuousCurrentLimit(20, 10);
+		rightTalon.talon.configContinuousCurrentLimit(20, 10);
+		leftTalon.talon.configPeakCurrentLimit(20, 10);
+		rightTalon.talon.configPeakCurrentLimit(20, 10);
+		leftTalon.talon.configPeakCurrentDuration(1000, 10);
+		rightTalon.talon.configPeakCurrentDuration(1000, 10);
+		leftTalon.enableCurrentLimit(true);
+		rightTalon.enableCurrentLimit(true);
+		leftTalon.talon.setNeutralMode(NeutralMode.Brake);
+		rightTalon.talon.setNeutralMode(NeutralMode.Brake);
 		leftTalon.setInverted(true);
 		rightTalon.setInverted(false);
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
@@ -162,5 +173,4 @@ public class Intake {
 	public boolean hasCube() {
 		return currentSwitchStatus;
 	}
-
 }

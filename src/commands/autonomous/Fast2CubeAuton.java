@@ -27,14 +27,17 @@ public class Fast2CubeAuton extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
 			new Waypoint(new Point(7.2, -0.6), -Math.PI / 4.0) };
 	private Waypoint[] leftGetCube = { new Waypoint(new Point(7.2, -0.5), 3 * Math.PI / 4.0),
-			new Waypoint(new Point(5.4, -0.5), -3 * Math.PI / 4.0) };
-	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.2, -0.2), Math.PI / 4.0),
+			new Waypoint(new Point(5.4, -0.65), -3 * Math.PI / 4.0) };
+	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.2, -0.35), Math.PI / 4.0),
 			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
 			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
 			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0),  new Waypoint(new Point(6.3, -5.8), 0),
 			new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
+	
+	private Waypoint[] shortRightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
+			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0)};
 	// private Waypoint[] rightPath2 = { new Waypoint(new Point(5.65, -2.9)
 	// -Math.PI / 2.0),
 	// new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new
@@ -77,10 +80,9 @@ public class Fast2CubeAuton extends OpMode {
 	 * 
 	 * @param bot
 	 */
-	public Fast2CubeAuton(Robot bot, boolean startOnLeft) {
+	public Fast2CubeAuton(Robot bot, boolean startOnLeft, String gameData) {
 		super(bot, "Left Scale auton");
 		startLeft = startOnLeft;
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
 
 		// Indicates whether the paths should be mirrored
@@ -96,8 +98,14 @@ public class Fast2CubeAuton extends OpMode {
 					MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
 		} else {
 			cross = true;
-			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
+			if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
+				mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
 					MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
+			}
+			else {
+				mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, shortRightPath);;;
+			}
 			// crossMpCommand = new MotionProfileCommand(this, robot, "Mp
 			// command 2", true, mirrored,
 			// MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
@@ -171,7 +179,8 @@ public class Fast2CubeAuton extends OpMode {
 				addCommand(lower1);
 				addCommand(getCubeCommand);
 			} else {
-				addCommand(raise1);
+				if(SmartDashboard.getBoolean("Allow Auton Opposite Side", true))
+					addCommand(raise1);
 			}
 			// }
 			/*

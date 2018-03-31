@@ -35,9 +35,8 @@ public class SwitchAuton extends OpMode {
 
 	LiftCommand flip;
 	
-	public SwitchAuton(Robot bot) {
+	public SwitchAuton(Robot bot, String gameData) {
 		super(bot, "Motion Profile Auton");
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		Logging.h(gameData);
 		if (gameData.charAt(0) == 'L') {
 			end = new Waypoint(new Point(switch_dist, switch_left), 0.0);

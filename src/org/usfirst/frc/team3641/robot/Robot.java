@@ -1,5 +1,8 @@
 package org.usfirst.frc.team3641.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import commands.autonomous.*;
 import commands.interfaces.*;
 import commands.teleop.*;
@@ -39,11 +42,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	enum Auton {
 		AUTO_LINE("Auto Line auton"), 
 		AUTO_SWITCH("Switch auton"), 
-		AUTO_SWITCH_2C("Two Cube Switch auton"),
-		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
-		AUTO_SCALE_R("(Reverse) Right Scale auton"),
-		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
-		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
+//		AUTO_SWITCH_2C("Two Cube Switch auton"),
+//		AUTO_SCALE_L("(Reverse) Left Scale auton"), 
+//		AUTO_SCALE_R("(Reverse) Right Scale auton"),
+//		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
+//		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
 		AUTO_FAST_2C_SCALE_L("(Reverse) FAST Two Cube Left Scale Auton"),
 		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
 		AUTO_TEST("Test Auton");
@@ -124,6 +127,9 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 * never be used concurrently.
 	 */
 	private OpMode autonomous;
+	
+	private Map<String, OpMode> autoChoices;
+	
 	/**
 	 * The OopMode that is run during teleop. This and autonomous should probably be
 	 * replaced with a single OpMode in the future, since the two should never be
@@ -139,6 +145,7 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	 */
 	@Override
 	public void robotInit() {
+		autoChoices = new HashMap<String, OpMode>();
 		for (Auton a : Auton.values()) {
 			chooser.addObject(a.name, a);
 		}
@@ -201,7 +208,55 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	}
 	
 	public void disabledPeriodic() {
-		
+		Auton newAuto = chooser.getSelected();
+		if(newAuto != autoSelected) {
+			autoSelected = newAuto;
+			autoChoices.put("RR", genAuto("RR"));
+			autoChoices.put("RL", genAuto("RL"));
+			autoChoices.put("LR", genAuto("LR"));
+			autoChoices.put("LL", genAuto("LL"));
+		}
+	}
+	
+	public OpMode genAuto(String gameData) {
+		OpMode autonomous;
+		Logging.h(autoSelected.name + "selected");
+		intake.setState(Intake.State.RESTING_WITH_CUBE);
+		//call the constructor of the auton.
+		switch (autoSelected) {
+		case AUTO_LINE:
+			autonomous = new AutoLineAuton(this);
+			break;
+		case AUTO_SWITCH:
+			autonomous = new SwitchAuton(this, gameData);
+			break;
+//		case AUTO_SWITCH_2C:
+//			autonomous = new SwitchAuton2Cube(this, gameData);
+//			break;
+//		case AUTO_SCALE_L:
+//			autonomous = new LeftScaleAuton(this);
+//			break;
+//		case AUTO_SCALE_R:
+//			autonomous = new RightScaleAuton(this);
+//			break;
+//		case AUTO_2C_SCALE_L:
+//			autonomous = new LeftScaleAuton2Cube(this);
+//			break;
+//		case AUTO_2C_SCALE_R:
+//			autonomous = new RightScaleAuton2Cube(this);
+//			break;
+		case AUTO_FAST_2C_SCALE_L:
+			autonomous = new Fast2CubeAuton(this, true, gameData);
+			break;
+		case AUTO_FAST_2C_SCALE_R:
+			autonomous = new Fast2CubeAuton(this, false, gameData);
+			break;
+		default:
+			autonomous = new TestAuton(this, "AUTON NOT FOUND");
+			Logging.e("Could not get auton from chooser");
+			break;
+		}
+		return autonomous;
 	}
 	/**
 	 * Called once when auton starts. This method reads the selected auton from the
@@ -211,46 +266,17 @@ public class Robot extends IterativeRobot implements CommandCallback {
 	@Override
 	public void autonomousInit() {
 		Logging.h("Auton enabled.");
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		
+		//TODO: MAKE THIS LESS TERRIBLE OH MY GOD
+		autonomous = autoChoices.get("" + gameData.charAt(0) + gameData.charAt(1));
+		
+		autoChoices.clear();
+		
 		//call the standard initialization method
 		standardInit();
-		//get the selected auton
-		autoSelected = chooser.getSelected();
-		Logging.h(autoSelected.name + "selected");
-		intake.setState(Intake.State.RESTING_WITH_CUBE);
-		//call the constructor of the auton.
-		switch (autoSelected) {
-		case AUTO_LINE:
-			autonomous = new AutoLineAuton(this);
-			break;
-		case AUTO_SWITCH:
-			autonomous = new SwitchAuton(this);
-			break;
-		case AUTO_SWITCH_2C:
-			autonomous = new SwitchAuton2Cube(this);
-			break;
-		case AUTO_SCALE_L:
-			autonomous = new LeftScaleAuton(this);
-			break;
-		case AUTO_SCALE_R:
-			autonomous = new RightScaleAuton(this);
-			break;
-		case AUTO_2C_SCALE_L:
-			autonomous = new LeftScaleAuton2Cube(this);
-			break;
-		case AUTO_2C_SCALE_R:
-			autonomous = new RightScaleAuton2Cube(this);
-			break;
-		case AUTO_FAST_2C_SCALE_L:
-			autonomous = new Fast2CubeAuton(this, true);
-			break;
-		case AUTO_FAST_2C_SCALE_R:
-			autonomous = new Fast2CubeAuton(this, false);
-			break;
-		default:
-			autonomous = new TestAuton(this, "AUTON NOT FOUND");
-			Logging.e("Could not get auton from chooser");
-			break;
-		}
+		
+		Logging.h("Finished creating auton object");
 	}
 
 	/**

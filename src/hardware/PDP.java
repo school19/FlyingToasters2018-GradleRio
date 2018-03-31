@@ -12,7 +12,7 @@ public class PDP extends PowerDistributionPanel
 	private PrintStream logStream;
 	
 	private static final int PORTS = 16;
-	private static String DIR = "/current_log/";
+	private static String DIR = "/home/lvuser/current_log/";
 	private static final double LOG_FREQUENCY = 0.1;
 	private static final int PERCISION = 2;
 	private double time = 0;
