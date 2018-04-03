@@ -1,5 +1,7 @@
 package hardware;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -40,7 +42,6 @@ public class Intake {
 
 	private final double defaultInSpeed = 1.0;
 	private final double defaultOutSpeed = 0.65;
-	private final double CURRENT_LIMIT_TIME = 1.0;
 	private double manualOutSpeed = defaultOutSpeed;
 	
 	public static enum State {
@@ -50,18 +51,28 @@ public class Intake {
 	public Intake(Lift lift) {
 		leftTalon = new Talon(leftMotorID);
 		rightTalon = new Talon(rightMotorID);
+		
 		leftTalon.talon.configContinuousCurrentLimit(20, 10);
 		rightTalon.talon.configContinuousCurrentLimit(20, 10);
+		
 		leftTalon.talon.configPeakCurrentLimit(20, 10);
 		rightTalon.talon.configPeakCurrentLimit(20, 10);
+		
 		leftTalon.talon.configPeakCurrentDuration(1000, 10);
 		rightTalon.talon.configPeakCurrentDuration(1000, 10);
+		
 		leftTalon.enableCurrentLimit(true);
 		rightTalon.enableCurrentLimit(true);
+		
 		leftTalon.talon.setNeutralMode(NeutralMode.Brake);
 		rightTalon.talon.setNeutralMode(NeutralMode.Brake);
+		
 		leftTalon.setInverted(true);
 		rightTalon.setInverted(false);
+		
+		leftTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
+		rightTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
+		
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
 		this.lift = lift;
 	}
@@ -75,9 +86,13 @@ public class Intake {
 	public void setPower(double power) {
 		leftTalon.setPower(power);
 		rightTalon.setPower(power);
-
 	}
-
+	
+	public void setVelocity(double velocity) {
+		leftTalon.talon.set(ControlMode.Velocity, velocity);
+		rightTalon.talon.set(ControlMode.Velocity, velocity);
+	}
+	
 	public void periodic(double deltaTime) {
 		pollSwitch();
 		switch (currentState) {
@@ -87,7 +102,7 @@ public class Intake {
 				setState(State.RESET);
 			}
 		case INTAKING:
-			setPower(-defaultInSpeed);
+			setVelocity(-defaultInSpeed);
 			if(!hasCube()) {
 				timeWithCube = 0;
 			} else {
@@ -98,7 +113,7 @@ public class Intake {
 			}
 			break;
 		case OUTPUTTING:
-			setPower(defaultOutSpeed);
+			setVelocity(defaultOutSpeed);
 			if (hasCube()) {
 				time = 0;
 			} else {
@@ -109,7 +124,7 @@ public class Intake {
 			}
 			break;
 		case OUTPUTTING_MANUAL:
-			setPower(manualOutSpeed);
+			setVelocity(manualOutSpeed);
 			if (hasCube()) {
 				time = 0;
 			} else {
@@ -127,7 +142,7 @@ public class Intake {
 			setState(State.RESTING);
 			break;
 		case HAS_CUBE:
-			setPower(0);
+			setVelocity(0);
 			//Lift up a bit if it's at the ground to avoid damage or losing the cube
 			if(lift.currentPos == Positions.GROUND && autoliftEnabled) lift.trackToPos(Positions.GROUND_TILT);
 			setState(State.RESTING_WITH_CUBE);

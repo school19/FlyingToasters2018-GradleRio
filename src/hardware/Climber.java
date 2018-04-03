@@ -2,15 +2,36 @@ package hardware;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.Servo;
+
 public class Climber {
 
+	private static final int RIGGING_PORT = 1;
+	private static final int FORK_PORT = 2;
+	
+	//TODO: Set the actual servo position values.
+	private static final double RIGGING_CLOSED = 0.25;
+	private static final double RIGGING_OPEN = 0.75;
+	private static final double FORKS_CLOSED = 0.25;
+	private static final double FORKS_OPEN = 0.75;
+	
+	private boolean riggingReleased;
+	
 	private static final int LEFT = 10;
 	private static final int RIGHT = 11;
+	
+	private Servo riggingServo;
+	private Servo forkServo;
 	
 	private Talon left;
 	private Talon right;
 
 	public Climber() {
+		riggingServo = new Servo(RIGGING_PORT);
+		forkServo = new Servo(FORK_PORT);
+		
+		closeServos();
+		
 		left = new Talon(LEFT);
 		right = new Talon(RIGHT);
 //		right.setFollower(left);
@@ -27,7 +48,24 @@ public class Climber {
 	}
 	
 	public void setSpeed(double left, double right) {
-		this.left.setPower(left);
-		this.right.setPower(right);
+		if(riggingReleased) {
+			this.left.setPower(left);
+			this.right.setPower(right);
+		}
+	}
+	
+	public void closeServos() {
+		riggingReleased = false;
+		forkServo.set(FORKS_CLOSED);
+		riggingServo.set(RIGGING_CLOSED);
+	}
+	
+	public void releaseRigging() {
+		riggingReleased = true;
+		riggingServo.set(RIGGING_OPEN);
+	}
+
+	public void releaseForks() {
+		forkServo.set(FORKS_OPEN);
 	}
 }

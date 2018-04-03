@@ -182,8 +182,11 @@ public class Teleop extends OpMode {
 		//		}
 		
 		//When the whammy bar is pressed, don't tilt the intake up when we get a cube.
-		if(op.isPressed(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(false);
-		else if(op.isReleased(Operator.Button.AUTO_FLIP)) robot.intake.enableAutolift(true);
+		if(op.isPressed(Operator.Button.AUTO_FLIP)) { 
+			robot.intake.enableAutolift(false);
+		} else if(op.isReleased(Operator.Button.AUTO_FLIP)) {
+			robot.intake.enableAutolift(true);
+		}
 		
 		//If we get the cube, let the driver know by activating the heavy rumble
 		if(robot.intake.getState() == Intake.State.HAS_CUBE) ps4.rumbleForTime(1, true, .5);
@@ -193,10 +196,17 @@ public class Teleop extends OpMode {
 		
 //		endgame = (ds.getMatchTime() > 105) || (ps4.isPressed(PS4.Button.SHARE));
 		
-		//Run the lift Motors
+		//Run the climber
+		if(ps4.isPressed(PS4.Button.OPTIONS)) {
+			robot.climber.releaseForks();
+		}
+		if(ps4.isPressed(PS4.Button.SHARE)) {
+			robot.climber.releaseRigging();
+		}
 		if(driveMode != DriveMode.MARIO_KART) {
 			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
-		}		
+		}
+
 		
 		// Temporary manual lift control code
 		// TODO remove temporary lift control code.
