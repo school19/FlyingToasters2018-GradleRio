@@ -18,12 +18,12 @@ import utilities.Logging;
 public class Intake {
 
 	/* 2 motors for intake */
-	static final int leftMotorID = 6;
-	static final int rightMotorID = 9;
+	static final int leftMotorID = 9;
+	static final int rightMotorID = 6;
 	static final int cubeSwitchPort = 0;
 
-	private Talon leftTalon;
-	private Talon rightTalon;
+	private FeedbackTalon leftTalon;
+	private FeedbackTalon rightTalon;
 	private DigitalInput cubeSwitch;
 	private boolean currentSwitchStatus = false;
 	
@@ -44,13 +44,28 @@ public class Intake {
 	private final double defaultOutSpeed = 0.65;
 	private double manualOutSpeed = defaultOutSpeed;
 	
+	private final int MAX_INTAKE_VELOCITY = 13500;
+	
+	private class IntakeTalonParams {
+		double kP = 0.01;
+		double kI = 0.0001;
+		double kD = 0;
+		double kF = 0.03;
+		int vel = 0;
+		int accel = 0;
+	}
+	
+	IntakeTalonParams intakeParams = new IntakeTalonParams();
+	
 	public static enum State {
 		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_MANUAL,
 	}
 
 	public Intake(Lift lift) {
-		leftTalon = new Talon(leftMotorID);
-		rightTalon = new Talon(rightMotorID);
+		addTuningToDashboard();
+		
+		leftTalon = new FeedbackTalon(leftMotorID);
+		rightTalon = new FeedbackTalon(rightMotorID);
 		
 		leftTalon.talon.configContinuousCurrentLimit(20, 10);
 		rightTalon.talon.configContinuousCurrentLimit(20, 10);
@@ -67,11 +82,13 @@ public class Intake {
 		leftTalon.talon.setNeutralMode(NeutralMode.Brake);
 		rightTalon.talon.setNeutralMode(NeutralMode.Brake);
 		
-		leftTalon.setInverted(true);
-		rightTalon.setInverted(false);
+		leftTalon.setInverted(false);
+		rightTalon.setInverted(true);
 		
 		leftTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
 		rightTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
+		
+		intakeParams = new IntakeTalonParams();
 		
 		cubeSwitch = new DigitalInput(cubeSwitchPort);
 		this.lift = lift;
@@ -89,8 +106,12 @@ public class Intake {
 	}
 	
 	public void setVelocity(double velocity) {
+		velocity *= MAX_INTAKE_VELOCITY;
 		leftTalon.talon.set(ControlMode.Velocity, velocity);
-		rightTalon.talon.set(ControlMode.Velocity, velocity);
+		rightTalon.talon.set(ControlMode.Velocity, -velocity);
+		SmartDashboard.putNumber("Intake Target Velocity", velocity);
+		SmartDashboard.putNumber("Left Intake Velocity Error", velocity - leftTalon.talon.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Right Intake Velocity Error", velocity - rightTalon.talon.getSelectedSensorVelocity(0));
 	}
 	
 	public void periodic(double deltaTime) {
@@ -102,15 +123,15 @@ public class Intake {
 				setState(State.RESET);
 			}
 		case INTAKING:
-			setVelocity(-defaultInSpeed);
+			setPower(-defaultInSpeed);
 			if(!hasCube()) {
 				timeWithCube = 0;
 			} else {
 				timeWithCube += deltaTime;
 			}
-			if (hasCube() && timeWithCube >= 0.25) {
-				setState(State.HAS_CUBE);
-			}
+//			if (hasCube() && timeWithCube >= 0.25) {
+//				setState(State.HAS_CUBE);
+//			}
 			break;
 		case OUTPUTTING:
 			setVelocity(defaultOutSpeed);
@@ -125,14 +146,14 @@ public class Intake {
 			break;
 		case OUTPUTTING_MANUAL:
 			setVelocity(manualOutSpeed);
-			if (hasCube()) {
-				time = 0;
-			} else {
-				time += deltaTime;
-			}
-			if (time >= timeWithoutCube) {
-				setState(State.RESET);
-			}
+//			if (hasCube()) {
+//				time = 0;
+//			} else {
+//				time += deltaTime;
+//			}
+//			if (time >= timeWithoutCube) {
+//				setState(State.RESET);
+//			}
 			break;
 		case RESET:
 			setPower(0);
@@ -160,6 +181,8 @@ public class Intake {
 		SmartDashboard.putString("Intake State", currentState.toString());
 		SmartDashboard.putBoolean("Has Cube?", hasCube());
 		SmartDashboard.putNumber("Intake Time", time);
+		SmartDashboard.putNumber("Left Intake Velocity", leftTalon.talon.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Right Intake Velocity", rightTalon.talon.getSelectedSensorVelocity(0));
 	}
 
 	
@@ -188,4 +211,27 @@ public class Intake {
 	public boolean hasCube() {
 		return currentSwitchStatus;
 	}
+	
+	public void readTuningValuesFromDashboard() {
+		Logging.h("Reading pid tuning values");
+		intakeParams.kP = SmartDashboard.getNumber("intake_kp", intakeParams.kP);
+		intakeParams.kI = SmartDashboard.getNumber("intake_ki", intakeParams.kI);
+		intakeParams.kD = SmartDashboard.getNumber("intake_kd", intakeParams.kD);
+		intakeParams.kF = SmartDashboard.getNumber("intake_kf", intakeParams.kF);
+		intakeParams.vel = (int) SmartDashboard.getNumber("intake_vel", intakeParams.vel);
+		intakeParams.accel = (int) SmartDashboard.getNumber("intake_accel", intakeParams.accel);
+
+		leftTalon.setupMotionMagic(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+		rightTalon.setupMotionMagic(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+	}
+	
+	public void addTuningToDashboard() {
+		SmartDashboard.putNumber("intake_kp", intakeParams.kP);
+		SmartDashboard.putNumber("intake_ki", intakeParams.kI);
+		SmartDashboard.putNumber("intake_kd", intakeParams.kD);
+		SmartDashboard.putNumber("intake_kf", intakeParams.kF);
+		SmartDashboard.putNumber("intake_vel", intakeParams.vel);
+		SmartDashboard.putNumber("intake_accel", intakeParams.accel);
+	}
+	
 }
