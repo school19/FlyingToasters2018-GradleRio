@@ -144,7 +144,7 @@ public class Teleop extends OpMode {
 		Logging.l("Right enc.:" + robot.driveBase.right.getPosition());
 
 		// Set the power of the intake based on the user inputs.
-		robot.intake.setOutputSpeed(op.getAxis(Operator.Axis.OUTPUT_SPEED));
+		robot.intake.setOutputSpeed(op.getAxis(Operator.Axis.OUTPUT_SPEED) * 0.4);
 		
 		if (op.isPressed(Operator.Button.INTAKE)) {
 			robot.intake.setState(Intake.State.INTAKING);

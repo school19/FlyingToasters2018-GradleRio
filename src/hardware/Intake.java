@@ -47,7 +47,7 @@ public class Intake {
 	private final int MAX_INTAKE_VELOCITY = 13500;
 	
 	private class IntakeTalonParams {
-		double kP = 0.01;
+		double kP = 0.03;
 		double kI = 0.0001;
 		double kD = 0;
 		double kF = 0.03;
@@ -129,9 +129,9 @@ public class Intake {
 			} else {
 				timeWithCube += deltaTime;
 			}
-//			if (hasCube() && timeWithCube >= 0.25) {
-//				setState(State.HAS_CUBE);
-//			}
+			if (hasCube() && timeWithCube >= 0.25) {
+				setState(State.HAS_CUBE);
+			}
 			break;
 		case OUTPUTTING:
 			setVelocity(defaultOutSpeed);
@@ -146,14 +146,14 @@ public class Intake {
 			break;
 		case OUTPUTTING_MANUAL:
 			setVelocity(manualOutSpeed);
-//			if (hasCube()) {
-//				time = 0;
-//			} else {
-//				time += deltaTime;
-//			}
-//			if (time >= timeWithoutCube) {
-//				setState(State.RESET);
-//			}
+			if (hasCube()) {
+				time = 0;
+			} else {
+				time += deltaTime;
+			}
+			if (time >= timeWithoutCube) {
+				setState(State.RESET);
+			}
 			break;
 		case RESET:
 			setPower(0);
