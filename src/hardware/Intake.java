@@ -221,8 +221,8 @@ public class Intake {
 		intakeParams.vel = (int) SmartDashboard.getNumber("intake_vel", intakeParams.vel);
 		intakeParams.accel = (int) SmartDashboard.getNumber("intake_accel", intakeParams.accel);
 
-		leftTalon.setupMotionMagic(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
-		rightTalon.setupMotionMagic(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+		leftTalon.setupTalonPIDVA(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+		rightTalon.setupTalonPIDVA(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
 	}
 	
 	public void addTuningToDashboard() {

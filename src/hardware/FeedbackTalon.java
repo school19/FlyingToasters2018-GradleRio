@@ -13,7 +13,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 	boolean isEncoderReversed = false;
 	private AbstractFeedbackController feedbackController;
 	boolean feedbackActive = false;
-	private boolean isMotionMagicMode = false;
+	private boolean isTalonClosedLoopMode = false;
 	private double lastSetpoint = 0;
 
 	public FeedbackTalon(int talonID) {
@@ -25,18 +25,18 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 		setFeedbackDevice(device);
 	}
 
-	public void setupMotionMagic(double kF, double kP, double kI, double kD, int rawVel, int rawAccel) {
+	public void setupTalonPIDVA(double kF, double kP, double kI, double kD, int rawVel, int rawAccel) {
 		talon.config_kF(0, kF, CONFIG_TIMEOUT_MS);
 		talon.config_kP(0, kP, CONFIG_TIMEOUT_MS);
 		talon.config_kI(0, kI, CONFIG_TIMEOUT_MS);
 		talon.config_kD(0, kD, CONFIG_TIMEOUT_MS);
 		talon.configMotionCruiseVelocity(rawVel, CONFIG_TIMEOUT_MS);
 		talon.configMotionAcceleration(rawAccel, CONFIG_TIMEOUT_MS);
-		isMotionMagicMode = true;
+		isTalonClosedLoopMode = true;
 	}
 
 	public void stopMotionMagic() {
-		isMotionMagicMode = false;
+		isTalonClosedLoopMode = false;
 	}
 
 	public double getRawPosition() {
@@ -78,7 +78,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 
 	@Override
 	public void runFeedback(double deltaTime) {
-		if (isMotionMagicMode) {
+		if (isTalonClosedLoopMode) {
 			//Logging.h("Motion Magic Mode run!");
 			talon.set(ControlMode.MotionMagic, lastSetpoint);
 		} else {
@@ -93,7 +93,7 @@ public class FeedbackTalon extends Talon implements FeedbackMotorController, Uti
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		if(isMotionMagicMode) {
+		if(isTalonClosedLoopMode) {
 			if (feedbackController != null) {
 				feedbackController.setSetpoint(setpoint);
 			}

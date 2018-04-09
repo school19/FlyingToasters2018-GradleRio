@@ -149,9 +149,9 @@ public class Lift {
 	 * sets up motion magic on motor controllers
 	 */
 	private void setupMotionMagic() {
-		flipMotor.setupMotionMagic(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD, flipParams.vel,
+		flipMotor.setupTalonPIDVA(flipParams.kF, flipParams.kP, flipParams.kI, flipParams.kD, flipParams.vel,
 				flipParams.accel);
-		liftMotor.feedbackTalon.setupMotionMagic(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
+		liftMotor.feedbackTalon.setupTalonPIDVA(liftParams.kF, liftParams.kP, liftParams.kI, liftParams.kD,
 				liftParams.vel, liftParams.accel);
 	}
 
