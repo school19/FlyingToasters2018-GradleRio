@@ -11,8 +11,8 @@ import hardware.Intake;
  *
  */
 public class IntakeCommand extends Command {
-	static final double intakeForwardSpeed = 0.2;
-	
+	static final double defaultIntakeForwardSpeed = 0.2;
+	private double intakeForwardSpeed = defaultIntakeForwardSpeed;
 	/**
 	 * The robot the command is running on.
 	 */
@@ -52,6 +52,11 @@ public class IntakeCommand extends Command {
 	 */
 	public IntakeCommand(CommandCallback opMode, Robot robot, Intake.State mode) {
 		this(opMode, robot, "Intake command", mode);
+	}
+	
+	public IntakeCommand(CommandCallback opMode, Robot robot, Intake.State mode, double speed) {
+		this(opMode, robot, "Intake command", mode);
+		intakeForwardSpeed = speed;
 	}
 
 	/**

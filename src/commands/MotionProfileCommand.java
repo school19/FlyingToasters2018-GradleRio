@@ -50,6 +50,8 @@ public class MotionProfileCommand extends Command {
 	 * they are really done.
 	 */
 	public static double END_TIME_EXTRA = 0.1;
+	
+	private double endExtraTime = END_TIME_EXTRA;
 	/**
 	 * The waypoints the path will be generated from
 	 */
@@ -108,7 +110,7 @@ public class MotionProfileCommand extends Command {
 			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
 		}
 		Logging.l(path);
-		endTime = path.endTime + END_TIME_EXTRA;
+		endTime = path.endTime + endExtraTime;
 	}
 
 	public MotionProfileCommand(CommandCallback opMode, Robot robot, String name, boolean isBackwards,
@@ -132,7 +134,11 @@ public class MotionProfileCommand extends Command {
 			path = new Path(Speed.SAFE.vel, Speed.SAFE.accel, wp);
 		}
 		Logging.l(path);
-		endTime = path.endTime + END_TIME_EXTRA;
+		endTime = path.endTime + endExtraTime;
+	}
+	
+	public void removeExtraEndTime() {
+		endExtraTime = 0;
 	}
 	/**
 	 * Returns the duration of the command

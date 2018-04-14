@@ -257,10 +257,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 			autonomous = new Fast2CubeAuton(this, false, gameData);
 			break;
 		case AUTO_FAST_3C_L:
-			autonomous = new Fast3CubeAuton(this, true, gameData);
+			autonomous = new Scale3CubeAuto(this, true, gameData);
 			break;
 		case AUTO_FAST_3C_R:
-			autonomous = new Fast3CubeAuton(this, false, gameData);
+			autonomous = new Scale3CubeAuto(this, false, gameData);
 			break;
 		
 		default:

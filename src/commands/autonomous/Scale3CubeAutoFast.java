@@ -23,7 +23,7 @@ import utilities.Logging;
  * @author jack
  *
  */
-public class Fast3CubeAuton extends OpMode {
+public class Scale3CubeAutoFast extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
 			new Waypoint(new Point(7.2, -0.6), -Math.PI / 4.0) };
 	private Waypoint[] leftGetCube2 = { new Waypoint(new Point(7.2, -0.5), 3 * Math.PI / 4.0),
@@ -95,7 +95,7 @@ public class Fast3CubeAuton extends OpMode {
 	 * 
 	 * @param bot
 	 */
-	public Fast3CubeAuton(Robot bot, boolean startOnLeft, String gameData) {
+	public Scale3CubeAutoFast(Robot bot, boolean startOnLeft, String gameData) {
 		super(bot, "Left Scale auton");
 		startLeft = startOnLeft;
 		Logging.h(gameData);
@@ -107,15 +107,19 @@ public class Fast3CubeAuton extends OpMode {
 			cross = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
 					MotionProfileCommand.Speed.FAST_LOW_ACCEL, leftPath);
+			mpCommand.removeExtraEndTime();
 			getCube2Command = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored,
-					MotionProfileCommand.Speed.MED_LOW_ACCEL, leftGetCube2);
+					MotionProfileCommand.Speed.MED, leftGetCube2);
+			getCube2Command.removeExtraEndTime();
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored,
-					MotionProfileCommand.Speed.MED_LOW_ACCEL, left2ndCube);
-			
+					MotionProfileCommand.Speed.MED, left2ndCube);
+			driveToDump2ndCube.removeExtraEndTime();
 			getCube3Command = new MotionProfileCommand(this, robot, "Get 3rd cube", false, mirrored,
 					MotionProfileCommand.Speed.MED, leftGetCube3);
+			getCube3Command.removeExtraEndTime();
 			driveToDump3rdCube = new MotionProfileCommand(this, robot, "go to dump cube 3", true, mirrored,
-					MotionProfileCommand.Speed.MED_LOW_ACCEL, left3rdCube);
+					MotionProfileCommand.Speed.MED, left3rdCube);
+			driveToDump3rdCube.removeExtraEndTime();
 			
 			output3 = new IntakeCommand(this, bot, State.OUTPUTTING);
 			raise3 = new LiftCommand(this, bot, Positions.L_SCALE)
@@ -126,10 +130,11 @@ public class Fast3CubeAuton extends OpMode {
 			if (SmartDashboard.getBoolean("Allow Auton Opposite Side", true)) {
 				mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
 						MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath);
+				mpCommand.removeExtraEndTime();
 			} else {
 				mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
 						MotionProfileCommand.Speed.MED_LOW_ACCEL, shortRightPath);
-				;
+				mpCommand.removeExtraEndTime();
 				;
 			}
 			// crossMpCommand = new MotionProfileCommand(this, robot, "Mp
@@ -137,12 +142,14 @@ public class Fast3CubeAuton extends OpMode {
 			// MotionProfileCommand.Speed.MED_LOW_ACCEL, rightPath2);
 			getCube2Command = new MotionProfileCommand(this, robot, "Get right cube", false, mirrored,
 					MotionProfileCommand.Speed.MED, rightGetCube);
+			getCube2Command.removeExtraEndTime();
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored,
-					MotionProfileCommand.Speed.MED_LOW_ACCEL, right2ndCube);
+					MotionProfileCommand.Speed.MED, right2ndCube);
+			driveToDump2ndCube.removeExtraEndTime();
 		}
 
-		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING);
-		intakeCommand2 = new IntakeCommand(this, robot, Intake.State.INTAKING);
+		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.5);
+		intakeCommand2 = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.5);
 
 		/*
 		 * if (cross) { raise1 = new LiftCommand(this, bot,
