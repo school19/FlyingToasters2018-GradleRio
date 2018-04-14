@@ -41,7 +41,7 @@ public class Intake {
 	private final double maxRecoveryTime = 1;
 
 	private final double defaultInSpeed = 1.0;
-	private final double defaultOutSpeed = 0.65;
+	private final double defaultOutSpeed = 0.5;
 	private double manualOutSpeed = defaultOutSpeed;
 	
 	private final int MAX_INTAKE_VELOCITY = 13500;
@@ -63,7 +63,7 @@ public class Intake {
 
 	public Intake(Lift lift) {
 		addTuningToDashboard();
-		
+	
 		leftTalon = new FeedbackTalon(leftMotorID);
 		rightTalon = new FeedbackTalon(rightMotorID);
 		
@@ -87,6 +87,10 @@ public class Intake {
 		
 		leftTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
 		rightTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
+		
+		leftTalon.setupTalonPIDVA(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+		rightTalon.setupTalonPIDVA(intakeParams.kF, intakeParams.kP, intakeParams.kI, intakeParams.kD, intakeParams.vel, intakeParams.accel);
+
 		
 		intakeParams = new IntakeTalonParams();
 		
@@ -146,14 +150,6 @@ public class Intake {
 			break;
 		case OUTPUTTING_MANUAL:
 			setVelocity(manualOutSpeed);
-			if (hasCube()) {
-				time = 0;
-			} else {
-				time += deltaTime;
-			}
-			if (time >= timeWithoutCube) {
-				setState(State.RESET);
-			}
 			break;
 		case RESET:
 			setPower(0);

@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj.Servo;
 
 public class Climber {
 
-	private static final int RIGGING_PORT = 1;
-	private static final int FORK_PORT = 2;
+	private static final int RIGGING_PORT = 2;
+	private static final int FORK_PORT = 9;
 	
 	//TODO: Set the actual servo position values.
-	private static final double RIGGING_CLOSED = 0.25;
-	private static final double RIGGING_OPEN = 0.75;
+	private static final double RIGGING_CLOSED = 0.5;
+	private static final double RIGGING_OPEN = 1.5;
 	private static final double FORKS_CLOSED = 0.25;
 	private static final double FORKS_OPEN = 0.75;
 	
@@ -48,7 +48,7 @@ public class Climber {
 	}
 	
 	public void setSpeed(double left, double right) {
-		if(riggingReleased) {
+		if(true || riggingReleased) {
 			this.left.setPower(left);
 			this.right.setPower(right);
 		}

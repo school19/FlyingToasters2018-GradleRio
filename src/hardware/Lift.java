@@ -54,7 +54,7 @@ public class Lift {
 		double kI = 0;
 		double kD = 4;
 		int vel = 25;
-		int accel = 50;
+		int accel = 30;
 	}
 
 	/**
@@ -70,8 +70,9 @@ public class Lift {
 	 * @author jack
 	 *
 	 */
-	public enum Positions {
-		GROUND(-98, 537),
+	 public enum Positions {
+		//old
+		/*GROUND(-98, 537),
 		GROUND_TILT(-98, 515),
 		SWITCH(-365, 537),
 		H_SWITCH(-475, 537),
@@ -80,7 +81,18 @@ public class Lift {
 		CLIMB(-777, 389),
 		CLIMB_ENGAGED(-550, 389),
 		STARTING(-418, 389),
-		STARTING_FLIP(-418, 537);
+		STARTING_FLIP(-418, 537);*/
+		//new
+		GROUND(-98, 667),
+		GROUND_TILT(-112, 657),
+		SWITCH(-365, 667),
+		H_SWITCH(-475, 667),
+		L_SCALE(-695, 621),
+		H_SCALE(-737, 627),
+		CLIMB(-777, 618),
+		CLIMB_ENGAGED(-650, 618),
+		STARTING(-418, 618),
+		STARTING_FLIP(-418, 667);
 
 		double liftPos;
 		double flipPos;

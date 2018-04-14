@@ -67,12 +67,15 @@ public class Teleop extends OpMode {
 		robot.driveBase.right.setFeedbackController(null);
 		
 		robot.lift.readTuningValuesFromDashboard();
+//		robot.intake.readTuningValuesFromDashboard();
 		
 		if (SmartDashboard.getBoolean("Manual enabled", true)) {
 			robot.lift.disableMotionMagic();
 		}
 
 		op.checkControllerType();
+		
+		
 		
 		brownout = false;
 	}
@@ -135,7 +138,7 @@ public class Teleop extends OpMode {
 			robot.driveBase.enableCurrentLimiting();
 			brownout = true;
 		} else if(robot.pdp.getVoltage() > BROWNOUT_RELEASE && brownout) {
-			robot.driveBase.disableCurrentLimiting();
+			robot.driveBase.lowCurrentLimiting();
 			brownout = false;
 		}
 		
@@ -198,10 +201,10 @@ public class Teleop extends OpMode {
 		
 		//Run the climber
 		if(ps4.isPressed(PS4.Button.OPTIONS)) {
-			robot.climber.releaseForks();
+			robot.climber.releaseRigging();
 		}
 		if(ps4.isPressed(PS4.Button.SHARE)) {
-			robot.climber.releaseRigging();
+			robot.climber.closeServos();
 		}
 		if(driveMode != DriveMode.MARIO_KART) {
 			robot.climber.setSpeed(ps4.getAxis(PS4.Axis.RIGHT_TRIGGER) - ps4.getAxis(PS4.Axis.LEFT_TRIGGER));
@@ -213,7 +216,7 @@ public class Teleop extends OpMode {
 //		if (SmartDashboard.getBoolean("Manual enabled", false)) {
 //			double liftPower = -op.e3d.getAxis(E3D.Axis.THROTTLE) * op.e3d.getAxis(E3D.Axis.Y);
 //			double flipPower = op.e3d.getAxis(E3D.Axis.THROTTLE) * op.e3d.getAxis(E3D.Axis.X);
-//			SmartDashboard.putNumber("Lift power", liftPower);
+//			SmartDashboard.putNumber("Lift poweer", liftPower);
 //			SmartDashboard.putNumber("Flip power", flipPower);
 //			SmartDashboard.putNumber("E3D Throttle axis", op.e3d.getAxis(E3D.Axis.THROTTLE));
 //			robot.lift.driveNoFeedback(liftPower, flipPower);

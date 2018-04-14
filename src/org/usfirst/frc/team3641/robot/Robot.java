@@ -49,6 +49,11 @@ public class Robot extends IterativeRobot implements CommandCallback {
 //		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
 		AUTO_FAST_2C_SCALE_L("(Reverse) FAST Two Cube Left Scale Auton"),
 		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
+		
+		//WOW!
+		AUTO_FAST_3C_L("(Reverse) FAST THREE!!! Cube Left Scale Auton"),
+		AUTO_FAST_3C_R("(Reverse) FAST THREE!!! Cube Right Scale Auton"),
+	
 		AUTO_TEST("Test Auton");
 		/**
 		 * The name of the auton to display on the dashboard
@@ -251,6 +256,13 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		case AUTO_FAST_2C_SCALE_R:
 			autonomous = new Fast2CubeAuton(this, false, gameData);
 			break;
+		case AUTO_FAST_3C_L:
+			autonomous = new Fast3CubeAuton(this, true, gameData);
+			break;
+		case AUTO_FAST_3C_R:
+			autonomous = new Fast3CubeAuton(this, false, gameData);
+			break;
+		
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
 			Logging.e("Could not get auton from chooser");
