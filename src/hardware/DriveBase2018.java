@@ -43,7 +43,7 @@ public class DriveBase2018 extends DriveBase {
 	public double rightPower = 0;
 
 	public enum Motors {
-		LEFT0(3), LEFT1(4), RIGHT0(1), RIGHT1(2);
+		LEFT0(3), LEFT1(4), LEFT2(13), RIGHT0(1), RIGHT1(2), RIGHT2(12);
 
 		public int id;
 
@@ -63,10 +63,10 @@ public class DriveBase2018 extends DriveBase {
 	public DriveBase2018() {
 		super();
 		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id,
-				Motors.LEFT0.getVictor());
+				Motors.LEFT0.getVictor(), Motors.RIGHT2.getVictor());
 		left.feedbackTalon.talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_20Ms, 0);
 		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id,
-				Motors.RIGHT0.getVictor());
+				Motors.RIGHT0.getVictor(), Motors.RIGHT2.getVictor());
 		right.feedbackTalon.talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_20Ms, 0);
 		right.setInverted(true);
 		left.setEncoderReversed(true);

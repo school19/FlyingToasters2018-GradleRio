@@ -51,10 +51,10 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
 		
 		//WOW!
-		AUTO_FAST_3C_L("(Reverse) FAST THREE!!! Cube Left Scale Auton"),
-		AUTO_FAST_3C_R("(Reverse) FAST THREE!!! Cube Right Scale Auton"),
+		AUTO_FAST_3C_L("(Reverse) 3 Cube Left Scale Auton"),
+		AUTO_FAST_3C_R("(Reverse) 3 Cube Right Scale Auton"),
 	
-		AUTO_TEST("Test Auton");
+		AUTO_TEST("Test Auton"), AUTO_3C_L("Faster 3 cube left scale auto"), AUTO_3C_R("Faster 3 cube right scale auto");
 		/**
 		 * The name of the auton to display on the dashboard
 		 */
@@ -172,7 +172,8 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		
 		new Thread(() -> {
 			Cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-//			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+			Cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+			Cam2.setResolution(320, 240);
 		}).start();
 		
 		resetTimer();
@@ -256,11 +257,17 @@ public class Robot extends IterativeRobot implements CommandCallback {
 		case AUTO_FAST_2C_SCALE_R:
 			autonomous = new Fast2CubeAuton(this, false, gameData);
 			break;
-		case AUTO_FAST_3C_L:
+		case AUTO_3C_L:
 			autonomous = new Scale3CubeAuto(this, true, gameData);
 			break;
-		case AUTO_FAST_3C_R:
+		case AUTO_3C_R:
 			autonomous = new Scale3CubeAuto(this, false, gameData);
+			break;
+		case AUTO_FAST_3C_L:
+			autonomous = new Scale3CubeAutoFast(this, true, gameData);
+			break;
+		case AUTO_FAST_3C_R:
+			autonomous = new Scale3CubeAutoFast(this, false, gameData);
 			break;
 		
 		default:
