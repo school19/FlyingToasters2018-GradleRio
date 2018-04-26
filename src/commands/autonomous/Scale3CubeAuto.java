@@ -220,6 +220,7 @@ public class Scale3CubeAuto extends OpMode {
 			 * addCommand(getCubeCommand);
 			 */
 		} else if (cross && cmd == raise1) {
+			robot.intake.setOutputPower(0.9);
 			addCommand(output1);
 			addCommand(lower1);
 			addCommand(getCube2Command);
@@ -232,10 +233,14 @@ public class Scale3CubeAuto extends OpMode {
 			addCommand(raise2);
 		} else if (cmd == driveToDump2ndCube) {
 			if (cross) {
+
+				robot.intake.setOutputPower(0.5);
 				addCommand(output2);
 			} else {
 				// dump the second cube. keep moving quickly since we're not
 				// done yet!
+
+				robot.intake.setOutputPower(0.5);
 				addCommand(output2);
 				// Lower to switch position.
 				addCommand(lower2);

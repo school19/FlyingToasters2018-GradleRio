@@ -27,6 +27,7 @@ public class Operator {
 //		RESET(E3D.Button.THUMB, XPlorer.Button.BACK),
 		START_CLIMB(E3D.Button.FOO, XPlorer.Button.BACK),
 		END_CLIMB(E3D.Button.FOO, XPlorer.Button.START),
+		FLUTTER(E3D.Button.FOO, XPlorer.Button.BACK),
 		AUTO_FLIP(E3D.Button.TRIGGER, XPlorer.Button.WHAMMY);
 		
 		E3D.Button e3dButton;

@@ -41,7 +41,7 @@ public class Intake {
 	private final double maxRecoveryTime = 1;
 
 	private final double defaultInSpeed = 1.0;
-	private final double defaultOutSpeed = 0.5;
+	private double defaultOutSpeed = 0.5;
 	private double manualOutSpeed = defaultOutSpeed;
 	
 	private final int MAX_INTAKE_VELOCITY = 13500;
@@ -58,7 +58,7 @@ public class Intake {
 	IntakeTalonParams intakeParams = new IntakeTalonParams();
 	
 	public static enum State {
-		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_MANUAL,
+		INTAKING, OUTPUTTING, RESTING, RESTING_WITH_CUBE, HAS_CUBE, RESET, RECOVERY, OUTPUTTING_MANUAL, FLUTTER_OUT, FLUTTER_PAUSE, START_FLUTTER_OUT,
 	}
 
 	public Intake(Lift lift) {
@@ -84,6 +84,7 @@ public class Intake {
 		
 		leftTalon.setInverted(false);
 		rightTalon.setInverted(true);
+		//rightTalon.talon.setInverted(true);
 		
 		leftTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
 		rightTalon.talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 1000);
@@ -138,7 +139,7 @@ public class Intake {
 			}
 			break;
 		case OUTPUTTING:
-			setVelocity(defaultOutSpeed);
+			setPower(defaultOutSpeed);
 			if (hasCube()) {
 				time = 0;
 			} else {
@@ -170,6 +171,27 @@ public class Intake {
 				setState(State.RECOVERY);
 			}
 			break;
+		case START_FLUTTER_OUT:
+			time = 0;
+			setState(State.FLUTTER_OUT);
+		case FLUTTER_OUT:
+			time += deltaTime;
+			if(time < .1) {
+				setVelocity(.37);
+			} else {
+				time = 0;
+				setState(State.FLUTTER_PAUSE);
+			}
+			break;
+		case FLUTTER_PAUSE:
+			time += deltaTime;
+			if(time < .1) {
+				setPower(0);
+			} else {
+				time = 0;
+				setState(State.FLUTTER_OUT);
+			}
+			break;
 		case RESTING:
 			time = 0;
 			break;
@@ -194,6 +216,10 @@ public class Intake {
 	
 	public void setOutputSpeed(double speed) {
 		manualOutSpeed = speed;
+	}
+
+	public void setOutputPower(double speed) {
+		defaultOutSpeed = speed;
 	}
 
 	public void pollSwitch() {

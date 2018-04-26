@@ -28,11 +28,11 @@ public class DriveBase2018 extends DriveBase {
 	public final static double wheelDistance = 0.665;
 	//public final static double wheelDistance = 0.735;
 	
-	final static double velGain = 0.25;
-	final static double accelGain = 0.005;
+	final static double velGain = 0.255;
+	final static double accelGain = 0.003;
 
-	private PIDcontroller leftMotionProfilePID = new PIDcontroller(7.5, 20, 0.375);
-	private PIDcontroller rightMotionProfilePID = new PIDcontroller(7.5, 20, 0.375);
+	private PIDcontroller leftMotionProfilePID = new PIDcontroller(7.5, 13, 0.275);
+	private PIDcontroller rightMotionProfilePID = new PIDcontroller(7.5, 13, 0.275);
 	private WheelProfileGenerator leftProfileGen;
 	private WheelProfileGenerator rightProfileGen;
 
@@ -63,7 +63,7 @@ public class DriveBase2018 extends DriveBase {
 	public DriveBase2018() {
 		super();
 		left = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.LEFT1.id,
-				Motors.LEFT0.getVictor(), Motors.RIGHT2.getVictor());
+				Motors.LEFT0.getVictor(), Motors.LEFT2.getVictor());
 		left.feedbackTalon.talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_20Ms, 0);
 		right = new FeedbackLinkedCAN(FeedbackDevice.CTRE_MagEncoder_Absolute, Motors.RIGHT1.id,
 				Motors.RIGHT0.getVictor(), Motors.RIGHT2.getVictor());
@@ -179,7 +179,7 @@ public class DriveBase2018 extends DriveBase {
 		rotation = Utilities.expInput(rotation, exp);
 		double outputPower = Utilities.expInput(power, exp);
 
-		double arcadeRotation = rotation;
+		double arcadeRotation = rotation * 0.8;
 		double cheesyRotation = rotation * gain * Math.abs(outputPower);
 		double arcadeWeight = (1 - Math.abs(power) / limit / subLimitWeight);
 		double cheesyWeight = (Math.abs(power) / limit * subLimitWeight);

@@ -227,6 +227,8 @@ public class Scale3CubeAutoFast extends OpMode {
 			 * addCommand(getCubeCommand);
 			 */
 		} else if (cross && cmd == raise1) {
+
+			robot.intake.setOutputPower(0.3);
 			addCommand(output1);
 			addCommand(lower1);
 			addCommand(getCube2Command);
@@ -239,6 +241,7 @@ public class Scale3CubeAutoFast extends OpMode {
 			addCommand(raise2);
 		} else if (cmd == driveToDump2ndCube) {
 			if (cross) {
+				robot.intake.setOutputPower(0.3);
 				addCommand(output2);
 			} else {
 				// dump the second cube. keep moving quickly since we're not
