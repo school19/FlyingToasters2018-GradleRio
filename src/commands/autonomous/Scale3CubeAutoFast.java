@@ -36,8 +36,8 @@ public class Scale3CubeAutoFast extends OpMode {
 			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
-			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
-			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.3, -5.8), 0),
+			new Waypoint(new Point(5.45, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.45, -2.9), -Math.PI / 2.0),
+			new Waypoint(new Point(5.45, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.3, -5.8), 0),
 			new Waypoint(new Point(6.9, -5.5), Math.PI / 4 + 0.2) };
 
 	private Waypoint[] shortRightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
