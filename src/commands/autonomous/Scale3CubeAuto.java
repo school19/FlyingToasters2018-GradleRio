@@ -27,12 +27,12 @@ public class Scale3CubeAuto extends OpMode {
 	private Waypoint[] leftPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(5.5, 0), 0),
 			new Waypoint(new Point(7.2, -0.6), -Math.PI / 4.0) };
 	private Waypoint[] leftGetCube2 = { new Waypoint(new Point(7.2, -0.5), 3 * Math.PI / 4.0),
-			new Waypoint(new Point(5.4, -0.82), -3 * Math.PI / 4.0) };
-	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.2, -0.35), Math.PI / 4.0),
+			new Waypoint(new Point(5.5, -0.82), -3 * Math.PI / 4.0) };
+	private Waypoint[] left2ndCube = { new Waypoint(new Point(5.3, -0.35), Math.PI / 4.0),
 			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 	private Waypoint[] leftGetCube3 = { new Waypoint(new Point(7.2, -0.5), 3 * Math.PI / 4.0),
-			new Waypoint(new Point(5.4, -1.5), -3 * Math.PI / 4.0) };
-	private Waypoint[] left3rdCube = { new Waypoint(new Point(5.2, -1), Math.PI / 4.0),
+			new Waypoint(new Point(5.5, -1.5), -3 * Math.PI / 4.0) };
+	private Waypoint[] left3rdCube = { new Waypoint(new Point(5.3, -1), Math.PI / 4.0),
 			new Waypoint(new Point(7.2, -0.4), -Math.PI / 4.0) };
 
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
@@ -180,8 +180,8 @@ public class Scale3CubeAuto extends OpMode {
 	 */
 	public void periodic(double deltaTime) {
 		super.periodic(deltaTime);
-		Logging.l("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
-				+ robot.driveBase.right.getPosition());
+//		Logging.l("Left pos: " + robot.driveBase.left.getPosition() + ", right pos: "
+//				+ robot.driveBase.right.getPosition());
 	}
 
 	/**
@@ -205,6 +205,8 @@ public class Scale3CubeAuto extends OpMode {
 			 * else {
 			 */
 			if (!cross) {
+
+				robot.intake.setOutputPower(0.9);
 				// Dump the cube and keep going to the next one
 				addCommand(output1);
 				addCommand(lower1);
@@ -220,7 +222,7 @@ public class Scale3CubeAuto extends OpMode {
 			 * addCommand(getCubeCommand);
 			 */
 		} else if (cross && cmd == raise1) {
-			robot.intake.setOutputPower(0.9);
+			robot.intake.setOutputPower(.9);
 			addCommand(output1);
 			addCommand(lower1);
 			addCommand(getCube2Command);
@@ -234,7 +236,7 @@ public class Scale3CubeAuto extends OpMode {
 		} else if (cmd == driveToDump2ndCube) {
 			if (cross) {
 
-				robot.intake.setOutputPower(0.5);
+				robot.intake.setOutputPower(0.9);
 				addCommand(output2);
 			} else {
 				// dump the second cube. keep moving quickly since we're not

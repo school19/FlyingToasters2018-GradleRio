@@ -38,7 +38,7 @@ public class Scale3CubeAutoFast extends OpMode {
 	private Waypoint[] rightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
 			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0),
 			new Waypoint(new Point(5.65, -4.75), -Math.PI / 2.0), new Waypoint(new Point(6.3, -5.8), 0),
-			new Waypoint(new Point(6.9, -5.5), Math.PI / 4) };
+			new Waypoint(new Point(6.9, -5.5), Math.PI / 4 + 0.2) };
 
 	private Waypoint[] shortRightPath = { new Waypoint(new Point(0, 0), 0), new Waypoint(new Point(4, 0.2), 0),
 			new Waypoint(new Point(5.65, -1.5), -Math.PI / 2.0), new Waypoint(new Point(5.65, -2.9), -Math.PI / 2.0) };
@@ -106,16 +106,16 @@ public class Scale3CubeAutoFast extends OpMode {
 		if (gameData.charAt(1) == 'L' && startOnLeft || gameData.charAt(1) == 'R' && !startOnLeft) {
 			cross = false;
 			mpCommand = new MotionProfileCommand(this, robot, "mp command", true, mirrored,
-					MotionProfileCommand.Speed.FAST_LOW_ACCEL, leftPath);
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, leftPath);
 			mpCommand.removeExtraEndTime();
 			getCube2Command = new MotionProfileCommand(this, robot, "Get left cube", false, mirrored,
-					MotionProfileCommand.Speed.MED, leftGetCube2);
+					MotionProfileCommand.Speed.SLOW, leftGetCube2);
 			getCube2Command.removeExtraEndTime();
 			driveToDump2ndCube = new MotionProfileCommand(this, robot, "go to dump cube 2", true, mirrored,
 					MotionProfileCommand.Speed.MED, left2ndCube);
 			driveToDump2ndCube.removeExtraEndTime();
 			getCube3Command = new MotionProfileCommand(this, robot, "Get 3rd cube", false, mirrored,
-					MotionProfileCommand.Speed.MED, leftGetCube3);
+					MotionProfileCommand.Speed.MED_LOW_ACCEL, leftGetCube3);
 			getCube3Command.removeExtraEndTime();
 			driveToDump3rdCube = new MotionProfileCommand(this, robot, "go to dump cube 3", true, mirrored,
 					MotionProfileCommand.Speed.MED, left3rdCube);
@@ -148,8 +148,8 @@ public class Scale3CubeAutoFast extends OpMode {
 			driveToDump2ndCube.removeExtraEndTime();
 		}
 
-		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.5);
-		intakeCommand2 = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.5);
+		intakeCommand = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.2);
+		intakeCommand2 = new IntakeCommand(this, robot, Intake.State.INTAKING, 0.2);
 
 		/*
 		 * if (cross) { raise1 = new LiftCommand(this, bot,
@@ -228,7 +228,7 @@ public class Scale3CubeAutoFast extends OpMode {
 			 */
 		} else if (cross && cmd == raise1) {
 
-			robot.intake.setOutputPower(0.3);
+			robot.intake.setOutputPower(0.5);
 			addCommand(output1);
 			addCommand(lower1);
 			addCommand(getCube2Command);
@@ -241,7 +241,7 @@ public class Scale3CubeAutoFast extends OpMode {
 			addCommand(raise2);
 		} else if (cmd == driveToDump2ndCube) {
 			if (cross) {
-				robot.intake.setOutputPower(0.3);
+				robot.intake.setOutputPower(0.4);
 				addCommand(output2);
 			} else {
 				// dump the second cube. keep moving quickly since we're not

@@ -215,10 +215,12 @@ public class Intake {
 	}
 	
 	public void setOutputSpeed(double speed) {
+		//Logging.h("Set Intake output velocity to " + speed);
 		manualOutSpeed = speed;
 	}
 
 	public void setOutputPower(double speed) {
+		//Logging.h("Set Intake output power to " + speed);
 		defaultOutSpeed = speed;
 	}
 

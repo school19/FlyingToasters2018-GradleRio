@@ -47,14 +47,16 @@ public class Robot extends IterativeRobot implements CommandCallback {
 //		AUTO_SCALE_R("(Reverse) Right Scale auton"),
 //		AUTO_2C_SCALE_L("(Reverse) Two Cube Left Scale Auton"),
 //		AUTO_2C_SCALE_R("(Reverse) Two Cube Right Scale Auton"),
-		AUTO_FAST_2C_SCALE_L("(Reverse) FAST Two Cube Left Scale Auton"),
-		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
-		
-		//WOW!
+//		AUTO_FAST_2C_SCALE_L("(Reverse) FAST Two Cube Left Scale Auton"),
+//		AUTO_FAST_2C_SCALE_R("(Reverse) FAST Two Cube Right Scale Auton"),
+//		
+//		//WOW!
 		AUTO_FAST_3C_L("(Reverse) 3 Cube Left Scale Auton"),
 		AUTO_FAST_3C_R("(Reverse) 3 Cube Right Scale Auton"),
-	
-		AUTO_TEST("Test Auton"), AUTO_3C_L("Faster 3 cube left scale auto"), AUTO_3C_R("Faster 3 cube right scale auto");
+		OP_AUTO_L("(Reverse) switch/scale auton LEFT"),
+		OP_AUTO_R("(Reverse) switch/scale auton RIGHT"),
+		AUTO_TEST("Test Auton"),;
+		//AUTO_3C_L("Faster 3 cube left scale auto"), AUTO_3C_R("Faster 3 cube right scale auto");
 		/**
 		 * The name of the auton to display on the dashboard
 		 */
@@ -250,26 +252,31 @@ public class Robot extends IterativeRobot implements CommandCallback {
 //			break;
 //		case AUTO_2C_SCALE_R:
 //			autonomous = new RightScaleAuton2Cube(this);
+////			break;
+//		case AUTO_FAST_2C_SCALE_L:
+//			autonomous = new Fast2CubeAuton(this, true, gameData);
 //			break;
-		case AUTO_FAST_2C_SCALE_L:
-			autonomous = new Fast2CubeAuton(this, true, gameData);
-			break;
-		case AUTO_FAST_2C_SCALE_R:
-			autonomous = new Fast2CubeAuton(this, false, gameData);
-			break;
-		case AUTO_3C_L:
-			autonomous = new Scale3CubeAuto(this, true, gameData);
-			break;
-		case AUTO_3C_R:
-			autonomous = new Scale3CubeAuto(this, false, gameData);
-			break;
+//		case AUTO_FAST_2C_SCALE_R:
+//			autonomous = new Fast2CubeAuton(this, false, gameData);
+//			break;
+//		case AUTO_3C_L:
+//			autonomous = new Scale3CubeAuto(this, true, gameData);
+//			break;
+//		case AUTO_3C_R:
+//			autonomous = new Scale3CubeAuto(this, false, gameData);
+//			break;
 		case AUTO_FAST_3C_L:
 			autonomous = new Scale3CubeAutoFast(this, true, gameData);
 			break;
 		case AUTO_FAST_3C_R:
 			autonomous = new Scale3CubeAutoFast(this, false, gameData);
 			break;
-		
+		case OP_AUTO_L:
+			autonomous = new OPScaleAuton(this, true, gameData);
+			break;
+		case OP_AUTO_R:
+			autonomous = new OPScaleAuton(this, false, gameData);
+			break;
 		default:
 			autonomous = new TestAuton(this, "AUTON NOT FOUND");
 			Logging.e("Could not get auton from chooser");
