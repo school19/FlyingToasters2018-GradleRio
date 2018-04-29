@@ -50,3 +50,7 @@ Temporary Items
 dist/
 build/
 bin/
+
+# IntelliJ .idea and Gradle directories
+.gradle/
+.idea/
