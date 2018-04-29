@@ -1,6 +1,6 @@
 package hardware;
 
-import org.usfirst.frc.team3641.robot.Robot;
+import robot.Robot;
 
 import edu.wpi.first.wpilibj.Spark;
 import hardware.Intake.State;

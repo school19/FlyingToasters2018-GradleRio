@@ -1,6 +1,6 @@
 package commands;
 
-import org.usfirst.frc.team3641.robot.Robot;
+import robot.Robot;
 
 import commands.interfaces.Command;
 import commands.interfaces.CommandCallback;

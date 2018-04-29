@@ -1,6 +1,6 @@
 package commands.teleop;
 
-import org.usfirst.frc.team3641.robot.Robot;
+import robot.Robot;
 
 import commands.interfaces.OpMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

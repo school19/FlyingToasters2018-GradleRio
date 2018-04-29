@@ -1,13 +1,12 @@
 package commands.autonomous;
 
-import org.usfirst.frc.team3641.robot.Robot;
+import robot.Robot;
 
 import commands.IntakeCommand;
 import commands.LiftCommand;
 import commands.MotionProfileCommand;
 import commands.interfaces.Command;
 import commands.interfaces.OpMode;
-import edu.wpi.first.wpilibj.DriverStation;
 import hardware.Intake;
 import hardware.Intake.State;
 import hardware.Lift;
