@@ -34,7 +34,7 @@ public class Climber {
 		
 		left = new Talon(LEFT);
 		right = new Talon(RIGHT);
-//		right.setFollower(left);
+//		right.followMaster(left);
 		
 		left.setInverted(false);
 		right.setInverted(true);

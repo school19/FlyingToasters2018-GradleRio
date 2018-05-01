@@ -16,7 +16,7 @@ public interface CANMotorController extends MotorController {
 	 * @param master
 	 *            the motor controller to follow
 	 */
-	public void setFollower(CANMotorController master);
+	public void followMaster(CANMotorController master);
 
 	/**
 	 * returns the actual motor controller object (TalonSRX or VictorSPX)

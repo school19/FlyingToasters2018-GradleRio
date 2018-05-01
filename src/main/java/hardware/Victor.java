@@ -36,7 +36,7 @@ public class Victor implements CANMotorController {
 
 
 	@Override
-	public void setFollower(CANMotorController master) {
+    public void followMaster(CANMotorController master) {
 		victor.follow(master.getMotorController());
 	}
 

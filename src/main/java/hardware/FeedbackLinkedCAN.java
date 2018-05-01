@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import controllers.AbstractFeedbackController;
 import hardware.interfaces.CANMotorController;
 import hardware.interfaces.FeedbackMotorController;
-import utilities.Logging;
 
 /**
  * Linked can motor controllers with feedback, works in master/slave mode
@@ -19,9 +18,8 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 	private boolean feedbackActive = false;
 	/**
 	 * Creates a new set of linked talons.
-	 * 
-	 * @param talonIDs
-	 *            Each of the IDs you want to control.
+     *
+     * @param controllers each motor controller to follow the feedback talon
 	 */
 	public FeedbackLinkedCAN(FeedbackTalon feedback, CANMotorController... controllers) {
 		//initializes the controllers and stuff
@@ -29,7 +27,7 @@ public class FeedbackLinkedCAN extends LinkedCANMotorControllers implements Feed
 		feedbackTalon = feedback;
 		//set the motor controllers to follow the master talon
 		for(CANMotorController mc : motorControllers) {
-			mc.setFollower(feedbackTalon);
+            mc.followMaster(feedbackTalon);
 		}
 	}
 	

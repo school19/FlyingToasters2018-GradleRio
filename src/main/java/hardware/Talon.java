@@ -46,7 +46,7 @@ public class Talon implements CANMotorController {
 	}
 
 	@Override
-	public void setFollower(CANMotorController master) {
+	public void followMaster(CANMotorController master) {
 		talon.follow(master.getMotorController());
 	}
 
