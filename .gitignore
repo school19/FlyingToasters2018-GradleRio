@@ -52,6 +52,7 @@ build/
 bin/
 out/
 
-# IntelliJ .idea and Gradle directories
+# IntelliJ .idea, visual studio .vscode, and Gradle directories
 .gradle/
 .idea/
+.vscode/
