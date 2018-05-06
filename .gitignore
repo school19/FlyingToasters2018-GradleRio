@@ -56,3 +56,6 @@ out/
 .gradle/
 .idea/
 .vscode/
+.settings/
+.classpath
+.project
