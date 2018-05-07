@@ -1,6 +1,6 @@
 before_script:
-  - apt update && apt install -y openjdk-11-jdk-headless gradle
-  - javac --version
+  - apt update && apt install -y default-jdk-headless gradle
   
 build:
-  - ./gradlew build
+  script:
+    - ./gradlew build

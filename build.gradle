@@ -27,7 +27,7 @@ deploy {
 // Set up RosJava imports
 repositories {
     maven {
-        url "https://github.com/rosjava/rosjava_mvn_repo/raw/master"
+        url 'http://repo1.maven.org/maven2'
     }
     mavenLocal()
     jcenter()
@@ -39,7 +39,7 @@ dependencies {
     compile wpilib()
     compile ctre()
     compile navx()
-    compile "org.ros.rosjava_core:rosjava:[0.3,0.4)"
+    testCompile 'junit:junit:4.11'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
