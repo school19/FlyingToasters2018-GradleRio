@@ -4,3 +4,7 @@ before_script:
 build:
   script:
     - ./gradlew build
+
+test:
+  script:
+    - ./gradlew test
