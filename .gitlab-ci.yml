@@ -1,10 +1,14 @@
 before_script:
   - apt update && apt install -y default-jdk-headless gradle
-  
-build:
-  script:
-    - ./gradlew build
 
-test:
-  script:
-    - ./gradlew test
+stages:
+  - build
+  - test
+
+build_job:
+  stage: build
+  script: "./gradlew build"
+
+unit_test_job:
+  stage: test
+  script: "./gradlew test"
